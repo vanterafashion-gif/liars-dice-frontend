@@ -1,0 +1,165 @@
+/*
+  Manual controls for the round result panel and its OK button.
+  This file is imported LAST from main.jsx, so these values win over:
+  - gameplay.mobile.css
+  - portrait-gameplay.mobile.css
+  - portrait-gameplay-layout-correction.mobile.css
+  - portrait-gameplay-final-reference.mobile.css
+
+  Edit the variables below only.
+  Positive X = right, positive Y = down.
+*/
+
+/* Mobile landscape / default mobile values */
+html[data-device='mobile'] .app-shell--gameplay {
+  --pg-round-result-left: 430px;
+  --pg-round-result-top: 185px;
+  --pg-round-result-width: 490px;
+  --pg-round-result-max-height: 230px;
+  --pg-round-result-padding: 16px 22px 54px;
+
+  --pg-round-result-ok-left: 50%;
+  --pg-round-result-ok-bottom: 12px;
+  --pg-round-result-ok-x: 0px;
+  --pg-round-result-ok-y: 0px;
+  --pg-round-result-ok-width: 92px;
+  --pg-round-result-ok-height: 34px;
+  --pg-round-result-ok-font-size: 14px;
+
+  --pg-round-result-ok-bg: linear-gradient(180deg, #ffe58a 0%, #ff9f1f 48%, #b84b00 100%);
+  --pg-round-result-ok-color: #2b0d00;
+  --pg-round-result-ok-border: 2px solid #fff0a8;
+  --pg-round-result-ok-shadow: 0 0 12px rgba(255, 210, 80, .95), 0 6px 14px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+
+/* Portrait values */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay {
+  --pg-round-result-left: 54px;
+  --pg-round-result-top: 300px;
+  --pg-round-result-width: 612px;
+  --pg-round-result-max-height: 260px;
+  --pg-round-result-padding: 12px 16px 54px;
+
+  --pg-round-result-ok-left: 50%;
+  --pg-round-result-ok-bottom: 12px;
+  --pg-round-result-ok-x: 0px;
+  --pg-round-result-ok-y: 0px;
+  --pg-round-result-ok-width: 94px;
+  --pg-round-result-ok-height: 32px;
+  --pg-round-result-ok-font-size: 12px;
+
+  --pg-round-result-ok-bg: linear-gradient(180deg, #ffe58a 0%, #ff9f1f 48%, #b84b00 100%);
+  --pg-round-result-ok-color: #ffffff;
+  --pg-round-result-ok-border: 2px solid #fff0a8;
+  --pg-round-result-ok-shadow: 0 0 12px rgba(255, 210, 80, .95), 0 6px 14px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+
+html[data-device='mobile'] .app-shell--gameplay .gameplay-round-result {
+  left: var(--pg-round-result-left) !important;
+  top: var(--pg-round-result-top) !important;
+  width: var(--pg-round-result-width) !important;
+  max-height: var(--pg-round-result-max-height) !important;
+  padding: var(--pg-round-result-padding) !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+html[data-device='mobile'] .app-shell--gameplay .gameplay-round-result__revealed {
+  max-height: calc(var(--pg-round-result-max-height) - 118px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+html[data-device='mobile'] .app-shell--gameplay .gameplay-round-result__ok {
+  position: absolute !important;
+  left: var(--pg-round-result-ok-left) !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: var(--pg-round-result-ok-bottom) !important;
+  width: var(--pg-round-result-ok-width) !important;
+  min-width: 0 !important;
+  height: var(--pg-round-result-ok-height) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) translate(var(--pg-round-result-ok-x), var(--pg-round-result-ok-y)) !important;
+  z-index: 20 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  font-size: var(--pg-round-result-ok-font-size) !important;
+  font-weight: 900 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  background: var(--pg-round-result-ok-bg) !important;
+  color: var(--pg-round-result-ok-color) !important;
+  border: var(--pg-round-result-ok-border) !important;
+  border-radius: 999px !important;
+  box-shadow: var(--pg-round-result-ok-shadow) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
+}
+
+/* Portrait override repeated with the same orientation specificity because older portrait files use !important. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-round-result {
+  left: var(--pg-round-result-left) !important;
+  top: var(--pg-round-result-top) !important;
+  width: var(--pg-round-result-width) !important;
+  max-height: var(--pg-round-result-max-height) !important;
+  padding: var(--pg-round-result-padding) !important;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-round-result__revealed {
+  max-height: calc(var(--pg-round-result-max-height) - 118px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-round-result__ok {
+  position: absolute !important;
+  left: var(--pg-round-result-ok-left) !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: var(--pg-round-result-ok-bottom) !important;
+  width: var(--pg-round-result-ok-width) !important;
+  min-width: 0 !important;
+  height: var(--pg-round-result-ok-height) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) translate(var(--pg-round-result-ok-x), var(--pg-round-result-ok-y)) !important;
+  z-index: 20 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  font-size: var(--pg-round-result-ok-font-size) !important;
+  font-weight: 900 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  background: var(--pg-round-result-ok-bg) !important;
+  color: var(--pg-round-result-ok-color) !important;
+  border: var(--pg-round-result-ok-border) !important;
+  border-radius: 999px !important;
+  box-shadow: var(--pg-round-result-ok-shadow) !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45) !important;
+}
+
+
+html[data-device='mobile'] .app-shell--gameplay .gameplay-round-result__ok:hover {
+  filter: brightness(1.12) saturate(1.12) !important;
+}
+
+html[data-device='mobile'] .app-shell--gameplay .gameplay-round-result__ok:active {
+  filter: brightness(.96) !important;
+  transform: translateX(-50%) translate(var(--pg-round-result-ok-x), calc(var(--pg-round-result-ok-y) + 1px)) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-round-result__ok:hover {
+  filter: brightness(1.12) saturate(1.12) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-round-result__ok:active {
+  filter: brightness(.96) !important;
+  transform: translateX(-50%) translate(var(--pg-round-result-ok-x), calc(var(--pg-round-result-ok-y) + 1px)) !important;
+}

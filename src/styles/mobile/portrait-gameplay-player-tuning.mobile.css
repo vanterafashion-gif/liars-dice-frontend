@@ -1,0 +1,138 @@
+/* Gameplay portrait player tuning controls.
+   Scope: mobile portrait gameplay only.
+   Edit the CSS variables inside each player slot to move the panel skin/avatar/name/count/dice independently. */
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player {
+  --panel-x: 0px;
+  --panel-y: 0px;
+
+  --skin-x: -100px;
+  --skin-y: -12px;
+  --skin-rotate: 90deg;
+  --skin-scale-x: 1;
+  --skin-scale-y: 1;
+  --skin-w: 220%;
+  --skin-h: 50%;
+
+  --avatar-x: 30px;
+  --avatar-y: -20px;
+  --avatar-w: 146px;
+  --avatar-h: 146px;
+
+  --name-x: 20px;
+  --name-y: 0px;
+
+  --count-x: 0px;
+  --count-y: 0px;
+
+  --dice-x: 20px;
+  --dice-y: 0px;
+
+  transform: translate(var(--panel-x), var(--panel-y)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player__skin {
+  position: absolute !important;
+  inset: 0 !important;
+  width: var(--skin-w) !important;
+  height: var(--skin-h) !important;
+  object-fit: fill !important;
+  display: block !important;
+  transform: translate(var(--skin-x), var(--skin-y)) rotate(var(--skin-rotate)) scale(var(--skin-scale-x), var(--skin-scale-y)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player__avatar {
+  position: absolute !important;
+  width: var(--avatar-w) !important;
+  height: var(--avatar-h) !important;
+  transform: translate(var(--avatar-x), var(--avatar-y)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player__name {
+  transform: translate(var(--name-x), var(--name-y)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player__countRow {
+  transform: translate(var(--count-x), var(--count-y)) !important;
+  transform-origin: center center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player__diceRow {
+  transform: translate(var(--dice-x), var(--dice-y)) !important;
+  transform-origin: center center !important;
+}
+
+/* Top-left opponent panel. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player--sophie {
+  --panel-x: 0px;
+  --panel-y: 0px;
+  --skin-x: -100px;
+  --skin-y: -12px;
+  --skin-rotate: 90deg;
+  --avatar-x: 30px;
+  --avatar-y: -20px;
+  --name-x: -140px;
+  --name-y: 40px;
+  --count-x: -140px;
+  --count-y: 45px;
+  --dice-x: -140px;
+  --dice-y: 55px;
+}
+
+/* Top-right green opponent panel.
+   The skin rotation is corrected here so the green asset is no longer visually reversed.
+   Edit --skin-rotate only if you want to test another direction. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player--dragon {
+  --panel-x: 0px;
+  --panel-y: 0px;
+  --skin-x: -70px;
+  --skin-y: -12px;
+  --skin-rotate: -90deg;
+  --avatar-x: 30px;
+  --avatar-y: -20px;
+  --name-x: -30px;
+  --name-y: 40px;
+  --count-x: -30px;
+  --count-y: 45px;
+  --dice-x: -30px;
+  --dice-y: 50px;
+}
+
+/* Bottom-left local player panel. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player--you {
+   --panel-x: 0px;
+  --panel-y: 0px;
+  --skin-x: -100px;
+  --skin-y: -12px;
+  --skin-rotate: 90deg;
+  --avatar-x: 30px;
+  --avatar-y: -20px;
+  --name-x: -140px;
+  --name-y: 40px;
+  --count-x: -140px;
+  --count-y: 45px;
+  --dice-x: -140px;
+  --dice-y: 55px;
+}
+
+
+/* Bottom-right player panel. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-player--fourth {
+   --panel-x: 0px;
+  --panel-y: 0px;
+  --skin-x: -100px;
+  --skin-y: -12px;
+  --skin-rotate: 90deg;
+  --avatar-x: 30px;
+  --avatar-y: -20px;
+  --name-x: -140px;
+  --name-y: 40px;
+  --count-x: -140px;
+  --count-y: 45px;
+  --dice-x: -140px;
+  --dice-y: 55px;
+}

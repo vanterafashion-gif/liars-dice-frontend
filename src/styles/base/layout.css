@@ -1,0 +1,313 @@
+:root {
+  --app-viewport-width: 100vw;
+  --app-viewport-height: 100vh;
+}
+
+.app-shell {
+  width: 100vw;
+  width: var(--app-viewport-width, 100vw);
+  height: 100vh;
+  height: var(--app-viewport-height, 100vh);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background-color: #050200;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/*
+  The background belongs to the viewport, not to the fixed UI canvas.
+  This keeps the background full-screen while the separate UI elements stay
+  inside the stable design resolution.
+*/
+
+
+.app-shell--starter,
+.app-shell--loading {
+  background-image: url('/assets/liars-dice/starter/BG.png');
+}
+
+.app-shell--login {
+  background-image: url('/assets/liars-dice/login/bg.png');
+}
+
+.app-shell--mainmenu {
+  background-image: url('/assets/liars-dice/main-menu/BG1.png');
+}
+
+.app-shell--profile {
+  background-image: url('/assets/liars-dice/main-menu/BG1.png');
+}
+
+.app-shell--specialevent {
+  background-image: url('/assets/liars-dice/special-event/BG.png');
+}
+
+.app-shell--dailyreward {
+  background-image: url('/assets/liars-dice/daily-reward/BG.png');
+}
+
+.app-shell--tournamentpass {
+  background-image: url('/assets/liars-dice/tournament-pass/BG.png');
+}
+
+.app-shell--roomselect {
+  background-image: url('/assets/liars-dice/room-select/BG.png');
+}
+
+.app-shell--help {
+  background-image: url('/assets/liars-dice/help/BGH.png');
+}
+
+
+html[data-language='zh'] .app-shell--help {
+  background-image: url('/assets/liars-dice/localized/zh/help-background.png');
+  background-size: cover;
+  background-position: center center;
+}
+
+.app-shell--win {
+  background-image: url('/assets/liars-dice/win/BG.png');
+}
+
+.app-shell--matchmaking {
+  background-image: url('/assets/liars-dice/room-select/BG.png');
+}
+
+.app-shell--gameplay {
+  background-image: var(--gameplay-background-image, url('/assets/liars-dice/gameplay/BG.png'));
+}
+
+.app-shell--createroom {
+  background-image: var(--create-room-background-image, url('/assets/liars-dice/room-select/BG.png'));
+}
+
+.app-shell--joinroom {
+  background-image: url('/assets/liars-dice/room-select/BG.png');
+}
+
+.app-shell--roomlobby {
+  background-image: var(--room-lobby-background-image, url('/assets/liars-dice/room-select/BG.png'));
+}
+
+.app-shell--starter .game-frame,
+.app-shell--login .game-frame,
+.app-shell--loading .game-frame,
+.app-shell--mainmenu .game-frame,
+.app-shell--roomselect .game-frame,
+.app-shell--help .game-frame,
+.app-shell--win .game-frame,
+.app-shell--matchmaking .game-frame,
+.app-shell--gameplay .game-frame,
+.app-shell--createroom .game-frame,
+.app-shell--joinroom .game-frame,
+.app-shell--roomlobby .game-frame,
+.app-shell--profile .game-frame,
+.app-shell--specialevent .game-frame,
+.app-shell--dailyreward .game-frame,
+.app-shell--tournamentpass .game-frame {
+  background: transparent;
+}
+
+.starter-bg,
+.login-bg,
+.loading-bg {
+  display: none;
+}
+
+.game-frame {
+  width: var(--design-width);
+  height: var(--design-height);
+  position: relative;
+  transform: scale(var(--ui-scale));
+  transform-origin: center center;
+  overflow: hidden;
+  background: transparent;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  width: var(--design-width);
+  height: var(--design-height);
+  overflow: hidden;
+}
+
+.ld-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ld-logo {
+  position: absolute;
+  z-index: 5;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 18px rgba(0,0,0,.55));
+}
+
+.placeholder-screen {
+  display: grid;
+  place-items: center;
+  color: #fff4c2;
+  background: radial-gradient(circle at center, #2e1605, #050200 72%);
+}
+
+.placeholder-card {
+  width: 760px;
+  min-height: 320px;
+  padding: 54px;
+  border: 3px solid #c58a27;
+  border-radius: 30px;
+  background: rgba(16, 7, 2, .86);
+  text-align: center;
+  box-shadow: 0 0 50px rgba(255, 177, 40, .22);
+}
+
+.placeholder-card h1 { margin: 0 0 20px; font-size: 58px; letter-spacing: 6px; }
+.placeholder-card p { margin: 0 0 36px; font-size: 28px; }
+.placeholder-card button {
+  color: #fff;
+  padding: 18px 36px;
+  border-radius: 14px;
+  border: 2px solid #d99d31;
+  background: linear-gradient(#115a12, #063e0d);
+  font-size: 28px;
+  letter-spacing: 2px;
+}
+
+/* Mobile portrait shell:
+   Desktop and landscape phones use the existing 1280x720 landscape frame.
+   Upright mobile devices use a 720x1280 portrait design frame, centered and scaled once. */
+html[data-device='mobile'] .app-shell {
+  width: 100vw;
+  width: var(--app-viewport-width, 100vw);
+  height: 100vh;
+  height: var(--app-viewport-height, 100vh);
+  min-width: 100vw;
+  min-width: var(--app-viewport-width, 100vw);
+  min-height: 100vh;
+  min-height: var(--app-viewport-height, 100vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    env(safe-area-inset-top, 0px)
+    env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+  background-color: #050200;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  touch-action: manipulation;
+}
+
+html[data-device='mobile'] .game-frame {
+  width: var(--design-width) !important;
+  height: var(--design-height) !important;
+  min-width: var(--design-width);
+  min-height: var(--design-height);
+  max-width: var(--design-width);
+  max-height: var(--design-height);
+  flex: 0 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: transparent !important;
+  background-image: none !important;
+  transform: scale(var(--ui-scale));
+  transform-origin: center center;
+  will-change: transform;
+}
+
+html[data-device='mobile'] .screen {
+  position: absolute;
+  inset: 0 !important;
+  width: var(--design-width) !important;
+  height: var(--design-height) !important;
+  min-width: var(--design-width);
+  min-height: var(--design-height);
+  max-width: var(--design-width);
+  max-height: var(--design-height);
+  overflow: hidden;
+}
+
+html[data-physical-device='mobile'][data-orientation='landscape'] .app-shell {
+  /* Rotated phones render the landscape 1280x720 UI instead of being blocked. */
+  background-position: center center;
+}
+
+/* Chinese help screen: use the same full-frame fitting as the English help background. */
+html[data-language='zh'] .app-shell--help {
+  background-size: 100% 100%;
+  background-position: center center;
+}
+
+
+/* Safari viewport correction.
+   iOS/iPadOS Safari can include the browser toolbars in 100vh/innerHeight.
+   The JS hook writes --app-viewport-* from visualViewport only for Safari. */
+html[data-browser='safari'] .app-shell {
+  position: fixed;
+  inset: 0;
+  width: var(--app-viewport-width, 100vw);
+  height: var(--app-viewport-height, 100vh);
+  min-width: var(--app-viewport-width, 100vw);
+  min-height: var(--app-viewport-height, 100vh);
+  max-width: var(--app-viewport-width, 100vw);
+  max-height: var(--app-viewport-height, 100vh);
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+html[data-browser='safari'][data-device='mobile'] .game-frame {
+  transform: scale(var(--ui-scale));
+  transform-origin: center center;
+}
+
+/* Safari-only gutter color fix.
+   When Safari's visible viewport is wider than the fixed 16:9 game frame,
+   the uncovered area must stay neutral instead of showing the old mobile teal fallback. */
+html[data-browser='safari'],
+html[data-browser='safari'] body {
+  background-color: #050200;
+}
+
+html[data-browser='safari'][data-device='mobile'] .app-shell {
+  background-color: #050200;
+}
+
+/* Chrome mobile viewport correction.
+   iOS Chrome exposes a larger layout viewport than the visible area when the
+   browser toolbar is open. JS writes --app-viewport-* from visualViewport for
+   Chrome too, so the same fixed-shell model used by Safari is applied globally. */
+html[data-browser='chrome'][data-device='mobile'] .app-shell {
+  position: fixed;
+  inset: 0;
+  width: var(--app-viewport-width, 100vw);
+  height: var(--app-viewport-height, 100vh);
+  min-width: var(--app-viewport-width, 100vw);
+  min-height: var(--app-viewport-height, 100vh);
+  max-width: var(--app-viewport-width, 100vw);
+  max-height: var(--app-viewport-height, 100vh);
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+html[data-browser='chrome'][data-device='mobile'] .game-frame {
+  transform: scale(var(--ui-scale));
+  transform-origin: center center;
+}
+
+html[data-browser='chrome'],
+html[data-browser='chrome'] body,
+html[data-browser='chrome'][data-device='mobile'] .app-shell {
+  background-color: #050200;
+}
+

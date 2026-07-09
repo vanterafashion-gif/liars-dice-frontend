@@ -1,0 +1,369 @@
+/* Mobile uses the same 1280x720 fixed-landscape layout as desktop. */
+html[data-device='mobile'] .join-room-screen {
+  color: #2b1808;
+}
+
+html[data-device='mobile'] .join-room-profile {
+  left: 96px;
+  top: 10px;
+  z-index: 40;
+}
+
+html[data-device='mobile'] .join-room-currency {
+  position: absolute;
+  top: 20px;
+  width: 148px;
+  height: 37px;
+  z-index: 40;
+  border-radius: 11px;
+  border: 2px solid #c78b35;
+  background: linear-gradient(#fff5cf, #e0b877);
+  box-shadow: 0 5px 12px rgba(0,0,0,.22);
+}
+html[data-device='mobile'] .join-room-currency--coins { right: 192px; }
+html[data-device='mobile'] .join-room-currency--gems { right: 40px; }
+html[data-device='mobile'] .join-room-currency__icon { position: absolute; left: 8px; top: 5px; width: 25px; height: 25px; object-fit: contain; }
+html[data-device='mobile'] .join-room-currency__value { position: absolute; left: 41px; top: 8px; width: 78px; font-family: Arial, sans-serif; font-size: 15px; font-weight: 900; color: #16110a; }
+html[data-device='mobile'] .join-room-currency__plus { position: absolute; right: 6px; top: 7px; width: 21px; height: 21px; object-fit: contain; }
+
+html[data-device='mobile'] .join-room-board {
+  position: absolute;
+  left: 175px;
+  top: 88px;
+  width: 930px;
+  height: 486px;
+  z-index: 15;
+}
+
+html[data-device='mobile'] .join-room-board__skin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+html[data-device='mobile'] .join-room-character {
+  position: absolute;
+  left: 36px;
+  bottom: 14px;
+  width: 315px;
+  height: 430px;
+  object-fit: contain;
+  z-index: 3;
+}
+
+html[data-device='mobile'] .join-room-form {
+  position: absolute;
+  left: 348px;
+  top: 42px;
+  width: 500px;
+  height: 400px;
+  z-index: 4;
+  font-family: Arial, sans-serif;
+}
+
+html[data-device='mobile'] .join-room-title {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 455px;
+  margin: 0;
+  text-align: center;
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 900;
+  color: #493114;
+  text-shadow: 0 2px 0 rgba(255,255,255,.42);
+}
+
+html[data-device='mobile'] .join-room-subtitle {
+  position: absolute;
+  left: 24px;
+  top: 34px;
+  width: 405px;
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #6a4318;
+}
+
+html[data-device='mobile'] .join-room-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  text-align: center;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 900;
+  color: #493114;
+}
+
+html[data-device='mobile'] .join-room-codeBlock {
+  position: absolute;
+  left: 84px;
+  top: 78px;
+  width: 285px;
+  height: 84px;
+}
+
+html[data-device='mobile'] .join-room-codeWrap {
+  position: absolute;
+  left: 0;
+  top: 25px;
+  width: 285px;
+  height: 50px;
+}
+
+html[data-device='mobile'] .join-room-codeWrap__skin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 221px;
+  height: 50px;
+  object-fit: fill;
+}
+
+html[data-device='mobile'] .join-room-codeWrap__field {
+  position: absolute;
+  left: 20px;
+  top: 8px;
+  width: 178px;
+  height: 33px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: Arial, sans-serif;
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  text-align: center;
+  color: #4a2a08;
+  text-transform: uppercase;
+}
+
+html[data-device='mobile'] .join-room-codeWrap__field::placeholder {
+  color: rgba(74, 42, 8, .42);
+}
+
+html[data-device='mobile'] .join-room-paste {
+  position: absolute;
+  right: 0;
+  top: 1px;
+  width: 48px;
+  height: 48px;
+}
+
+html[data-device='mobile'] .join-room-paste img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+html[data-device='mobile'] .join-room-or {
+  position: absolute;
+  left: 0;
+  top: 164px;
+  width: 455px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: #6a4318;
+}
+
+html[data-device='mobile'] .join-room-recentBlock {
+  position: absolute;
+  left: 36px;
+  top: 194px;
+  width: 380px;
+  height: 126px;
+}
+
+html[data-device='mobile'] .join-room-label--recent {
+  top: -2px;
+}
+
+html[data-device='mobile'] .join-room-recentList {
+  position: absolute;
+  left: 0;
+  top: 24px;
+  width: 380px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
+}
+
+html[data-device='mobile'] .join-room-recent {
+  position: relative;
+  flex: 0 0 30px;
+  width: calc(100% - 2px);
+  height: 30px;
+  border: 2px solid #b87a24;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fff3cd 0%, #f1d394 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.82), 0 2px 5px rgba(82,45,8,.15);
+  font-family: Arial, sans-serif;
+  color: #3b2308;
+}
+
+html[data-device='mobile'] .join-room-recent__code,
+html[data-device='mobile'] .join-room-recent__name,
+html[data-device='mobile'] .join-room-recent__players,
+html[data-device='mobile'] .join-room-recent__join {
+  position: absolute;
+  top: 5px;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+html[data-device='mobile'] .join-room-recent__code { left: 14px; width: 72px; text-align: left; }
+html[data-device='mobile'] .join-room-recent__name { left: 102px; width: 130px; text-align: left; }
+html[data-device='mobile'] .join-room-recent__players { left: 242px; width: 48px; text-align: center; }
+html[data-device='mobile'] .join-room-recent__join { right: 12px; width: 54px; color: #0f6e13; text-align: center; }
+
+html[data-device='mobile'] .join-room-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 88px;
+  width: calc(100% - 2px);
+  border: 2px dashed rgba(112, 68, 18, .35);
+  border-radius: 10px;
+  background: rgba(255, 243, 205, .38);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #6a4318;
+}
+
+html[data-device='mobile'] .join-room-recentList::-webkit-scrollbar {
+  width: 8px;
+}
+
+html[data-device='mobile'] .join-room-recentList::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(117, 69, 17, .14);
+}
+
+html[data-device='mobile'] .join-room-recentList::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(#e7b957, #9a5c12);
+  border: 1px solid rgba(76, 43, 9, .35);
+}
+
+html[data-device='mobile'] .join-room-helper {
+  position: absolute;
+  left: -8px;
+  top: 324px;
+  width: 462px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #3e260d;
+}
+
+html[data-device='mobile'] .join-room-actions {
+  position: absolute;
+  left: 50%;
+  bottom: 25px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 42px;
+  z-index: 6;
+}
+
+html[data-device='mobile'] .join-room-bottom {
+  position: relative;
+  flex: 0 0 auto;
+  height: 50px;
+  transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+}
+
+html[data-device='mobile'] .join-room-bottom:hover,
+html[data-device='mobile'] .join-room-paste:hover,
+html[data-device='mobile'] .join-room-recent:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+html[data-device='mobile'] .join-room-bottom--join {
+  width: 232px;
+}
+
+html[data-device='mobile'] .join-room-bottom--join.is-disabled {
+  opacity: .58;
+  cursor: not-allowed;
+}
+
+html[data-device='mobile'] .join-room-bottom--join.is-disabled:hover {
+  transform: none;
+  filter: none;
+}
+
+html[data-device='mobile'] .join-room-bottom--back {
+  width: 185px;
+}
+
+html[data-device='mobile'] .join-room-bottom__skin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+html[data-device='mobile'] .join-room-bottom__text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff8e6;
+  text-shadow: 0 2px 3px rgba(0,0,0,.45);
+}
+
+
+/* Mobile keyboard mode: keep room-code entry visible above the system keyboard. */
+html[data-device='mobile'] .join-room-board {
+  transition: top .18s ease, transform .18s ease;
+  transform-origin: top center;
+}
+
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-profile,
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-currency {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-board {
+  top: 12px;
+  transform: scale(.88);
+}
+
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-character,
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-recentBlock,
+html.keyboard-open[data-device='mobile'] .app-shell--joinroom .join-room-or {
+  opacity: .18;
+}
+
+html[data-device='mobile'] .join-room-bottom--refresh {
+  width: 185px;
+}
+
+/* Pek/Slam available-room summary patch */
+html[data-device='mobile'] .join-room-recent { height: 42px; flex-basis: 42px; }
+html[data-device='mobile'] .join-room-recent__summary { position: absolute; left: 102px; right: 76px; bottom: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font: 800 10px/1 Arial, sans-serif; color: #6b4315; text-align: left; }

@@ -1,0 +1,102 @@
+/* Portrait loading screen: converts the mobile loading layout from the landscape frame to 720x1280. */
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--loading {
+  background-image: url('/assets/liars-dice/mobile-portrait/loading-portrait-bg.jpg') !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-color: #140704 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--loading .game-frame,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--loading .loading-screen {
+  background: transparent !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-screen {
+  isolation: isolate;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-panel {
+  left: 42px !important;
+  top: 835px !important;
+  width: 636px !important;
+  height: 168px !important;
+  z-index: 24 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-title {
+  top: 28px !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  letter-spacing: 1.8px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-title__percent {
+  min-width: 68px !important;
+  margin-left: 12px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar {
+  left: 82px !important;
+  top: 82px !important;
+  width: 472px !important;
+  height: 52px !important;
+  border-radius: 26px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar__empty,
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar__fill {
+  width: 472px !important;
+  height: 52px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar__fill-mask {
+  height: 52px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar__shine {
+  top: 6px !important;
+  height: 38px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-bar__tip {
+  top: 21px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-vfx--vignette {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 220, 118, .065) 0%, rgba(255, 220, 118, 0) 42%),
+    radial-gradient(circle at center, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, .28) 100%) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-vfx--logoShine {
+  left: 82px !important;
+  top: 86px !important;
+  width: 556px !important;
+  height: 260px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-vfx--cupsSpark {
+  left: 8px !important;
+  top: 660px !important;
+  width: 704px !important;
+  height: 150px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--1 { left: 46px !important; top: 86px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--2 { left: 138px !important; top: 212px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--3 { left: 286px !important; top: 128px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--4 { left: 454px !important; top: 72px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--5 { left: 616px !important; top: 154px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--6 { left: 644px !important; top: 338px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--7 { left: 570px !important; top: 514px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--8 { left: 102px !important; top: 520px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--9 { left: 622px !important; top: 766px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--10 { left: 454px !important; top: 736px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--11 { left: 278px !important; top: 742px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--12 { left: 92px !important; top: 760px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--13 { left: 80px !important; top: 1068px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--14 { left: 246px !important; top: 1126px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--15 { left: 478px !important; top: 1090px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .loading-sparkle--16 { left: 646px !important; top: 1184px !important; }

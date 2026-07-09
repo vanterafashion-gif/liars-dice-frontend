@@ -1,0 +1,129 @@
+.orientation-guard {
+  display: none;
+}
+
+.orientation-guard__card {
+  width: min(82vw, 390px);
+  padding: 30px 24px 28px;
+  border: 2px solid rgba(249, 194, 93, 0.62);
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(46, 17, 7, 0.92), rgba(12, 5, 2, 0.94));
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.62),
+    0 0 46px rgba(248, 194, 87, 0.18),
+    inset 0 0 28px rgba(255, 185, 54, 0.12);
+  color: #fff4cf;
+  text-align: center;
+  animation: orientationCardIn 0.45s ease-out both;
+}
+
+.orientation-guard__phone {
+  width: 92px;
+  height: 132px;
+  margin: 0 auto 18px;
+  border: 5px solid #f8c257;
+  border-radius: 22px;
+  position: relative;
+  box-shadow:
+    0 0 26px rgba(248, 194, 87, 0.34),
+    inset 0 0 18px rgba(248, 194, 87, 0.10);
+  transform-origin: center center;
+  animation: orientationPhoneRotate 1.85s ease-in-out infinite;
+}
+
+.orientation-guard__phone::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(248, 194, 87, 0.86);
+  transform: translateX(-50%);
+  box-shadow: 0 0 14px rgba(248, 194, 87, 0.55);
+}
+
+.orientation-guard__phone::after {
+  content: '';
+  position: absolute;
+  inset: 12px 14px 26px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 244, 207, 0.13), transparent 58%);
+  opacity: 0.8;
+}
+
+.orientation-guard__arrow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  font-size: 42px;
+  line-height: 1;
+  color: #fff8dc;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 16px rgba(255, 210, 101, 0.78);
+  animation: orientationArrowPulse 1.85s ease-in-out infinite;
+}
+
+.orientation-guard__title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.orientation-guard__text {
+  margin-top: 10px;
+  color: rgba(255, 244, 207, 0.80);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+@keyframes orientationCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes orientationPhoneRotate {
+  0%, 18% {
+    transform: rotate(0deg) scale(1);
+  }
+  42%, 62% {
+    transform: rotate(90deg) scale(1.06);
+  }
+  86%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes orientationArrowPulse {
+  0%, 100% {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 8px rgba(255, 210, 101, 0.36));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 18px rgba(255, 210, 101, 0.82));
+  }
+}
+
+/* Portrait mobile is now supported. The guard is kept only as dormant markup
+   for future fallback messaging and must never block the game frame. */
+@media screen and (orientation: portrait), screen and (orientation: landscape) {
+  html[data-device='mobile'] .orientation-guard {
+    display: none !important;
+  }
+
+  html[data-device='mobile'] .game-frame {
+    visibility: visible;
+    pointer-events: auto;
+  }
+}

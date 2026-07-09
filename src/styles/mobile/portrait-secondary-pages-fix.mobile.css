@@ -1,0 +1,563 @@
+/* Portrait secondary pages adjustment pass.
+   Scope: mobile portrait only. Keeps desktop and gameplay untouched. */
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--roomselect,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--dailyreward,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--joinroom,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--roomlobby {
+  background-size: cover !important;
+  background-position: center center !important;
+}
+
+/* Keep the HUD fixed and above every board. */
+html[data-device='mobile'][data-orientation='portrait'] .room-select-profile,
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-profile,
+html[data-device='mobile'][data-orientation='portrait'] .join-room-profile,
+html[data-device='mobile'][data-orientation='portrait'] .create-room-profile,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-profile {
+  z-index: 100 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-currency,
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-currency,
+html[data-device='mobile'][data-orientation='portrait'] .join-room-currency,
+html[data-device='mobile'][data-orientation='portrait'] .create-room-currency,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-currency {
+  z-index: 100 !important;
+}
+
+/* SELECT TABLE --------------------------------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .room-select-titleArt {
+  top: 112px !important;
+  width: 500px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-cards {
+  left: 30px !important;
+  top: 202px !important;
+  width: 660px !important;
+  height: 788px !important;
+  grid-template-columns: repeat(2, 286px) !important;
+  grid-auto-rows: 510px !important;
+  gap: 20px 18px !important;
+  padding: 4px 0 120px !important;
+  box-sizing: border-box !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card {
+  width: 286px !important;
+  height: 515px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__title {
+  top: 12px !important;
+  height: 38px !important;
+  font-size: 19px !important;
+  letter-spacing: .08em !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card--high-roller .room-select-card__title,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card--private .room-select-card__title {
+  font-size: 16px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__art--beginner,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__art--classic,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__art--high-roller,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__art--vip,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__art--private {
+  left: 66px !important;
+  top: 60px !important;
+  width: 180x !important;
+  height: 112px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__stats {
+  left: 30px !important;
+  top: 240px !important;
+  width: 226px !important;
+  gap: 3px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__stat {
+  min-height: 22px !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__statLabel,
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__statValue {
+  font-size: 13px !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__statLabel {
+  max-width: 142px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__rules {
+  left: 32px !important;
+  top: 360px !important;
+  width: 220px !important;
+  gap: 4px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__rule {
+  min-height: 22px !important;
+  font-size: 12px !important;
+  line-height: 1.1 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__rule img {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__playSkinWrap {
+  left: 52px !important;
+  top: 432px !important;
+  width: 182px !important;
+  height: 56px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-card__playText {
+  font-size: 20px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-bottom {
+  top: 1012px !important;
+  width: 300px !important;
+  height: 84px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-select-back {
+  top: 1116px !important;
+  width: 252px !important;
+  height: 68px !important;
+}
+
+/* DAILY REWARD -------------------------------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-banner {
+  left: 94px !important;
+  top: 126px !important;
+  width: 532px !important;
+  height: 106px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-cards {
+  left: 54px !important;
+  top: 258px !important;
+  width: 612px !important;
+  height: 650px !important;
+  grid-template-columns: repeat(2, 276px) !important;
+  grid-auto-rows: 208px !important;
+  justify-content: center !important;
+  align-content: start !important;
+  gap: 16px 18px !important;
+  padding: 4px 0 120px !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-card {
+  width: 276px !important;
+  height: 208px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-card__button {
+  left: 56px !important;
+  top: 164px !important;
+  width: 164px !important;
+  height: 30px !important;
+  font-size: 14px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-status {
+  left: 58px !important;
+  top: 926px !important;
+  width: 604px !important;
+  height: 102px !important;
+  padding: 14px 18px !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 132px 1fr 128px !important;
+  align-items: center !important;
+  column-gap: 12px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-status__title {
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-status__copy {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-status__streak {
+  font-size: 23px !important;
+  line-height: 1.05 !important;
+  text-align: right !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-back {
+  top: 1100px !important;
+  width: 252px !important;
+  height: 68px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .daily-reward-error {
+  top: 1044px !important;
+}
+
+/* CREATE / JOIN / LOBBY SHARED BOARD -------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .create-room-board,
+html[data-device='mobile'][data-orientation='portrait'] .join-room-board,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-board {
+  left: 36px !important;
+  top: 138px !important;
+  width: 648px !important;
+  height: 848px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-form,
+html[data-device='mobile'][data-orientation='portrait'] .join-room-form,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-panel {
+  left: 54px !important;
+  top: 58px !important;
+  width: 540px !important;
+  height: 720px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-character
+{
+  left: 70px !important;
+  bottom: 200px !important;
+  width: 210px !important;
+  height: auto !important;
+  opacity: .99 !important;
+}
+html[data-device='mobile'][data-orientation='portrait'] .join-room-character{
+  left: -20px !important;
+  bottom: 650px !important;
+  width: 210px !important;
+  height: auto !important;
+  opacity: .99 !important;
+}
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-character {
+  left: 0px !important;
+  bottom: 650px !important;
+  width: 210px !important;
+  height: auto !important;
+  opacity: .99 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-label,
+html[data-device='mobile'][data-orientation='portrait'] .join-room-label,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-label {
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+/* CREATE ROOM -------------------------------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--name { top: 0 !important; width: 540px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--players { left: 0 !important; top: 92px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--cups { left: 292px !important; top: 92px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--timer { left: 0 !important; top: 184px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--bid { left: 292px !important; top: 184px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--private { left: 0 !important; top: 288px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--code { left: 292px !important; top: 288px !important; width: 248px !important; }
+
+
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-input--name {
+  left: 16px !important;
+  width: 508px !important;
+  height: 48px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-input__field {
+  width: 462px !important;
+  font-size: 21px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-option {
+  width: 68px !important;
+  height: 38px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-option--wide {
+  width: 104px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-option__text {
+  font-size: 17px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-option--wide .create-room-option__text {
+  font-size: 13px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-codeWrap__text {
+  font-size: 21px !important;
+  line-height: 1.05 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-invite {
+  left: 310px !important;
+  top: 382px !important;
+  width: 205px !important;
+  height: 48px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-rules {
+  left: 18px !important;
+  top: 700px !important;
+  width: 504px !important;
+  font-size: 15px !important;
+  line-height: 1.22 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-bottom {
+  bottom: auto !important;
+  top: 662px !important;
+  height: 62px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-bottom--create {
+  left: 6px !important;
+  width: 316px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-bottom--back {
+  left: 346px !important;
+  width: 178px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .create-room-bottom__text {
+  font-size: 20px !important;
+}
+
+/* JOIN ROOM ---------------------------------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .join-room-title,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-title {
+  width: 540px !important;
+  font-size: 31px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-subtitle,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-subtitle {
+  left: 30px !important;
+  width: 480px !important;
+  font-size: 15px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-codeBlock {
+  left: 52px !important;
+  top: 104px !important;
+  width: 436px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-or {
+  top: 218px !important;
+  width: 540px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recentBlock {
+  left: 42px !important;
+  top: 262px !important;
+  width: 456px !important;
+  height: 236px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recentList {
+  width: 456px !important;
+  height: 196px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent {
+  height: 40px !important;
+  margin-bottom: 14px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent__code {
+  top: 5px !important;
+  font-size: 16px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent__name {
+  top: 30px !important;
+  font-size: 11px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent__players {
+  left: 286px !important;
+  top: 12px !important;
+  font-size: 13px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent__join {
+  top: 11px !important;
+  font-size: 14px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-helper {
+  left: 32px !important;
+  top: 528px !important;
+  width: 476px !important;
+  font-size: 15px !important;
+  line-height: 1.2 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-actions {
+  left: 60px !important;
+  top: 620px !important;
+  bottom: auto !important;
+  width: 540px !important;
+  height: 130px !important;
+  transform: none !important;
+  display: block !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-bottom {
+  position: absolute !important;
+  height: 58px !important;
+  flex: none !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-bottom--join {
+  left: 0 !important;
+  top: 0 !important;
+  width: 540px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-bottom--refresh {
+  left: 0 !important;
+  top: 72px !important;
+  width: 254px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-bottom--back {
+  left: 286px !important;
+  top: 72px !important;
+  width: 254px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .join-room-bottom__text {
+  font-size: 20px !important;
+}
+
+/* ROOM LOBBY --------------------------------------------------------- */
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-codeBlock {
+  left: 70px !important;
+  top: 94px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-refresh {
+  right: -40px !important;
+  top: 132px !important;
+  width: 104px !important;
+  height: 32px !important;
+  font-size: 10px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-infoGrid {
+  left: 26px !important;
+  top: 202px !important;
+  width: 488px !important;
+  gap: 10px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-info {
+  height: 56px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-playerList {
+  left: 26px !important;
+  top: 344px !important;
+  width: 488px !important;
+  height: 184px !important;
+  padding-top: 34px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player {
+  height: 38px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player__slot,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player__name,
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player__status {
+  top: 9px !important;
+  font-size: 14px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player__name {
+  width: 230px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-player__status {
+  width: 132px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-error {
+  top: 540px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-action {
+  bottom: auto !important;
+  height: 58px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-action--primary {
+  left: 0 !important;
+  top: 574px !important;
+  width: 252px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-action--ready {
+  left: 270px !important;
+  top: 574px !important;
+  width: 270px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-action--secondary {
+  left: 140px !important;
+  top: 648px !important;
+  width: 260px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-action__text {
+  font-size: 19px !important;
+}
+
+/* Pek/Slam room preset betting patch */
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--perGame { left: 0 !important; top: 288px !important; width: 248px !important; height: 76px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--pekToggle { left: 292px !important; top: 288px !important; width: 248px !important; height: 76px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--pekPercent { left: 0 !important; top: 392px !important; width: 248px !important; height: 92px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--private { left: 292px !important; top: 392px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--mode { left: 0 !important; top: 496px !important; width: 248px !important; height: 76px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-block--code { left: 292px !important; top: 496px !important; width: 248px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-pekToggle { left: 74px !important; top: 29px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-option--percent { width: 68px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-pekPreview { position: absolute !important; left: 0 !important; top: 69px !important; width: 248px !important; text-align: center !important; font: 900 13px/1 Arial, sans-serif !important; color: #5b3210 !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-invite { top: 590px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .create-room-rules { top: 616px !important; }
+
+/* Pek/Slam available-room summary patch */
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent { height: 56px !important; flex-basis: 56px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .join-room-recent__summary { position: absolute !important; left: 126px !important; right: 92px !important; bottom: 7px !important; overflow: hidden !important; white-space: nowrap !important; text-overflow: ellipsis !important; font: 800 13px/1 Arial, sans-serif !important; color: #6b4315 !important; text-align: left !important; }
+
+/* Pek/Slam lobby betting summary patch */
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-infoGrid { grid-template-columns: repeat(3, 1fr) !important; }
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-info strong { font-size: 18px !important; }
+html[data-device='mobile'][data-orientation='portrait'] .room-lobby-playerList { top: 410px !important; height: 128px !important; }

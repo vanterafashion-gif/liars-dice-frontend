@@ -1,0 +1,169 @@
+.image-button {
+  position: absolute;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  transition: transform .18s ease, filter .18s ease;
+}
+
+.image-button:hover { transform: translateY(-2px) scale(1.015); filter: brightness(1.08); }
+.image-button:active { transform: translateY(1px) scale(.99); }
+
+.image-button__skin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.image-button__text {
+  position: relative;
+  z-index: 2;
+  color: #f8f1e7;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-shadow: 0 4px 0 rgba(0,0,0,.5), 0 0 14px rgba(255,255,255,.3);
+  white-space: nowrap;
+}
+
+/* Shared top profile HUD: reference asset stack + backend-ready XP fill */
+.profile-hud {
+  position: absolute;
+  z-index: 20;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #2b1707;
+  font-family: Arial, sans-serif;
+  cursor: default;
+  overflow: visible;
+  width: 247px;
+  height: 90px;
+  transform: translateY(var(--profile-hud-y, 10px)) scale(var(--profile-hud-scale, .78));
+  transform-origin: left top;
+}
+
+button.profile-hud { cursor: pointer; }
+
+.profile-hud__plate {
+  position: absolute;
+  left: 57px;
+  top: 15px;
+  width: 190px;
+  height: 71px;
+  object-fit: fill;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.profile-hud__avatar {
+  position: absolute;
+  left:-6px;
+  top: 0px;
+  width: 95px;
+  height: 95px;
+  object-fit: contain;
+  z-index: 5;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .36));
+  pointer-events: none;
+}
+
+.profile-hud__name {
+  position: absolute;
+  left: 116px;
+  top: 27px;
+  width: 120px;
+  z-index: 4;
+  color: #231405;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .01em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.profile-hud__levelBadge {
+  position: absolute;
+  left: 74px;
+  top: 45px;
+  width: 39px;
+  height: 33px;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.profile-hud__levelSkin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.profile-hud__levelText {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff6df;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 900;
+  text-shadow: 0 2px 2px rgba(0, 0, 0, .55);
+}
+
+.profile-hud__progress {
+  position: absolute;
+  left: 100px;
+  top: 53px;
+  width: 131px;
+  height: 17px;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.profile-hud__barEmpty,
+.profile-hud__barFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 131px;
+  height: 17px;
+  object-fit: fill;
+}
+
+.profile-hud__barFillClip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--profile-xp-fill, 0%);
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.profile-hud__xpText {
+  position: absolute;
+  left: 100px;
+  top: 54px;
+  width: 121px;
+  height: 16px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff8ee;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .72);
+  pointer-events: none;
+}

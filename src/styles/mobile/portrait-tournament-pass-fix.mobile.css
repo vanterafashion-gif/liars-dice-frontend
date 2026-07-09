@@ -1,0 +1,255 @@
+/* Portrait Tournament + Lucky Pass repair
+   Scope is intentionally limited to upright mobile tournamentpass screen. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-screen {
+  overflow: hidden !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-profile {
+  top: 26px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-currency {
+  top: 36px !important;
+}
+
+/* Top tournaments panel: keep the three cards readable and inside the frame. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-tournaments {
+  left: 32px !important;
+  top: 138px !important;
+  width: 656px !important;
+  height: 356px !important;
+  z-index: 5 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-tournaments__panel {
+  left: 0 !important;
+  top: 0 !important;
+  width: 656px !important;
+  height: 356px !important;
+  object-fit: fill !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-tournaments__cards {
+  left: 56px !important;
+  top: 50px !important;
+  width: 544px !important;
+  height: 262px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 14px !important;
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card {
+  width: 172px !important;
+  height: 262px !important;
+  flex: none !important;
+  overflow: visible !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__skin {
+  left: 0 !important;
+  top: 0 !important;
+  width: 172px !important;
+  height: 244px !important;
+  object-fit: fill !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__stats {
+  left: 16px !important;
+  top: 140px !important;
+  width: 140px !important;
+  font: 800 9px/1 Arial, sans-serif !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__stats div {
+  height: 22px !important;
+  gap: 2px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__stats span:first-child {
+  min-width: 56px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__stats img {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-card__clock img {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-enter {
+  left: 22px !important;
+  bottom:-10px !important;
+  width: 128px !important;
+  height: 36px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-enter span {
+  font: 900 15px/1 Arial, sans-serif !important;
+}
+
+/* Lucky Pass panel: make it taller and stop reward icons/text from being squeezed. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-lucky {
+  left: 28px !important;
+  top: 520px !important;
+  width: 664px !important;
+  height: 560px !important;
+  z-index: 4 !important;
+  overflow: visible !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-lucky__panel {
+  left: 0 !important;
+  top: 0 !important;
+  width: 664px !important;
+  height: 560px !important;
+  object-fit: fill !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-xp-label {
+  left: 60px !important;
+  top: 90px !important;
+  width: 480px !important;
+  height: 20px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font: 900 15px/1 Arial, sans-serif !important;
+  white-space: nowrap !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-xp-label b {
+  font-size: 15px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-xp-bar {
+  left: 190px !important;
+  top: 119px !important;
+  width: 266px !important;
+  height: 31px !important;
+  border-radius: 12px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards {
+  left: 85px !important;
+  width: 548px !important;
+  height: 118px !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-template-columns: repeat(10, 74px) !important;
+  grid-template-rows: 1fr !important;
+  grid-auto-columns: 74px !important;
+  column-gap: 10px !important;
+  row-gap: 0 !important;
+  align-items: center !important;
+  justify-items: center !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 0 8px 12px 8px !important;
+  scroll-snap-type: x proximity !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards--premium {
+  top: 210px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards--free {
+  top: 320px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: 72px !important;
+  height: 96px !important;
+  display: grid !important;
+  grid-template-rows: 62px 22px !important;
+  justify-items: center !important;
+  align-items: center !important;
+  scroll-snap-align: center !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward img {
+  width: 58px !important;
+  height: 58px !important;
+  max-width: 58px !important;
+  max-height: 58px !important;
+  object-fit: contain !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward__value {
+  width: 72px !important;
+  color: #ffe36e !important;
+  font: 900 12px/1 Arial, sans-serif !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward__lock,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward__claimed {
+  font-size: 20px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-reward__claim {
+  bottom: -6px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-upgrade {
+  left: 210px !important;
+  top: 462px !important;
+  bottom: auto !important;
+  width: 244px !important;
+  height: 58px !important;
+  z-index: 8 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-upgrade span {
+  font: 900 17px/1 Arial, sans-serif !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-back {
+  left: 224px !important;
+  right: auto !important;
+  bottom: 42px !important;
+  width: 272px !important;
+  height: 76px !important;
+  z-index: 25 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-back span {
+  inset: 0 0 0 54px !important;
+  font: 800 28px/1 Arial, sans-serif !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-message {
+  left: 60px !important;
+  top: auto !important;
+  bottom: 130px !important;
+  width: 600px !important;
+  max-width: 600px !important;
+  font-size: 15px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards::-webkit-scrollbar {
+  height: 8px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards::-webkit-scrollbar-track {
+  border-radius: 999px !important;
+  background: rgba(25, 10, 0, .45) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--tournamentpass .tournament-pass-rewards::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: linear-gradient(#f0ca6a, #8d4c10) !important;
+}

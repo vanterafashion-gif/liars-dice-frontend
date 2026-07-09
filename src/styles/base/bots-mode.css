@@ -1,0 +1,90 @@
+/* Bots mode frontend support. Keeps the Create Room UI readable and hides any chat widgets in solo-bots matches. */
+
+.create-room-block--mode {
+  position: absolute;
+}
+
+.create-room-option--mode .create-room-option__text {
+  letter-spacing: .02em;
+}
+
+html[data-device='desktop'] .create-room-block--mode {
+  left: 252px;
+  top: 208px;
+  width: 210px;
+  height: 72px;
+}
+
+html[data-device='desktop'] .create-room-option--mode {
+  width: 86px;
+  height: 34px;
+}
+
+html[data-device='desktop'] .create-room-invite {
+  top: 282px;
+}
+
+html[data-device='desktop'] .create-room-rules {
+  top: 318px;
+}
+
+html[data-device='mobile'] .create-room-block--mode {
+  left: 252px;
+  top: 208px;
+  width: 210px;
+  height: 72px;
+}
+
+html[data-device='mobile'] .create-room-option--mode {
+  width: 86px;
+  height: 34px;
+}
+
+html[data-device='mobile'] .create-room-invite {
+  top: 282px;
+}
+
+html[data-device='mobile'] .create-room-rules {
+  top: 318px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-block--mode {
+  left: 120px !important;
+  top: 410px !important;
+  width: 548px !important;
+  height: 78px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-optionRow--mode {
+  top: 34px !important;
+  gap: 18px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-option--mode {
+  width: 160px !important;
+  height: 46px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-option--mode .create-room-option__text {
+  font-size: 18px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-invite {
+  top: 504px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-rules {
+  top: 574px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--createroom .create-room-bottom {
+  bottom: -102px !important;
+}
+
+.gameplay-screen--bots .gameplay-chat,
+.gameplay-screen--bots .gameplay-chat-button,
+.gameplay-screen--bots .gameplay-chat-drawer,
+.gameplay-screen--bots .chat-button,
+.gameplay-screen--bots .chat-drawer {
+  display: none !important;
+}

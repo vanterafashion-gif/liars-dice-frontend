@@ -1,0 +1,38 @@
+/* Patch: opponent turn should show a grey player panel, not the blue/gold active highlight. */
+html[data-device='desktop'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated),
+html[data-device='mobile'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated),
+html[data-device='desktop'] .gameplay-player.is-active-opponent:not(.is-eliminated),
+html[data-device='mobile'] .gameplay-player.is-active-opponent:not(.is-eliminated) {
+  opacity: .74 !important;
+  filter: grayscale(1) brightness(.64) saturate(.12) contrast(.96) !important;
+  z-index: 45 !important;
+  transition: opacity .18s ease, filter .18s ease, transform .18s ease !important;
+}
+
+html[data-device='desktop'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__skin,
+html[data-device='mobile'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__skin,
+html[data-device='desktop'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__skin,
+html[data-device='mobile'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__skin {
+  filter: grayscale(1) brightness(.58) saturate(.08) contrast(.98) drop-shadow(0 3px 7px rgba(0, 0, 0, .55)) !important;
+}
+
+html[data-device='desktop'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__avatar,
+html[data-device='mobile'] .gameplay-screen.has-active-player .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__avatar,
+html[data-device='desktop'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__avatar,
+html[data-device='mobile'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__avatar {
+  filter: grayscale(.88) brightness(.70) saturate(.35) drop-shadow(0 3px 6px rgba(0, 0, 0, .55)) !important;
+}
+
+html[data-device='desktop'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__name,
+html[data-device='mobile'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__name,
+html[data-device='desktop'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__coinValue,
+html[data-device='mobile'] .gameplay-player.is-active-opponent:not(.is-eliminated) .gameplay-player__coinValue {
+  color: #e2e2e2 !important;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, .75) !important;
+}
+
+/* Keep the local player's own turn using the normal active highlight. */
+html[data-device='desktop'] .gameplay-player.is-active-self:not(.is-eliminated),
+html[data-device='mobile'] .gameplay-player.is-active-self:not(.is-eliminated) {
+  opacity: 1 !important;
+}

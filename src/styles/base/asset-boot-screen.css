@@ -1,0 +1,81 @@
+.asset-boot-screen {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(120, 71, 22, .9) 0%, rgba(45, 17, 8, .96) 52%, #090403 100%);
+  color: #ffe8ad;
+  isolation: isolate;
+}
+
+.asset-boot-screen__glow {
+  position: absolute;
+  inset: -15%;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(255, 212, 103, .26), transparent 28%),
+    radial-gradient(circle at 18% 72%, rgba(238, 88, 34, .16), transparent 22%),
+    radial-gradient(circle at 82% 68%, rgba(53, 201, 93, .13), transparent 22%);
+  filter: blur(12px);
+  animation: asset-boot-glow 4.8s ease-in-out infinite alternate;
+}
+
+.asset-boot-screen__panel {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 58%);
+  padding: 34px 42px 30px;
+  border: 1px solid rgba(255, 220, 145, .28);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(54, 22, 9, .78), rgba(20, 8, 4, .88));
+  box-shadow: 0 22px 60px rgba(0, 0, 0, .42), inset 0 0 28px rgba(255, 194, 89, .09);
+  text-align: center;
+}
+
+.asset-boot-screen__eyebrow {
+  margin-bottom: 10px;
+  color: rgba(255, 202, 104, .76);
+  font: 700 13px/1.1 Arial, sans-serif;
+  letter-spacing: 4px;
+}
+
+.asset-boot-screen__title {
+  margin: 0 0 22px;
+  color: #fff1c9;
+  font: 700 34px/1.1 Arial, sans-serif;
+  text-shadow: 0 0 16px rgba(255, 183, 70, .2);
+}
+
+.asset-boot-screen__bar {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(8, 3, 2, .72);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, .58), 0 0 18px rgba(255, 176, 58, .08);
+}
+
+.asset-boot-screen__bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8b351b 0%, #e49c3f 45%, #ffe395 100%);
+  box-shadow: 0 0 16px rgba(255, 194, 74, .36);
+  transition: width .16s linear;
+}
+
+.asset-boot-screen__progress {
+  margin: 14px 0 0;
+  color: rgba(255, 236, 190, .82);
+  font: 700 17px/1.2 Arial, sans-serif;
+  letter-spacing: 1px;
+}
+
+@keyframes asset-boot-glow {
+  from { transform: scale(1); opacity: .76; }
+  to { transform: scale(1.06); opacity: 1; }
+}

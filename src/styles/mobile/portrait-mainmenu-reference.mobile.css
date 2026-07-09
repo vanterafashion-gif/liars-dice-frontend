@@ -1,0 +1,343 @@
+/* Main Menu portrait reference layout.
+   Keeps desktop untouched and only overrides the 720x1280 mobile portrait frame. */
+
+html[data-device='mobile'] .app-shell--mainmenu {
+  background-size: cover !important;
+  background-position: center top !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-screen {
+  isolation: isolate;
+  color: #fff8de;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--vignette {
+  z-index: 2 !important;
+  background:
+    radial-gradient(circle at 50% 27%, rgba(255, 221, 132, .12) 0%, rgba(255, 221, 132, 0) 34%),
+    radial-gradient(circle at 50% 51%, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, .30) 100%) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--lightRays {
+  left: -90px !important;
+  top: -64px !important;
+  width: 900px !important;
+  height: 760px !important;
+  z-index: 3 !important;
+  opacity: .34 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--bannerShine {
+  left: 95px !important;
+  top: 130px !important;
+  width: 530px !important;
+  height: 260px !important;
+  z-index: 4 !important;
+  opacity: .44 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-sparkles {
+  inset: 0 !important;
+  z-index: 6 !important;
+  overflow: hidden !important;
+}
+
+/* Top profile / currency header */
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-profile {
+  left: 18px !important;
+  top: 18px !important;
+  width: 247px !important;
+  height: 90px !important;
+  z-index: 80 !important;
+  --profile-hud-y: 0px;
+  --profile-hud-scale: .96;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency {
+  left: auto !important;
+  right: 24px !important;
+  width: 214px !important;
+  height: 48px !important;
+  z-index: 80 !important;
+  border-radius: 15px !important;
+  border-width: 2px !important;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, .42) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency--coins {
+  top: 24px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency--gems {
+  top: 86px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency__icon {
+  left: 12px !important;
+  top: 7px !important;
+  width: 34px !important;
+  height: 34px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency__value {
+  left: 57px !important;
+  top: 12px !important;
+  width: 116px !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  letter-spacing: .035em !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-currency__plus {
+  right: 11px !important;
+  top: 11px !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* Four large menu buttons in a 2x2 block, like the provided reference. */
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action {
+  width: 318px !important;
+  height: 108px !important;
+  z-index: 60 !important;
+  transition: transform .14s ease, filter .14s ease !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:active {
+  transform: translateY(2px) scale(.99) !important;
+  filter: brightness(1.05) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--play {
+  left: 40px !important;
+  top: 780px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--create {
+  left: 360px !important;
+  top: 780px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--join {
+  left: 40px !important;
+  top: 890px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--help {
+  left: 360px !important;
+  top: 890px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__skin,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__skin {
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: fill !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__title {
+  left: 104px !important;
+  top: 30px !important;
+  width: 194px !important;
+  font-size: 29px !important;
+  line-height: 1 !important;
+  letter-spacing: .015em !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--create .main-menu-action__title,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action--help .main-menu-action__title {
+  font-size: 25px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__subtitle {
+  left: 106px !important;
+  top: 64px !important;
+  width: 184px !important;
+  font-size: 14px !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0 !important;
+  white-space: normal !important;
+  color: #fff1d5 !important;
+}
+
+/* Bottom feature cards: four vertical cards in one row. */
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card {
+  top: 1000px !important;
+  width: 158px !important;
+  height: 252px !important;
+  z-index: 60 !important;
+  transition: transform .14s ease, filter .14s ease !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:active {
+  transform: translateY(2px) scale(.99) !important;
+  filter: brightness(1.06) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card--daily {
+  left: 34px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card--pass {
+  left: 198px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card--tournaments {
+  left: 362px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card--events {
+  left: 526px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__header {
+  left: 8px !important;
+  top: 12px !important;
+  width: 142px !important;
+  height: 24px !important;
+  font-size: 12px !important;
+  line-height: 1.05 !important;
+  letter-spacing: .01em !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art {
+  object-fit: contain !important;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, .38)) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art--chest,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art--pass,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art--cup,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art--gift {
+  left: 29px !important;
+  top: 54px !important;
+  width: 100px !important;
+  height: 92px !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy--daily,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy--pass,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy--tournaments,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy--events {
+  left: 14px !important;
+  top: 151px !important;
+  width: 130px !important;
+  min-height: 38px !important;
+  font-size: 12px !important;
+  line-height: 1.08 !important;
+  text-align: center !important;
+  color: #2a1502 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta {
+  left: 22px !important;
+  right: auto !important;
+  bottom: 15px !important;
+  width: 114px !important;
+  height: 30px !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
+}
+
+@media (max-height: 740px) and (orientation: portrait) {
+  html[data-device='mobile'] .app-shell--mainmenu {
+    background-position: center top !important;
+  }
+}
+
+/* Patch: Portrait main menu softer button contrast.
+   Loaded after the portrait reference layout so only visual tone is adjusted here. */
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__skin,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__skin {
+  filter: saturate(.76) contrast(.84) brightness(.91) sepia(.08) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__title,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__header {
+  color: #fff3dc !important;
+  text-shadow: 0 1.6px 2.4px rgba(0, 0, 0, .68) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action__subtitle {
+  color: #ead5b5 !important;
+  text-shadow: 0 1.25px 2px rgba(0, 0, 0, .58) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__copy {
+  color: #241304 !important;
+  text-shadow: none !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__art {
+  filter: saturate(.9) contrast(.92) brightness(.96) drop-shadow(0 5px 6px rgba(0, 0, 0, .34)) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta {
+  color: #fff0dc !important;
+  border-color: rgba(158, 111, 45, .78) !important;
+  text-shadow: 0 1.35px 2.1px rgba(0,0,0,.68) !important;
+  box-shadow:
+    inset 0 0.77px 1.53px rgba(255,255,255,.23),
+    0 2.3px 5.36px rgba(0,0,0,.32) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta--daily,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta--pass,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta--tournaments {
+  background: linear-gradient(#0f6118, #06350b) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card__cta--events {
+  background: linear-gradient(#7f1114, #4e0508) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--vignette {
+  background:
+    radial-gradient(circle at 50% 27%, rgba(255, 221, 132, .065) 0%, rgba(255, 221, 132, 0) 34%),
+    radial-gradient(circle at 50% 51%, rgba(0, 0, 0, 0) 42%, rgba(0, 0, 0, .34) 100%) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--lightRays {
+  opacity: .22 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-vfx--bannerShine {
+  opacity: .24 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:hover,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:hover {
+  transform: translateY(-1.4px) scale(1.01) !important;
+  filter: brightness(1.025) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:hover .main-menu-action__skin,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:hover .main-menu-card__skin {
+  filter: saturate(.82) contrast(.87) brightness(.94) sepia(.08) !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:hover::before,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:hover::before {
+  opacity: .38 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:hover::after,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:hover::after {
+  opacity: .48 !important;
+}
+
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-action:active,
+html[data-device='mobile'] .app-shell--mainmenu .main-menu-card:active {
+  transform: translateY(2px) scale(.985) !important;
+  filter: brightness(1.03) !important;
+}

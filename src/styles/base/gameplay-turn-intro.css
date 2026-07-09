@@ -1,0 +1,307 @@
+/*
+  Turn intro reveal animation.
+  Flow: hide table cups -> shake active cup -> reveal dice in center -> fly dice to top turn banner.
+*/
+
+.gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 45%;
+  --turn-intro-cup-size: 150px;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 50%;
+  --turn-intro-dice-target-left: 50%;
+  --turn-intro-dice-target-top: 15%;
+  --turn-intro-die-size: 48px;
+  --turn-intro-dice-gap: 8px;
+}
+
+.gameplay-turn-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 260;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.gameplay-cups.is-turn-intro-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 120ms ease;
+}
+
+.gameplay-turnbar__diceRow.is-turn-intro-waiting {
+  opacity: 0;
+  transform: scale(.9);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.gameplay-turn-intro__cupWrap {
+  position: absolute;
+  left: var(--turn-intro-cup-left);
+  top: var(--turn-intro-cup-top);
+  width: var(--turn-intro-cup-size);
+  height: var(--turn-intro-cup-size);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.gameplay-turn-intro__cup {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .45));
+}
+
+.gameplay-turn-intro__diceWrap {
+  position: absolute;
+  left: var(--turn-intro-dice-center-left);
+  top: var(--turn-intro-dice-center-top);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--turn-intro-dice-gap);
+  transform: translate(-50%, -50%) scale(.7);
+  transform-origin: center center;
+  opacity: 0;
+  will-change: transform, opacity, left, top;
+}
+
+.gameplay-turn-intro__die,
+.gameplay-hidden-die.gameplay-turn-intro__die {
+  width: var(--turn-intro-die-size);
+  height: var(--turn-intro-die-size);
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .42));
+}
+
+.gameplay-turn-intro--shake .gameplay-turn-intro__cupWrap {
+  opacity: 1;
+  animation: turnIntroCupVibrate 650ms ease-in-out both;
+}
+
+.gameplay-turn-intro--center .gameplay-turn-intro__cupWrap,
+.gameplay-turn-intro--fly .gameplay-turn-intro__cupWrap,
+.gameplay-turn-intro--done .gameplay-turn-intro__cupWrap {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.86);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.gameplay-turn-intro--center .gameplay-turn-intro__diceWrap {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 140ms ease, transform 180ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.gameplay-turn-intro--fly .gameplay-turn-intro__diceWrap {
+  opacity: 1;
+  animation: turnIntroDiceFly 500ms cubic-bezier(.2, .88, .22, 1) both;
+}
+
+.gameplay-turn-intro--done .gameplay-turn-intro__diceWrap {
+  left: var(--turn-intro-dice-target-left);
+  top: var(--turn-intro-dice-target-top);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.72);
+  transition: opacity 130ms ease, transform 130ms ease;
+}
+
+@keyframes turnIntroCupVibrate {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  12% { transform: translate(calc(-50% - 7px), calc(-50% + 3px)) rotate(-3deg); }
+  24% { transform: translate(calc(-50% + 7px), calc(-50% - 2px)) rotate(3deg); }
+  36% { transform: translate(calc(-50% - 5px), calc(-50% + 2px)) rotate(-2deg); }
+  48% { transform: translate(calc(-50% + 5px), calc(-50% - 2px)) rotate(2deg); }
+  60% { transform: translate(calc(-50% - 3px), calc(-50% + 1px)) rotate(-1deg); }
+  74% { transform: translate(calc(-50% + 3px), calc(-50% - 1px)) rotate(1deg); }
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+@keyframes turnIntroDiceFly {
+  0% {
+    left: var(--turn-intro-dice-center-left);
+    top: var(--turn-intro-dice-center-top);
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(.9);
+  }
+  100% {
+    left: var(--turn-intro-dice-target-left);
+    top: var(--turn-intro-dice-target-top);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.72);
+  }
+}
+
+html[data-device='desktop'] .gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 40%;
+  --turn-intro-cup-size: 138px;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 50%;
+  --turn-intro-dice-target-left: 633px;
+  --turn-intro-dice-target-top: 95px;
+  --turn-intro-die-size: 50px;
+  --turn-intro-dice-gap: 9px;
+}
+
+html[data-device='mobile'][data-orientation='landscape'] .gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 42%;
+  --turn-intro-cup-size: 138px;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 50%;
+  --turn-intro-dice-target-left: 633px;
+  --turn-intro-dice-target-top: 95px;
+  --turn-intro-die-size: 50px;
+  --turn-intro-dice-gap: 9px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 42%;
+  --turn-intro-cup-size: 170px;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 45%;
+  --turn-intro-dice-target-left: 280px;
+  --turn-intro-dice-target-top: 100px;
+  --turn-intro-die-size: 56px;
+  --turn-intro-dice-gap: 10px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-turn-intro {
+  z-index: 260 !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-cups.is-turn-intro-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-turnbar__diceRow.is-turn-intro-waiting {
+  opacity: 0 !important;
+  transform: scale(.9) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-turn-intro__cupWrap {
+  width: var(--turn-intro-cup-size) !important;
+  height: var(--turn-intro-cup-size) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-turn-intro__die,
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-hidden-die.gameplay-turn-intro__die {
+  width: var(--turn-intro-die-size) !important;
+  height: var(--turn-intro-die-size) !important;
+}
+
+/* Patch 3 tuning and safety overrides. Keep this file imported after portrait gameplay overrides. */
+.gameplay-screen.is-turn-intro-playing .gameplay-bid-selector,
+.gameplay-screen.is-turn-intro-playing .gameplay-action,
+.gameplay-screen.is-turn-intro-playing .gameplay-action-tray {
+  pointer-events: none;
+}
+
+.gameplay-screen.is-turn-intro-playing .gameplay-bid-selector,
+.gameplay-screen.is-turn-intro-playing .gameplay-action-tray,
+.gameplay-screen.is-turn-intro-playing .gameplay-action {
+  transition: opacity 140ms ease, filter 140ms ease;
+}
+
+.gameplay-screen.is-turn-intro-playing .gameplay-bid-selector,
+.gameplay-screen.is-turn-intro-playing .gameplay-action-tray {
+  filter: saturate(.9) brightness(.95);
+}
+
+.gameplay-turn-intro__diceWrap {
+  max-width: min(92%, 540px);
+}
+
+.gameplay-screen[data-turn-intro-count='2'] {
+  --turn-intro-cup-size: 146px;
+}
+
+.gameplay-screen[data-turn-intro-count='3'] {
+  --turn-intro-cup-size: 142px;
+}
+
+.gameplay-screen[data-turn-intro-count='4'] {
+  --turn-intro-cup-size: 138px;
+}
+
+/* PATCH 3 - DICE FLY TARGET CONTROLS
+   The dice now flies into the Current Bid panel area instead of the top turn bar.
+   Tune only the target values below if the Current Bid panel is moved later.
+*/
+html[data-device='desktop'] .gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 41%;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 50%;
+  --turn-intro-dice-target-left: 1150px;
+  --turn-intro-dice-target-top: 156px;
+}
+
+html[data-device='mobile'][data-orientation='landscape'] .gameplay-screen {
+  --turn-intro-cup-left: 50%;
+  --turn-intro-cup-top: 41%;
+  --turn-intro-dice-center-left: 50%;
+  --turn-intro-dice-center-top: 50%;
+  --turn-intro-dice-target-left: 1150px;
+  --turn-intro-dice-target-top: 178px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay {
+  --pg-turn-intro-cup-left: 50%;
+  --pg-turn-intro-cup-top: 44%;
+  --pg-turn-intro-cup-size: 168px;
+  --pg-turn-intro-dice-center-left: 50%;
+  --pg-turn-intro-dice-center-top: 45%;
+  /* PATCH 3 - portrait dice target: Current Bid panel main row */
+  --pg-turn-intro-dice-target-left: 360px;
+  --pg-turn-intro-dice-target-top: 491px;
+  --pg-turn-intro-die-size: 43px;
+  --pg-turn-intro-dice-gap: 6px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen {
+  --turn-intro-cup-left: var(--pg-turn-intro-cup-left) !important;
+  --turn-intro-cup-top: var(--pg-turn-intro-cup-top) !important;
+  --turn-intro-cup-size: var(--pg-turn-intro-cup-size) !important;
+  --turn-intro-dice-center-left: var(--pg-turn-intro-dice-center-left) !important;
+  --turn-intro-dice-center-top: var(--pg-turn-intro-dice-center-top) !important;
+  --turn-intro-dice-target-left: var(--pg-turn-intro-dice-target-left) !important;
+  --turn-intro-dice-target-top: var(--pg-turn-intro-dice-target-top) !important;
+  --turn-intro-die-size: var(--pg-turn-intro-die-size) !important;
+  --turn-intro-dice-gap: var(--pg-turn-intro-dice-gap) !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen[data-turn-intro-count='2'] {
+  --pg-turn-intro-cup-size: 172px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen[data-turn-intro-count='3'] {
+  --pg-turn-intro-cup-size: 170px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen[data-turn-intro-count='4'] {
+  --pg-turn-intro-cup-size: 166px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gameplay-turn-intro--shake .gameplay-turn-intro__cupWrap,
+  .gameplay-turn-intro--fly .gameplay-turn-intro__diceWrap {
+    animation-duration: 1ms !important;
+  }
+
+  .gameplay-turn-intro__cupWrap,
+  .gameplay-turn-intro__diceWrap,
+  .gameplay-cups.is-turn-intro-hidden,
+  .gameplay-turnbar__diceRow.is-turn-intro-waiting {
+    transition-duration: 1ms !important;
+  }
+}

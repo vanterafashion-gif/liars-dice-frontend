@@ -1,0 +1,129 @@
+html[data-device='mobile'] .room-lobby-screen {
+  background-image: url('/assets/liars-dice/create-room/bg.png');
+}
+
+html[data-device='mobile'] .room-lobby-profile { position: absolute; left: 24px; top: 19px; width: 210px; height: 57px; z-index: 10; }
+html[data-device='mobile'] .room-lobby-currency { position: absolute; top: 22px; width: 145px; height: 35px; z-index: 10; background: rgba(255, 224, 154, .82); border: 2px solid rgba(102, 62, 14, .42); border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+html[data-device='mobile'] .room-lobby-currency--coins { right: 192px; }
+html[data-device='mobile'] .room-lobby-currency--gems { right: 40px; }
+html[data-device='mobile'] .room-lobby-currency__icon { position: absolute; left: 8px; top: 5px; width: 25px; height: 25px; object-fit: contain; }
+html[data-device='mobile'] .room-lobby-currency__value { position: absolute; left: 41px; top: 8px; width: 78px; font-family: Arial, sans-serif; font-size: 15px; font-weight: 900; color: #16110a; }
+html[data-device='mobile'] .room-lobby-currency__plus { position: absolute; right: 6px; top: 7px; width: 21px; height: 21px; object-fit: contain; }
+
+html[data-device='mobile'] .room-lobby-board { position: absolute; left: 172px; top: 100px; width: 930px; height: 520px; }
+html[data-device='mobile'] .room-lobby-board__skin { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+html[data-device='mobile'] .room-lobby-character { position: absolute; left: 40px; bottom: 10px; width: 285px; height: auto; z-index: 3; }
+html[data-device='mobile'] .room-lobby-panel { position: absolute; left: 348px; top: 42px; width: 500px; height: 400px; z-index: 4; font-family: Arial, sans-serif; }
+html[data-device='mobile'] .room-lobby-title { position: absolute; left: 0; top: 0; width: 455px; margin: 0; text-align: center; font-size: 27px; line-height: 1; font-weight: 900; color: #493114; text-shadow: 0 2px 0 rgba(255,255,255,.42); }
+html[data-device='mobile'] .room-lobby-subtitle { position: absolute; left: 24px; top: 34px; width: 405px; margin: 0; text-align: center; font-size: 14px; font-weight: 800; color: #6a4318; }
+html[data-device='mobile'] .room-lobby-label { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 17px; line-height: 1; font-weight: 900; color: #493114; }
+html[data-device='mobile'] .room-lobby-codeBlock { position: absolute; left: 84px; top: 72px; width: 285px; height: 84px; }
+html[data-device='mobile'] .room-lobby-codeWrap { position: absolute; left: 0; top: 25px; width: 285px; height: 50px; }
+html[data-device='mobile'] .room-lobby-codeWrap__skin { position: absolute; left: 0; top: 0; width: 221px; height: 50px; object-fit: fill; }
+html[data-device='mobile'] .room-lobby-codeWrap__text { position: absolute; left: 20px; top: 8px; width: 178px; height: 33px; font-size: 27px; font-weight: 900; text-align: center; color: #4a2a08; }
+html[data-device='mobile'] .room-lobby-copy { position: absolute; right: 0; top: 1px; width: 48px; height: 48px; }
+html[data-device='mobile'] .room-lobby-copy img { width: 100%; height: 100%; object-fit: contain; }
+html[data-device='mobile'] .room-lobby-infoGrid { position: absolute; left: 38px; top: 158px; width: 380px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+html[data-device='mobile'] .room-lobby-info { height: 39px; border: 2px solid #b87a24; border-radius: 11px; background: linear-gradient(180deg, #fff3cd 0%, #f1d394 100%); color: #3b2308; display: grid; place-items: center; }
+html[data-device='mobile'] .room-lobby-info span { font-size: 10px; font-weight: 900; line-height: 1; color: #79501d; }
+html[data-device='mobile'] .room-lobby-info strong { font-size: 15px; font-weight: 900; line-height: 1; }
+html[data-device='mobile'] .room-lobby-playerList { position: absolute; left: 38px; top: 250px; width: 380px; height: 132px; padding-top: 26px; padding-right: 8px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-gutter: stable; }
+html[data-device='mobile'] .room-lobby-label--players { top: 0; pointer-events: none; }
+html[data-device='mobile'] .room-lobby-player { position: relative; width: calc(100% - 2px); height: 22px; margin-bottom: 4px; flex: 0 0 22px; border: 2px solid #b87a24; border-radius: 10px; background: linear-gradient(180deg, #fff3cd 0%, #f1d394 100%); color: #3b2308; box-sizing: border-box; }
+html[data-device='mobile'] .room-lobby-player__slot, html[data-device='mobile'] .room-lobby-player__name, html[data-device='mobile'] .room-lobby-player__status { position: absolute; top: 3px; font-size: 12px; font-weight: 900; line-height: 1; }
+html[data-device='mobile'] .room-lobby-player__slot { left: 14px; width: 24px; }
+html[data-device='mobile'] .room-lobby-player__name { left: 54px; width: 205px; }
+html[data-device='mobile'] .room-lobby-player__status { right: 14px; width: 80px; text-align: right; color: #0f6e13; }
+
+html[data-device='mobile'] .room-lobby-playerList::-webkit-scrollbar {
+  width: 8px;
+}
+
+html[data-device='mobile'] .room-lobby-playerList::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(117, 69, 17, .14);
+}
+
+html[data-device='mobile'] .room-lobby-playerList::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(#e7b957, #9a5c12);
+  border: 1px solid rgba(76, 43, 9, .35);
+}
+
+html[data-device='mobile'] .room-lobby-error { position: absolute; left: 0; top: 354px; width: 455px; text-align: center; font-size: 12px; font-weight: 900; color: #8a1a11; }
+html[data-device='mobile'] .room-lobby-action { position: absolute; bottom: -54px; height: 50px; z-index: 7; transition: transform .16s ease, filter .16s ease, opacity .16s ease; }
+html[data-device='mobile'] .room-lobby-action:hover, html[data-device='mobile'] .room-lobby-copy:hover { transform: translateY(-1px); filter: brightness(1.06); }
+html[data-device='mobile'] .room-lobby-action--primary { left: -5px; width: 232px; }
+html[data-device='mobile'] .room-lobby-action--secondary { left: 282px; width: 185px; }
+html[data-device='mobile'] .room-lobby-action.is-disabled { opacity: .58; cursor: not-allowed; }
+html[data-device='mobile'] .room-lobby-action__skin { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+html[data-device='mobile'] .room-lobby-action__text { position: absolute; inset: 0; display: grid; place-items: center; font-size: 20px; font-weight: 900; color: #fff8e6; text-shadow: 0 2px 3px rgba(0,0,0,.45); }
+
+html[data-device='mobile'] .room-lobby-action--ready { left: 218px; width: 170px; }
+html[data-device='mobile'] .room-lobby-action--ready.is-ready { filter: hue-rotate(22deg) saturate(1.08); }
+html[data-device='mobile'] .room-lobby-action--primary { left: -46px; width: 232px; }
+html[data-device='mobile'] .room-lobby-action--secondary { left: 415px; width: 150px; }
+html[data-device='mobile'] .room-lobby-player__status.is-waiting { color: #8a1a11; }
+html[data-device='mobile'] .room-lobby-countdown {
+  position: absolute;
+  left: 134px;
+  top: 216px;
+  width: 190px;
+  height: 74px;
+  z-index: 8;
+  border: 3px solid #b87a24;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff4ce 0%, #efc46c 100%);
+  box-shadow: 0 6px 14px rgba(78, 44, 9, .22), inset 0 1px 0 rgba(255,255,255,.8);
+  text-align: center;
+  pointer-events: none;
+}
+html[data-device='mobile'] .room-lobby-countdown__label {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #4a2a08;
+}
+html[data-device='mobile'] .room-lobby-countdown__number {
+  display: block;
+  margin-top: -2px;
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 900;
+  color: #8b1a11;
+  text-shadow: 0 2px 0 rgba(255,255,255,.55);
+}
+html[data-device='mobile'] .room-lobby-refresh {
+  position: absolute;
+  right: 20px;
+  top: 128px;
+  width: 88px;
+  height: 28px;
+  z-index: 9;
+  border: 2px solid #b87a24;
+  border-radius: 999px;
+  background: linear-gradient(#fff2c7, #e7b75b);
+  color: #4a2a08;
+  font-size: 11px;
+  font-weight: 900;
+  box-shadow: 0 2px 5px rgba(0,0,0,.18);
+}
+
+/* Pek/Slam lobby betting summary patch */
+html[data-device='mobile'] .room-lobby-infoGrid { left: 8px; top: 158px; width: 440px; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+html[data-device='mobile'] .room-lobby-info strong { font-size: 13px; }
+html[data-device='mobile'] .room-lobby-playerList { top: 302px; height: 80px; }
+
+/* Patch 3: full betting contract summary */
+html[data-device='mobile'] .room-lobby-rulesSummary {
+  position: absolute;
+  left: 8px;
+  top: 286px;
+  width: 440px;
+  text-align: center;
+  font: 900 11px/1.15 Arial, sans-serif;
+  color: #5b3210;
+}
+html[data-device='mobile'] .room-lobby-playerList { top: 322px; height: 60px; }
+html[data-device='mobile'] .room-lobby-info strong { font-size: 11px; text-align: center; }
