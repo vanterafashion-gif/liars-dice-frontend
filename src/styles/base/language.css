@@ -1,0 +1,42 @@
+/*
+ * Language presentation only.
+ *
+ * Language must never change component position, size, or orientation layout.
+ * Chinese therefore inherits the exact English desktop, landscape, and portrait
+ * geometry. Only font rendering and text fitting are adjusted here.
+ */
+
+html[data-language='zh'] {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", Arial, sans-serif;
+}
+
+html[data-language='zh'] body,
+html[data-language='zh'] button,
+html[data-language='zh'] input,
+html[data-language='zh'] select,
+html[data-language='zh'] textarea {
+  font-family: inherit;
+}
+
+/* Keep translated labels inside the same English-sized controls. */
+html[data-language='zh'] .gameplay-action__title,
+html[data-language='zh'] .gameplay-action__subtitle,
+html[data-language='zh'] .gameplay-current-bid__label,
+html[data-language='zh'] .gameplay-time-remaining__label,
+html[data-language='zh'] .gameplay-bid-selector__title,
+html[data-language='zh'] .gameplay-bid-selector__quantityLabel,
+html[data-language='zh'] .gameplay-bid-selector__ownDiceLabel,
+html[data-language='zh'] .menu-card__title,
+html[data-language='zh'] .menu-card__subtitle,
+html[data-language='zh'] .room-select-card__title,
+html[data-language='zh'] .room-select-card__subtitle,
+html[data-language='zh'] .create-room-label,
+html[data-language='zh'] .daily-reward-card__label,
+html[data-language='zh'] .win-screen__title {
+  letter-spacing: 0 !important;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+/* Chinese help and daily-reward artwork remain localized, but use the same
+   English layout boxes supplied by the normal screen styles. */

@@ -1731,6 +1731,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dataset.language = i18n.language;
+    document.documentElement.lang = i18n.language === 'zh' ? 'zh-CN' : 'en';
   }, [i18n.language]);
 
   useEffect(() => {

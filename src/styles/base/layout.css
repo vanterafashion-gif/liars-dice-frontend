@@ -64,8 +64,6 @@
 
 html[data-language='zh'] .app-shell--help {
   background-image: url('/assets/liars-dice/localized/zh/help-background.png');
-  background-size: cover;
-  background-position: center center;
 }
 
 .app-shell--win {
@@ -238,12 +236,6 @@ html[data-device='mobile'] .screen {
 
 html[data-physical-device='mobile'][data-orientation='landscape'] .app-shell {
   /* Rotated phones render the landscape 1280x720 UI instead of being blocked. */
-  background-position: center center;
-}
-
-/* Chinese help screen: use the same full-frame fitting as the English help background. */
-html[data-language='zh'] .app-shell--help {
-  background-size: 100% 100%;
   background-position: center center;
 }
 

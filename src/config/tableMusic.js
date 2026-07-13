@@ -6,18 +6,47 @@ export const TABLE_MUSIC_TRACKS = {
     label: 'Beginner Table Music',
     placeholder: `${MUSIC_BASE_PATH}/beginner-table-music.txt`,
     audioSrc: '/assets/liars-dice/music/beginner-table-music.mp3',
+    // Start points detected from the silent transitions between songs.
+    cuePoints: [
+      { id: 'beginner-01', start: 0 },
+      { id: 'beginner-02', start: 225.2 },
+      { id: 'beginner-03', start: 434.4 },
+      { id: 'beginner-04', start: 668.2 },
+      { id: 'beginner-05', start: 969.4 },
+      { id: 'beginner-06', start: 1253.9 },
+      { id: 'beginner-07', start: 1524.1 },
+    ],
   },
   'high-roller': {
     id: 'high-roller',
     label: 'High Roller Table Music',
     placeholder: `${MUSIC_BASE_PATH}/high-roller-table-music.txt`,
     audioSrc: '/assets/liars-dice/music/high-roller-table-music.mp3',
+    cuePoints: [
+      { id: 'high-roller-01', start: 0 },
+      { id: 'high-roller-02', start: 215.5 },
+      { id: 'high-roller-03', start: 564.0 },
+      { id: 'high-roller-04', start: 871.5 },
+      { id: 'high-roller-05', start: 1121.2 },
+    ],
   },
   createroom: {
     id: 'createroom',
     label: 'Create Room Music',
     placeholder: `${MUSIC_BASE_PATH}/create-room-music.txt`,
     audioSrc: '/assets/liars-dice/music/create-room-music.mp3',
+    cuePoints: [
+      { id: 'create-room-01', start: 0 },
+      { id: 'create-room-02', start: 303.0 },
+      { id: 'create-room-03', start: 596.1 },
+      { id: 'create-room-04', start: 865.0 },
+      { id: 'create-room-05', start: 1128.4 },
+      { id: 'create-room-06', start: 1446.5 },
+      { id: 'create-room-07', start: 1723.7 },
+      { id: 'create-room-08', start: 2021.8 },
+      { id: 'create-room-09', start: 2299.7 },
+      { id: 'create-room-10', start: 2573.2 },
+    ],
   },
 };
 

@@ -1,0 +1,107 @@
+/* =========================================================
+   GAMEPLAY MANUAL CONTROLS
+   Edit orientation values here first.
+   The existing portrait variables from the former manual-control
+   patches are consolidated in gameplay.portrait.css and can still
+   be overridden below without editing generated rule files.
+   ========================================================= */
+
+/* LANDSCAPE CONTROLS */
+html[data-orientation='landscape'] .app-shell--gameplay {
+  --gameplay-ui-scale: 1;
+  --gameplay-ui-offset-x: 0px;
+  --gameplay-ui-offset-y: 0px;
+}
+
+/* PORTRAIT CONTROLS */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay {
+  --gameplay-ui-scale: 1;
+  --gameplay-ui-offset-x: 0px;
+  --gameplay-ui-offset-y: 0px;
+
+  /* Action buttons */
+  --pg-confirm-bid-left: 28px;
+  --pg-confirm-bid-top: 1158px;
+  --pg-call-liar-left: 254px;
+  --pg-call-liar-top: 1158px;
+  --pg-pek-slam-left: 480px;
+  --pg-pek-slam-top: 1158px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen {
+  /* Current Bid */
+  --pg-current-bid-left: 250px;
+  --pg-current-bid-top: 200px;
+  --pg-current-bid-width: 245px;
+  --pg-current-bid-height: 180px;
+
+  /* Cups */
+  --pg-cups-left: 140px;
+  --pg-cups-top: 446px;
+  --pg-cups-width: 440px;
+  --pg-cups-height: 255px;
+}
+
+/* =========================================================
+   MUSIC BUTTON / PANEL CONTROLS
+   Button and panel are intentionally independent.
+   Edit these values only; do not move .gameplay-music-control.
+   ========================================================= */
+
+/* DESKTOP */
+html[data-device='desktop'] .app-shell--gameplay .gameplay-music-control {
+  --music-button-left: 50px;
+  --music-button-top: 104px;
+  --music-button-width: 166px;
+  --music-button-height: 58px;
+
+  --music-panel-left: 228px;
+  --music-panel-top: 94px;
+  --music-panel-width: 330px;
+}
+
+/* MOBILE LANDSCAPE */
+html[data-device='mobile'][data-orientation='landscape'] .app-shell--gameplay .gameplay-music-control {
+  --music-button-left: 46px;
+  --music-button-top: 84px;
+  --music-button-width: 150px;
+  --music-button-height: 52px;
+
+  --music-panel-left: 224px;
+  --music-panel-top: 216px;
+  --music-panel-width: 310px;
+}
+
+/* MOBILE PORTRAIT */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-music-control {
+  --music-button-left: 26px;
+  --music-button-top: 24px;
+  --music-button-width: 154px;
+  --music-button-height: 54px;
+
+  --music-panel-left: 24px;
+  --music-panel-top: 86px;
+  --music-panel-width: 320px;
+
+  z-index: 124;
+}
+
+/* =========================================================
+   TURN INTRO DICE DESTINATION
+   The final target is measured at runtime from
+   .gameplay-bid-selector__ownDiceRow, so moving the Select Bid
+   panel in any orientation automatically moves the animation target.
+   The old fixed right-side coordinates are now only harmless fallbacks.
+   ========================================================= */
+
+/* Fallback positions used only until the runtime measurement is available. */
+html[data-device='desktop'] .app-shell--gameplay .gameplay-screen,
+html[data-device='mobile'][data-orientation='landscape'] .app-shell--gameplay .gameplay-screen {
+  --turn-intro-dice-target-left: 614px !important;
+  --turn-intro-dice-target-top: 694px !important;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen {
+  --turn-intro-dice-target-left: 245px !important;
+  --turn-intro-dice-target-top: 1070px !important;
+}

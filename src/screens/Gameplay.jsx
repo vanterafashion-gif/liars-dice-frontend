@@ -3,6 +3,8 @@ import { resolveProfileAvatarSrc as resolveAvatarSrc } from '../utils/profileAva
 import { getTableMusicMuted, getTableMusicVolume, resumeTableMusic, setTableMusicMuted, setTableMusicVolume } from '../services/tableMusicPlayer.js';
 import { startVoiceChatSession } from '../services/voiceChatService.js';
 import { resolveGameDataBackground, toCssBackgroundImageValue } from '../utils/gameplayBackgrounds.js';
+import { GameplayChatDrawer, GameplayPlayersLayer, GameplayStatusLayer, GameplayUtilityControls } from '../components/gameplay/GameplaySections.jsx';
+import OpeningCoinFlipOverlay from '../components/gameplay/OpeningCoinFlipOverlay.jsx';
 
 const asset = '/assets/liars-dice/gameplay/';
 
@@ -161,29 +163,25 @@ function getPlayerDiceCount(player, fallback = 0) {
 }
 
 function getTurnDicePlayer(match, activePlayer, viewerPlayer, user, myTurn) {
-  const activeDice = getPlayerDiceValues(activePlayer);
   const viewerDice = getPlayerDiceValues(viewerPlayer);
   const matchViewerDice = getMatchViewerDiceValues(match);
-  const shouldUseViewerDice = Boolean(myTurn || samePlayer(activePlayer, viewerPlayer) || samePlayer(activePlayer, user));
-
-  const dice = activeDice.length
-    ? activeDice
-    : shouldUseViewerDice && viewerDice.length
-      ? viewerDice
-      : shouldUseViewerDice && matchViewerDice.length
-        ? matchViewerDice
-        : [];
-
-  const count = getPlayerDiceCount(activePlayer, getPlayerDiceCount(viewerPlayer, dice.length || 0));
+  const isViewerTurn = Boolean(myTurn || samePlayer(activePlayer, viewerPlayer) || samePlayer(activePlayer, user));
+  const dice = isViewerTurn
+    ? (viewerDice.length ? viewerDice : matchViewerDice)
+    : [];
+  const count = isViewerTurn
+    ? getPlayerDiceCount(viewerPlayer, dice.length || 5)
+    : getPlayerDiceCount(activePlayer, 5);
 
   return {
     ...(activePlayer || viewerPlayer || user || {}),
-    ...(shouldUseViewerDice && viewerPlayer ? {
+    ...(isViewerTurn && viewerPlayer ? {
       diceCount: getPlayerDiceCount(viewerPlayer, count),
       lives: viewerPlayer.lives ?? viewerPlayer.diceCount ?? count,
     } : {}),
     dice,
-    diceCount: count || dice.length || (shouldUseViewerDice ? 5 : 0),
+    diceCount: count || (isViewerTurn ? 5 : getPlayerDiceCount(activePlayer, 5)),
+    diceHidden: !isViewerTurn,
   };
 }
 
@@ -432,14 +430,14 @@ function getMatchJokerDisplay(match = {}, bid = null, tx = (value) => value) {
   return { mode: 'normal', label: tx('Joker ON'), detail: tx('1s are wild'), className: 'is-normal', jokerWildActive: true };
 }
 
-function buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, match }) {
+function buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled = false, match }) {
   const currentJokerInfo = getMatchJokerDisplay(match, currentBid);
   const face = toNumber(selectedFace, 1);
-  const zai = Boolean(zaiEnabled && face !== 1);
-  const zaiInherited = Boolean(!zai && currentBid && currentJokerInfo.mode === 'zai' && face !== 1);
-  const chai = false;
-  const onesLocked = face === 1 || currentJokerInfo.mode === 'ones_locked';
-  const jokerMode = zai ? 'zai' : onesLocked ? 'ones_locked' : zaiInherited ? 'zai_locked' : 'normal';
+  const chai = Boolean(chaiEnabled && currentBid && ['zai', 'zai_locked'].includes(currentJokerInfo.mode));
+  const zai = Boolean(!chai && zaiEnabled && face !== 1);
+  const zaiInherited = Boolean(!chai && !zai && currentBid && ['zai', 'zai_locked'].includes(currentJokerInfo.mode) && face !== 1);
+  const onesLocked = !chai && (face === 1 || currentJokerInfo.mode === 'ones_locked');
+  const jokerMode = chai ? 'chai' : zai ? 'zai' : onesLocked ? 'ones_locked' : zaiInherited ? 'zai_locked' : 'normal';
 
   return {
     zai,
@@ -448,14 +446,14 @@ function buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiE
     chai,
     isChai: chai,
     chaiAutoApplied: false,
-    chaiReopensJoker: false,
+    chaiReopensJoker: chai,
     jokerMode,
     jokerWildActive: jokerMode === 'normal',
   };
 }
 
-function getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, match, tx = (value) => value }) {
-  const payload = buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, match });
+function getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled = false, match, tx = (value) => value }) {
+  const payload = buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled, match });
   if (payload.zai || payload.jokerMode === 'zai_locked') return { ...payload, label: tx('ZAI'), detail: tx('Joker OFF'), className: 'is-zai' };
   if (payload.chai) return { ...payload, label: tx('CHAI'), detail: tx('Joker ON'), className: 'is-chai' };
   if (payload.jokerMode === 'ones_locked') return { ...payload, label: tx('1s LOCKED'), detail: tx('Joker OFF'), className: 'is-locked' };
@@ -894,6 +892,20 @@ function getActivePlayer(match) {
 function getViewerPlayer(match, user) {
   if (!match?.players?.length) return null;
 
+  const explicitViewerIds = [
+    match.viewerPlayerId,
+    match.selfPlayerId,
+    match.viewerUserId,
+    match.selfUserId,
+  ].filter(Boolean).map(String);
+
+  if (explicitViewerIds.length) {
+    const explicitViewer = match.players.find((player) =>
+      playerIdentityValues(player).some((id) => explicitViewerIds.includes(id))
+    );
+    if (explicitViewer) return explicitViewer;
+  }
+
   const viewerRefs = [match.me, match.viewer, match.currentUser, user]
     .filter((item) => item && typeof item === 'object');
 
@@ -902,7 +914,8 @@ function getViewerPlayer(match, user) {
     if (matchPlayer) return matchPlayer;
   }
 
-  return match.players.find((player) => !player?.isBot) || match.players[0];
+  // Never guess the viewer by selecting the first human player; that can expose or hide the wrong hand.
+  return null;
 }
 
 function getBidderPlayer(match) {
@@ -1204,10 +1217,23 @@ function revealedDiceRows(roundResult) {
   return Array.isArray(roundResult?.revealedDice) ? roundResult.revealedDice.filter(Boolean) : [];
 }
 
+const BID_FACE_ORDER = [2, 3, 4, 5, 6, 1];
+
+function bidFaceRank(face) {
+  const index = BID_FACE_ORDER.indexOf(toNumber(face, 0));
+  return index >= 0 ? index : -1;
+}
+
+function nextBidFace(face) {
+  const index = bidFaceRank(face);
+  return index >= 0 && index < BID_FACE_ORDER.length - 1 ? BID_FACE_ORDER[index + 1] : null;
+}
+
 function nextDefaultBid(currentBid, totalDice) {
   if (!currentBid) return { quantity: Math.min(1, totalDice || 1), face: 1 };
-  if (toNumber(currentBid.face, 1) < 6) return { quantity: currentBid.quantity, face: toNumber(currentBid.face, 1) + 1 };
-  return { quantity: Math.min(toNumber(currentBid.quantity, 1) + 1, totalDice || 7), face: 1 };
+  const higherFace = nextBidFace(currentBid.face);
+  if (higherFace !== null) return { quantity: currentBid.quantity, face: higherFace };
+  return { quantity: Math.min(toNumber(currentBid.quantity, 1) + 1, totalDice || 7), face: 2 };
 }
 
 function isValidBid(currentBid, quantity, face, options = {}) {
@@ -1220,17 +1246,10 @@ function isValidBid(currentBid, quantity, face, options = {}) {
   }
   const currentQuantity = toNumber(currentBid.quantity, 0);
   const currentFace = toNumber(currentBid.face, 0);
-  return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && normalizedFace > currentFace);
+  return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && bidFaceRank(normalizedFace) > bidFaceRank(currentFace));
 }
 
-function getDirectZaiBid({ currentBid, selectedQuantity, selectedFace }) {
-  const currentQuantity = toNumber(currentBid?.quantity, 0);
-  const currentFace = toNumber(currentBid?.face, 0);
-
-  if (currentBid && currentQuantity > 0 && currentFace >= 2 && currentFace <= 6 && !isBidZai(currentBid)) {
-    return { quantity: currentQuantity, face: currentFace, source: 'current_bid' };
-  }
-
+function getDirectZaiBid({ selectedQuantity, selectedFace }) {
   return {
     quantity: toNumber(selectedQuantity, 0),
     face: toNumber(selectedFace, 0),
@@ -1251,6 +1270,26 @@ function isValidZaiBid(currentBid, quantity, face, options = {}) {
   }
 
   return isValidBid(currentBid, normalizedQuantity, normalizedFace, options);
+}
+
+function syncTurnIntroDiceTarget(screenElement, targetElement) {
+  if (!screenElement || !targetElement || typeof window === 'undefined') return false;
+
+  const screenRect = screenElement.getBoundingClientRect();
+  const targetRect = targetElement.getBoundingClientRect();
+  if (!screenRect.width || !screenRect.height || !targetRect.width || !targetRect.height) return false;
+
+  // getBoundingClientRect() returns rendered pixels. Convert them back to the
+  // fixed gameplay-canvas coordinate system so the result stays correct when
+  // desktop, landscape, or portrait layouts are scaled by their parent shell.
+  const scaleX = screenElement.clientWidth > 0 ? screenElement.clientWidth / screenRect.width : 1;
+  const scaleY = screenElement.clientHeight > 0 ? screenElement.clientHeight / screenRect.height : 1;
+  const targetCenterX = (targetRect.left + (targetRect.width / 2) - screenRect.left) * scaleX;
+  const targetCenterY = (targetRect.top + (targetRect.height / 2) - screenRect.top) * scaleY;
+
+  screenElement.style.setProperty('--turn-intro-dice-target-left', `${Math.round(targetCenterX)}px`, 'important');
+  screenElement.style.setProperty('--turn-intro-dice-target-top', `${Math.round(targetCenterY)}px`, 'important');
+  return true;
 }
 
 function TurnIntroOverlay({ player, phase }) {
@@ -1284,7 +1323,22 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const previousBid = match?.previousBid || null;
   const viewerPlayer = getViewerPlayer(match, user);
   const viewerEliminated = isPlayerEliminatedForMatch(match, viewerPlayer);
-  const myTurn = !viewerEliminated && (Boolean(match?.myTurn) || samePlayer(activePlayer, viewerPlayer) || samePlayer(activePlayer, user));
+  const openingCoinFlip = match?.openingCoinFlip || null;
+  const isOpeningCoinFlipActive = Boolean(match?.coinFlipActive || openingCoinFlip?.status === 'pending');
+  const myTurn = !isOpeningCoinFlipActive && !viewerEliminated && (Boolean(match?.myTurn) || samePlayer(activePlayer, viewerPlayer) || samePlayer(activePlayer, user));
+
+  useEffect(() => {
+    const shell = document.querySelector('.app-shell--gameplay');
+    if (!shell) return undefined;
+
+    shell.classList.toggle('is-opponent-turn-shell', !myTurn);
+    shell.classList.toggle('is-my-turn-shell', myTurn);
+    shell.classList.toggle('is-opening-coin-flip-shell', isOpeningCoinFlipActive);
+
+    return () => {
+      shell.classList.remove('is-opponent-turn-shell', 'is-my-turn-shell', 'is-opening-coin-flip-shell');
+    };
+  }, [myTurn, isOpeningCoinFlipActive]);
   const turnDicePlayer = getTurnDicePlayer(match, activePlayer, viewerPlayer, user, myTurn);
   const [turnIntroPhase, setTurnIntroPhase] = useState(TURN_INTRO_PHASE.IDLE);
   const [turnIntroPlayer, setTurnIntroPlayer] = useState(null);
@@ -1292,12 +1346,15 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const activeTurnIntroKeyRef = useRef('');
   const turnIntroTimersRef = useRef([]);
   const turnIntroRunIdRef = useRef(0);
-  const turnIntroKey = getTurnIntroKey(match, activePlayer);
+  const lastOwnDiceRef = useRef([]);
+  const gameplayScreenRef = useRef(null);
+  const bidDiceTargetRef = useRef(null);
+  const turnIntroKey = isOpeningCoinFlipActive ? '' : getTurnIntroKey(match, activePlayer);
   const turnIntroResetKey = getTurnIntroResetKey(match);
   const isTurnIntroPlaying = TURN_INTRO_ACTIVE_PHASES.has(turnIntroPhase);
   const isFinished = match?.status === 'finished';
   const isBusy = Boolean(backendStatus?.loading && String(backendStatus.lastAction || '').startsWith('match.'));
-  const canAct = Boolean(currentMatchId && match && !isFinished && myTurn && !viewerEliminated && !isBusy && !isTurnIntroPlaying);
+  const canAct = Boolean(currentMatchId && match && !isFinished && !isOpeningCoinFlipActive && myTurn && !viewerEliminated && !isBusy && !isTurnIntroPlaying);
   const availableActions = normalizedActionList(match?.availableActions);
   const disabledActions = normalizedActionList(match?.disabledActions);
   const hasServerActionRules = availableActions.length > 0 || disabledActions.length > 0;
@@ -1320,7 +1377,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const [roundResultVisible, setRoundResultVisible] = useState(false);
   const showRoundResult = Boolean(match && roundResult && roundResultVisible && !isFinished);
   const [clockTick, setClockTick] = useState(() => Date.now());
-  const liveTurnSeconds = getLiveTurnSeconds(match, clockTick);
+  const liveTurnSeconds = isOpeningCoinFlipActive ? 0 : getLiveTurnSeconds(match, clockTick);
   const chatMessages = Array.isArray(data?.chatMessages) ? data.chatMessages : [];
   const chatStatus = data?.chatStatus || {};
   const [chatOpen, setChatOpen] = useState(false);
@@ -1339,6 +1396,33 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     participants: [],
     error: null,
   });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    const updateTarget = () => {
+      syncTurnIntroDiceTarget(gameplayScreenRef.current, bidDiceTargetRef.current);
+    };
+
+    updateTarget();
+    const frameId = window.requestAnimationFrame(updateTarget);
+    window.addEventListener('resize', updateTarget);
+    window.addEventListener('orientationchange', updateTarget);
+
+    let resizeObserver = null;
+    if (typeof window.ResizeObserver === 'function') {
+      resizeObserver = new window.ResizeObserver(updateTarget);
+      if (gameplayScreenRef.current) resizeObserver.observe(gameplayScreenRef.current);
+      if (bidDiceTargetRef.current) resizeObserver.observe(bidDiceTargetRef.current);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', updateTarget);
+      window.removeEventListener('orientationchange', updateTarget);
+      resizeObserver?.disconnect();
+    };
+  }, []);
 
   const clearTurnIntroTimers = () => {
     turnIntroRunIdRef.current += 1;
@@ -1379,6 +1463,9 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     activeTurnIntroKeyRef.current = turnIntroKey;
     const runId = turnIntroRunIdRef.current;
     const introPlayerSnapshot = turnDicePlayer || activePlayer || null;
+    // Measure the real Select Bid / Your Dice row before every reveal. This
+    // replaces the old hard-coded right-side target and follows future UI moves.
+    syncTurnIntroDiceTarget(gameplayScreenRef.current, bidDiceTargetRef.current);
     setTurnIntroPlayer(introPlayerSnapshot);
     setTurnIntroPhase(TURN_INTRO_PHASE.SHAKE);
 
@@ -1457,6 +1544,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const [selectedFace, setSelectedFace] = useState(defaultBid.face || 1);
   const [selectedCoinBet, setSelectedCoinBet] = useState(getMatchCoinBet(match));
   const [zaiEnabled, setZaiEnabled] = useState(false);
+  const [chaiEnabled, setChaiEnabled] = useState(false);
   const [isDiceFacePickerOpen, setDiceFacePickerOpen] = useState(false);
   const faceDialRef = useRef(null);
   const quantitySliderRef = useRef(null);
@@ -1483,6 +1571,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     setSelectedQuantity(Math.max(1, Math.min(quantityValues.length, defaultBid.quantity || 1)));
     setSelectedFace(Math.max(1, Math.min(6, defaultBid.face || 1)));
     setZaiEnabled(false);
+    setChaiEnabled(false);
     setDiceFacePickerOpen(false);
   }, [defaultBid.quantity, defaultBid.face, quantityValues.length]);
 
@@ -1561,7 +1650,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
 
   const submitBid = () => {
     if (!canSubmitBid || isTurnIntroPlaying) return;
-    const jokerPayload = buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, match });
+    const jokerPayload = buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled, match });
     backendActions?.submitGameAction?.({
       matchId: currentMatchId,
       type: 'bid',
@@ -1582,13 +1671,16 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const submitZaiBid = () => {
     if (!canSubmitBid || isTurnIntroPlaying) return;
     const directZaiBid = getDirectZaiBid({ currentBid, selectedQuantity, selectedFace });
-    if (!isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount })) return;
+    const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
+    const shouldChai = ['zai', 'zai_locked'].includes(currentMode);
+    if (!shouldChai && !isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount })) return;
 
     const jokerPayload = buildBidJokerPayload({
       currentBid,
       selectedQuantity: directZaiBid.quantity,
       selectedFace: directZaiBid.face,
-      zaiEnabled: true,
+      zaiEnabled: !shouldChai,
+      chaiEnabled: shouldChai,
       match,
     });
 
@@ -1684,14 +1776,15 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const quantityMin = currentBid ? 1 : getOpeningMinimumQuantity(match, tablePlayerCount, selectedFace);
   const quantityMax = quantityValues[quantityValues.length - 1] || Math.max(1, toNumber(totalDice, 1));
   const directZaiBid = getDirectZaiBid({ currentBid, selectedQuantity, selectedFace });
-  const zaiAvailable = isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
   const currentBidJokerInfo = getMatchJokerDisplay(match, currentBid, tx);
+  const chaiAvailable = Boolean(currentBid && ['zai', 'zai_locked'].includes(currentBidJokerInfo?.mode) && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0));
+  const zaiAvailable = chaiAvailable || isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
   const showCurrentBidJokerBadge = Boolean(currentBid && currentBidJokerInfo?.mode && currentBidJokerInfo.mode !== 'normal');
   const showDangerTurnTimer = Boolean(match?.status === 'active' && Number(liveTurnSeconds) > 0 && Number(liveTurnSeconds) <= 10);
-  const selectedBidJokerInfo = getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, match, tx });
+  const selectedBidJokerInfo = getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled, match, tx });
   const directZaiSubtitle = zaiAvailable
-    ? `${directZaiBid.quantity} x ${directZaiBid.face} · ${tx('Joker OFF')}`
-    : tx('Joker OFF');
+    ? `${directZaiBid.quantity} x ${directZaiBid.face} · ${tx(chaiAvailable ? 'Joker ON' : 'Joker OFF')}`
+    : tx(chaiAvailable ? 'Joker ON' : 'Joker OFF');
   const chaiHint = '';
   const bidSubmitSubtitle = openingBidError || (bidIsValid ? (coinBetIsValid ? selectedBidJokerInfo.detail : tx('Coin bet out of range')) : tx('Bid must be higher'));
   useEffect(() => {
@@ -1775,13 +1868,17 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const turnIntroDisplayPlayer = turnIntroPlayer || turnDicePlayer || activePlayer || viewerPlayer;
   const viewerDiceValues = getPlayerDiceValues(viewerPlayer);
   const matchViewerDiceValues = getMatchViewerDiceValues(match);
-  const ownDiceValues = viewerDiceValues.length ? viewerDiceValues : matchViewerDiceValues;
-  const ownDiceCount = Math.max(getPlayerDiceCount(viewerPlayer, 0), ownDiceValues.length, 5);
+  const latestOwnDiceValues = viewerDiceValues.length ? viewerDiceValues : matchViewerDiceValues;
+  if (latestOwnDiceValues.length) lastOwnDiceRef.current = latestOwnDiceValues;
+  if (viewerEliminated) lastOwnDiceRef.current = [];
+  const ownDiceValues = latestOwnDiceValues.length ? latestOwnDiceValues : lastOwnDiceRef.current;
+  const ownDiceCount = Math.max(getPlayerDiceCount(viewerPlayer, 0), ownDiceValues.length, viewerEliminated ? 0 : 5);
   const backgroundContract = resolveGameDataBackground(data);
 
   return (
     <section
-      className={`screen gameplay-screen gameplay-screen--players-${panelItems.length} ${botsMatch ? 'gameplay-screen--bots' : 'gameplay-screen--normal'} ${activePlayer ? 'has-active-player' : ''} ${isTurnIntroPlaying ? 'is-turn-intro-playing' : ''}`}
+      ref={gameplayScreenRef}
+      className={`screen gameplay-screen gameplay-screen--players-${panelItems.length} ${botsMatch ? 'gameplay-screen--bots' : 'gameplay-screen--normal'} ${activePlayer ? 'has-active-player' : ''} ${myTurn ? 'is-my-turn' : 'is-opponent-turn'} ${isTurnIntroPlaying ? 'is-turn-intro-playing' : ''} ${isOpeningCoinFlipActive ? 'is-opening-coin-flip' : ''}`}
       style={{
         '--gameplay-background-image': toCssBackgroundImageValue(backgroundContract.backgroundUrl),
         '--gameplay-portrait-background-image': toCssBackgroundImageValue(backgroundContract.gameplayPortraitBackgroundUrl || backgroundContract.portraitUrl || backgroundContract.backgroundUrl),
@@ -1793,117 +1890,42 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       data-turn-intro-count={tablePlayerCount}
       aria-label={tx('Gameplay')}
     >
-      {panelItems.map((item) => (
-        <PlayerPanel
-          key={`${item.slot}-${playerId(item.player) || playerName(item.player, item.fallbackName)}`}
-          className={item.className}
-          skin={item.skin}
-          player={item.player}
-          fallbackName={item.fallbackName}
-          isTurnPlayer={samePlayer(item.player, activePlayer)}
-          match={match}
-        />
-      ))}
-
-
-      <button className="gameplay-leave" type="button" onClick={submitLeaveMatch} disabled={!currentMatchId || isBusy || isFinished}>
-        <img className="gameplay-leave__skin" src="/assets/liars-dice/gameplay/leave-button-red.png" alt="" draggable="false" />
-        <span className="gameplay-leave__title">{tx('LEAVE')}</span>
-        <span className="gameplay-leave__subtitle">{tx('Forfeit match')}</span>
-      </button>
-
-      {canUseChat ? (
-        <button
-          className={`gameplay-chat-button ${chatOpen ? 'is-open' : ''}`}
-          type="button"
-          onClick={() => setChatOpen((open) => !open)}
-          aria-expanded={chatOpen}
-          aria-controls="gameplay-chat-drawer"
-        >
-          <img
-            className="gameplay-chat-button__skin"
-            src="/assets/liars-dice/gameplay/chat-button-red.png"
-            alt=""
-            draggable="false"
+      <GameplayPlayersLayer
+        panelItems={panelItems}
+        renderPlayerPanel={(item) => (
+          <PlayerPanel
+            key={`${item.slot}-${playerId(item.player) || playerName(item.player, item.fallbackName)}`}
+            className={item.className}
+            skin={item.skin}
+            player={item.player}
+            fallbackName={item.fallbackName}
+            isTurnPlayer={samePlayer(item.player, activePlayer)}
+            match={match}
           />
-          <span className="gameplay-chat-button__title">{tx('CHAT')}</span>
-          <span className="gameplay-chat-button__count">{chatMessages.length}</span>
-        </button>
-      ) : null}
+        )}
+      />
 
-      {canUseVoice ? (
-        <button
-          className={`gameplay-voice-button ${voiceState.connected ? 'is-connected' : ''} ${voiceState.muted ? 'is-muted' : ''} ${voiceState.connected && !voiceState.muted ? 'is-live' : ''} ${voiceState.connecting ? 'is-connecting' : ''}`}
-          type="button"
-          onClick={toggleVoiceChat}
-          disabled={voiceState.connecting}
-          aria-pressed={voiceState.connected && !voiceState.muted}
-          title={voiceState.connected ? tx(voiceState.muted ? 'Mic muted' : 'Mic live') : tx('Join voice chat')}
-        >
-          <img
-            className="gameplay-voice-button__skin"
-            src="/assets/liars-dice/gameplay/chat-button-red.png"
-            alt=""
-            draggable="false"
-          />
-          <span className="gameplay-voice-button__icon" aria-hidden="true">🎙</span>
-          <span className="gameplay-voice-button__title">
-            {voiceState.connecting ? tx('CONNECTING') : tx(voiceState.connected ? (voiceState.muted ? 'MUTED' : 'LIVE') : 'VOICE')}
-          </span>
-        </button>
-      ) : null}
 
-      {canUseVoice && voiceState.error ? (
-        <div className="gameplay-voice-status gameplay-voice-status--error">{voiceState.error}</div>
-      ) : null}
-
-      <div className={`gameplay-music-control ${musicPanelOpen ? 'is-open' : ''}`}>
-        <button
-          className="gameplay-music-button"
-          type="button"
-          onClick={toggleMusicPanel}
-          aria-expanded={musicPanelOpen}
-          aria-controls="gameplay-music-volume-panel"
-          title={tx('Music volume')}
-        >
-          <img
-            className="gameplay-music-button__skin"
-            src="/assets/liars-dice/gameplay/chat-button-red.png"
-            alt=""
-            draggable="false"
-          />
-          <span className="gameplay-music-button__icon" aria-hidden="true">🔊</span>
-          <span className="gameplay-music-button__title">{tx('SOUND')}</span>
-        </button>
-
-        {musicPanelOpen ? (
-          <div id="gameplay-music-volume-panel" className="gameplay-music-panel" role="group" aria-label={tx('Music volume')}>
-            <div className="gameplay-music-panel__label">{tx('MUSIC')}</div>
-            <div className="gameplay-music-panel__row">
-              <input
-                className="gameplay-music-panel__slider"
-                type="range"
-                min="0"
-                max="100"
-                step="1"
-                value={musicVolume}
-                onChange={handleMusicVolumeChange}
-                aria-label={tx('Music volume')}
-              />
-              <button
-                className={`gameplay-music-panel__mute ${musicMuted ? 'is-muted' : ''}`}
-                type="button"
-                onClick={toggleMusicMuted}
-                aria-pressed={musicMuted}
-                aria-label={tx(musicMuted ? 'Unmute music' : 'Mute music')}
-              >
-                {tx(musicMuted ? 'UNMUTE' : 'MUTE')}
-              </button>
-            </div>
-            <div className="gameplay-music-panel__value">{musicMuted ? tx('Muted') : `${musicVolume}%`}</div>
-          </div>
-        ) : null}
-      </div>
+      <GameplayUtilityControls
+        tx={tx}
+        currentMatchId={currentMatchId}
+        isBusy={isBusy}
+        isFinished={isFinished}
+        onLeave={submitLeaveMatch}
+        canUseChat={canUseChat}
+        chatOpen={chatOpen}
+        chatCount={chatMessages.length}
+        onToggleChat={() => setChatOpen((open) => !open)}
+        canUseVoice={canUseVoice}
+        voiceState={voiceState}
+        onToggleVoice={toggleVoiceChat}
+        musicPanelOpen={musicPanelOpen}
+        onToggleMusicPanel={toggleMusicPanel}
+        musicVolume={musicVolume}
+        musicMuted={musicMuted}
+        onMusicVolumeChange={handleMusicVolumeChange}
+        onToggleMusicMuted={toggleMusicMuted}
+      />
 
       <div className="gameplay-current-bid">
         <img className="gameplay-current-bid__skin" src={`${asset}4.png`} alt="" draggable="false" />
@@ -2037,7 +2059,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
 
         <section className="gameplay-bid-selector__ownDice" aria-label={tx('Your dice')}>
           <div className="gameplay-bid-selector__sectionTitle gameplay-bid-selector__sectionTitle--ownDice">{tx('YOUR DICE')}</div>
-          <div className="gameplay-bid-selector__ownDiceRow">
+          <div ref={bidDiceTargetRef} className="gameplay-bid-selector__ownDiceRow">
             {ownDiceValues.length ? ownDiceValues.slice(0, 6).map((value, index) => (
               <Die key={`own-die-${index}-${value}`} value={value} className="gameplay-bid-selector__ownDie" />
             )) : Array.from({ length: Math.min(ownDiceCount, 6) }, (_, index) => (
@@ -2102,68 +2124,45 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
             disabled={zaiDisabled}
           >
             <img className="gameplay-action__skin" src={`${asset}B3.png`} alt="" draggable="false" />
-            <span className="gameplay-action__title">{tx('ZAI')}</span>
-            <span className="gameplay-action__subtitle">{tx('View 1 Die')}</span>
+            <span className="gameplay-action__title">{tx(chaiAvailable ? 'CHAI' : 'ZAI')}</span>
+            <span className="gameplay-action__subtitle">{directZaiSubtitle}</span>
           </button>
         </div>
       </div>
 
 
-      {canUseChat && chatOpen ? (
-        <aside id="gameplay-chat-drawer" className="gameplay-chat-drawer" aria-label={tx('Match Chat')}>
-          <div className="gameplay-chat-drawer__header">
-            <div>
-              <div className="gameplay-chat-drawer__title">{tx('MATCH CHAT')}</div>
-              <div className="gameplay-chat-drawer__subtitle">{tx('Normal mode only')} · {tx('Voice')}: {tx(voiceState.connected ? (voiceState.muted ? 'Muted' : 'Live') : 'Off')}</div>
-            </div>
-            <button className="gameplay-chat-drawer__close" type="button" onClick={() => setChatOpen(false)} aria-label={tx('Close chat')}>×</button>
-          </div>
+      <GameplayChatDrawer
+        visible={canUseChat && chatOpen}
+        tx={tx}
+        voiceState={voiceState}
+        chatListRef={chatListRef}
+        chatStatus={chatStatus}
+        messages={chatMessages}
+        renderMessage={(message) => (
+          <ChatMessage
+            key={message.id || message.messageId || `${message.createdAt}-${chatMessageText(message)}`}
+            message={message}
+            user={user}
+            viewerPlayer={viewerPlayer}
+          />
+        )}
+        onClose={() => setChatOpen(false)}
+        onSubmit={submitChatMessage}
+        draft={chatDraft}
+        onDraftChange={(event) => setChatDraft(event.target.value.slice(0, 200))}
+      />
 
-          <div className="gameplay-chat-drawer__messages" ref={chatListRef}>
-            {chatStatus.loading ? (
-              <div className="gameplay-chat-drawer__empty">{tx('Loading chat...')}</div>
-            ) : chatMessages.length ? (
-              chatMessages.map((message) => (
-                <ChatMessage key={message.id || message.messageId || `${message.createdAt}-${chatMessageText(message)}`} message={message} user={user} viewerPlayer={viewerPlayer} />
-              ))
-            ) : (
-              <div className="gameplay-chat-drawer__empty">{tx('No messages yet')}</div>
-            )}
-          </div>
+      <OpeningCoinFlipOverlay match={match} tx={tx} />
 
-          {chatStatus.error ? <div className="gameplay-chat-drawer__error">{chatStatus.error}</div> : null}
-
-          <form className="gameplay-chat-drawer__form" onSubmit={submitChatMessage}>
-            <input
-              className="gameplay-chat-drawer__input"
-              type="text"
-              value={chatDraft}
-              maxLength={200}
-              placeholder={tx('Type a message')}
-              onChange={(event) => setChatDraft(event.target.value.slice(0, 200))}
-              disabled={chatStatus.sending}
-            />
-            <button className="gameplay-chat-drawer__send" type="submit" disabled={!chatDraft.trim() || chatStatus.sending}>
-              {chatStatus.sending ? tx('SENDING...') : tx('SEND')}
-            </button>
-          </form>
-        </aside>
-      ) : null}
-
-      {!currentMatchId ? (
-        <div className="gameplay-status gameplay-status--warning">{tx('No active match. Start matchmaking first.')}</div>
-      ) : null}
-      {backendStatus?.error ? (
-        <div className="gameplay-status gameplay-status--error">{backendStatus.error}</div>
-      ) : null}
-      {isBusy ? (
-        <div className="gameplay-status gameplay-status--loading">{tx('Updating match...')}</div>
-      ) : null}
-      {viewerEliminated && !isFinished ? (
-        <div className="gameplay-status gameplay-status--warning">
-          {tx('You are eliminated. Stack is below minimum bid')} ({formatAmount(minRequiredCoinBet)})
-        </div>
-      ) : null}
+      <GameplayStatusLayer
+        tx={tx}
+        currentMatchId={currentMatchId}
+        backendError={backendStatus?.error}
+        isBusy={isBusy}
+        viewerEliminated={viewerEliminated}
+        isFinished={isFinished}
+        minimumBidLabel={formatAmount(minRequiredCoinBet)}
+      />
     </section>
   );
 }

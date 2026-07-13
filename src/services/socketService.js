@@ -7,6 +7,8 @@ const DEFAULT_ACK_TIMEOUT_MS = Math.max(8000, Number(API_TIMEOUT_MS || 15000));
 let gameSocket = null;
 let matchmakingCleanup = null;
 let gameplayCleanup = null;
+let activeMatchId = null;
+let matchmakingGameStarted = false;
 
 function normalizeSocketError(error) {
   if (!error) return new Error('Socket error');
@@ -56,6 +58,9 @@ function isGameStartedPayload(payload = {}) {
 
 function routeMatchmakingResponse(response = {}, handlers = {}) {
   if (isGameStartedPayload(response)) {
+    matchmakingGameStarted = true;
+    activeMatchId = response.matchId || response.match?.id || response.match?.matchId || activeMatchId;
+    clearMatchmakingListeners();
     handlers.onGameStarted?.(response);
     return;
   }
@@ -198,9 +203,11 @@ export function startSocketMatchmaking(payload = {}, handlers = {}) {
 
   let hasJoinedQueue = false;
   let isRejoiningQueue = false;
+  matchmakingGameStarted = false;
+  activeMatchId = null;
 
   const rejoinQueueAfterReconnect = () => {
-    if (!hasJoinedQueue || isRejoiningQueue) return;
+    if (!hasJoinedQueue || isRejoiningQueue || matchmakingGameStarted || activeMatchId) return;
 
     isRejoiningQueue = true;
     socket.timeout(DEFAULT_ACK_TIMEOUT_MS).emit('client:join_queue', payload, (error, response) => {
@@ -245,8 +252,33 @@ export function cancelSocketMatchmaking(payload = {}) {
 }
 
 export function joinSocketMatch(payload = {}, handlers = {}) {
+  const socket = getSocket();
+  activeMatchId = payload.matchId || activeMatchId;
+  matchmakingGameStarted = Boolean(activeMatchId);
   bindGameplayListeners(handlers);
-  return emitWithAck('client:join_match', payload)
+
+  let isRejoiningMatch = false;
+  const rejoinMatchAfterReconnect = () => {
+    if (!activeMatchId || isRejoiningMatch) return;
+    isRejoiningMatch = true;
+    socket.timeout(DEFAULT_ACK_TIMEOUT_MS).emit('client:join_match', { matchId: activeMatchId }, (error, response) => {
+      isRejoiningMatch = false;
+      if (error || response?.success === false) {
+        handlers.onError?.(normalizeSocketError(error || response));
+        return;
+      }
+      handlers.onGameState?.(response);
+    });
+  };
+
+  socket.on('connect', rejoinMatchAfterReconnect);
+  const previousCleanup = gameplayCleanup;
+  gameplayCleanup = () => {
+    socket.off('connect', rejoinMatchAfterReconnect);
+    previousCleanup?.();
+  };
+
+  return emitWithAck('client:join_match', { ...payload, matchId: activeMatchId })
     .catch((error) => {
       clearGameplayListeners();
       throw error;
@@ -266,8 +298,15 @@ export function loadSocketChatHistory(payload = {}) {
 }
 
 export function leaveSocketMatch(payload = {}) {
-  return emitWithAck('client:leave_match', payload);
+  const matchId = payload.matchId || activeMatchId;
+  return emitWithAck('client:leave_match', { ...payload, matchId })
+    .finally(() => {
+      activeMatchId = null;
+      matchmakingGameStarted = false;
+      clearGameplayListeners();
+    });
 }
+
 
 export function finishSocketMatch(payload = {}) {
   return emitWithAck('client:finish_match', payload);
@@ -281,6 +320,8 @@ export function disconnectGameSocket() {
   clearMatchmakingListeners();
   clearGameplayListeners();
   if (gameSocket) {
+    activeMatchId = null;
+    matchmakingGameStarted = false;
     gameSocket.disconnect();
     gameSocket = null;
   }

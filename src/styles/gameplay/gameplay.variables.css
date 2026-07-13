@@ -1,0 +1,14 @@
+/* =========================================================
+   GAMEPLAY CONTROL VARIABLES
+   Cleanup Patch 1
+
+   Put shared values here. Orientation-specific values belong in
+   gameplay.controls.css. Existing legacy variables remain supported.
+   ========================================================= */
+
+.app-shell--gameplay {
+  --gameplay-ui-scale: 1;
+  --gameplay-ui-offset-x: 0px;
+  --gameplay-ui-offset-y: 0px;
+  --gameplay-grey-filter: grayscale(1) saturate(0.08) brightness(0.72);
+}

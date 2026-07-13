@@ -1,0 +1,276 @@
+.opening-coin-flip {
+  position: absolute;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.opening-coin-flip__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 5, 8, 0.76);
+  backdrop-filter: grayscale(1) brightness(0.48) blur(2px);
+  -webkit-backdrop-filter: grayscale(1) brightness(0.48) blur(2px);
+}
+
+.opening-coin-flip__card {
+  position: relative;
+  width: min(720px, 82vw);
+  min-height: 350px;
+  padding: 34px 42px 30px;
+  overflow: hidden;
+  border: 3px solid #f5bd35;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 190, 45, 0.22), transparent 42%),
+    linear-gradient(180deg, rgba(73, 25, 8, 0.98), rgba(20, 7, 3, 0.98));
+  box-shadow:
+    0 0 0 5px rgba(106, 34, 5, 0.88),
+    0 26px 70px rgba(0, 0, 0, 0.72),
+    inset 0 0 40px rgba(255, 150, 15, 0.15);
+  color: #fff7df;
+  text-align: center;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.85);
+}
+
+.opening-coin-flip__eyebrow {
+  margin-bottom: 8px;
+  color: #ffd76b;
+  font-size: clamp(20px, 2.2vw, 32px);
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+}
+
+.opening-coin-flip__stage {
+  margin-bottom: 20px;
+  color: #ffffff;
+  font-size: clamp(16px, 1.5vw, 22px);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  opacity: 0.88;
+}
+
+.opening-coin-flip__versus {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) 150px minmax(140px, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.opening-coin-flip__player {
+  min-width: 0;
+  padding: 14px 12px;
+  border: 2px solid rgba(255, 209, 95, 0.28);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.26);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.opening-coin-flip__player strong {
+  display: block;
+  overflow: hidden;
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opening-coin-flip__player.is-winner {
+  transform: scale(1.06);
+  border-color: #ffe27a;
+  background: rgba(175, 104, 5, 0.45);
+  box-shadow: 0 0 28px rgba(255, 196, 54, 0.34);
+}
+
+.opening-coin-flip__side {
+  display: block;
+  margin-bottom: 5px;
+  color: #ffc743;
+  font-size: 13px;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+}
+
+.opening-coin-flip__coin {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+}
+
+.opening-coin-flip__coin.is-flipping {
+  animation: openingCoinFlipSpin 760ms linear infinite;
+}
+
+.opening-coin-flip__coin.is-revealed.is-heads {
+  transform: rotateY(0deg);
+}
+
+.opening-coin-flip__coin.is-revealed.is-tails {
+  transform: rotateY(180deg);
+}
+
+.opening-coin-flip__coinFace {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 7px double #7b3800;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  background:
+    radial-gradient(circle at 33% 25%, #fff1a2 0 8%, #ffc43b 28%, #c86c06 72%, #713000 100%);
+  box-shadow:
+    inset 0 0 0 5px #f8d661,
+    inset 0 0 24px rgba(88, 31, 0, 0.72),
+    0 10px 22px rgba(0, 0, 0, 0.48);
+  color: #692700;
+  font-family: Georgia, serif;
+  font-size: 58px;
+  font-weight: 1000;
+  text-shadow: 0 2px 0 rgba(255, 238, 148, 0.62);
+}
+
+.opening-coin-flip__coinFace--tails {
+  transform: rotateY(180deg);
+}
+
+.opening-coin-flip__resultText {
+  min-height: 30px;
+  margin-top: 22px;
+  color: #ffe686;
+  font-size: clamp(17px, 1.7vw, 24px);
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+}
+
+.opening-coin-flip__progress {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.opening-coin-flip__progress span {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 216, 112, 0.56);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.opening-coin-flip__progress span.is-current {
+  transform: scale(1.25);
+  background: #fff0a5;
+  box-shadow: 0 0 14px #ffba24;
+}
+
+.opening-coin-flip__progress span.is-complete {
+  background: #e98d0c;
+}
+
+.opening-coin-flip__winner {
+  display: grid;
+  justify-items: center;
+  padding-top: 24px;
+}
+
+.opening-coin-flip__winnerCoin {
+  display: grid;
+  width: 120px;
+  height: 120px;
+  place-items: center;
+  border: 7px double #7b3800;
+  border-radius: 50%;
+  background: radial-gradient(circle at 33% 25%, #fff4ad, #ffc43b 32%, #a64d00 100%);
+  box-shadow: 0 0 38px rgba(255, 197, 55, 0.58);
+  color: #713000;
+  font-size: 58px;
+  animation: openingCoinWinnerPop 420ms cubic-bezier(.2, .9, .25, 1.35) both;
+}
+
+.opening-coin-flip__winnerName {
+  max-width: 100%;
+  margin-top: 18px;
+  overflow: hidden;
+  color: #fff2a9;
+  font-size: clamp(28px, 4vw, 50px);
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.opening-coin-flip__winnerText {
+  margin-top: 3px;
+  color: #fff;
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+}
+
+@keyframes openingCoinFlipSpin {
+  from { transform: rotateX(18deg) rotateY(0deg) translateY(0); }
+  50% { transform: rotateX(198deg) rotateY(540deg) translateY(-28px); }
+  to { transform: rotateX(378deg) rotateY(1080deg) translateY(0); }
+}
+
+@keyframes openingCoinWinnerPop {
+  from { transform: scale(0.35) rotate(-120deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__card {
+  width: min(88vw, 560px);
+  min-height: 420px;
+  padding: 30px 24px 26px;
+  border-radius: 26px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__versus {
+  grid-template-columns: minmax(90px, 1fr) 104px minmax(90px, 1fr);
+  gap: 12px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__coin {
+  width: 96px;
+  height: 96px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__coinFace {
+  border-width: 5px;
+  font-size: 42px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__player {
+  padding: 12px 7px;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .opening-coin-flip__side {
+  font-size: 11px;
+}
+
+@media (max-width: 620px) {
+  .opening-coin-flip__card {
+    width: 91vw;
+    padding-inline: 18px;
+  }
+
+  .opening-coin-flip__versus {
+    grid-template-columns: minmax(78px, 1fr) 88px minmax(78px, 1fr);
+    gap: 8px;
+  }
+
+  .opening-coin-flip__coin {
+    width: 82px;
+    height: 82px;
+  }
+
+  .opening-coin-flip__coinFace {
+    border-width: 4px;
+    font-size: 36px;
+  }
+}
