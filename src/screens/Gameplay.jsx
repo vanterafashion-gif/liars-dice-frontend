@@ -2113,7 +2113,20 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
             {isDiceFacePickerOpen ? (
               <div className="gameplay-bid-selector__faceDialRing" role="listbox" aria-label={tx('Dice face')}>
                 {diceFacePickerOptions.map((value, index) => {
-                  const disabled = Boolean(currentBid && selectedQuantity === toNumber(currentBid.quantity, 0) && value <= toNumber(currentBid.face, 0));
+                  const normalBidFaceAllowed = isValidBid(
+                    currentBid,
+                    selectedQuantity,
+                    value,
+                    { match, playerCount: tablePlayerCount },
+                  );
+                  const sameCurrentBidFace = Boolean(
+                    currentBid
+                    && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0)
+                    && toNumber(value, 0) === toNumber(currentBid.face, 0)
+                  );
+                  const currentBidActionFaceAllowed = sameCurrentBidFace
+                    && (chaiAvailable ? canSubmitBid : canSubmitZai);
+                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed;
                   return (
                     <button
                       key={`face-${value}`}
