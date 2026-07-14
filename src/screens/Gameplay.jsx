@@ -1697,12 +1697,18 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       return;
     }
 
+    // CHAI is a selectable response to the active ZAI bid. Keep the same
+    // quantity and submit whichever face (1-6) the player selected.
     if (!canSubmitBid) return;
-    const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
+    const chaiQuantity = toNumber(selectedQuantity, 0);
+    const chaiFace = toNumber(selectedFace, 0);
+    const currentQuantity = toNumber(currentBid?.quantity, 0);
+    if (chaiQuantity !== currentQuantity || chaiFace < 1 || chaiFace > 6) return;
+
     const jokerPayload = buildBidJokerPayload({
       currentBid,
-      selectedQuantity: directZaiBid.quantity,
-      selectedFace: directZaiBid.face,
+      selectedQuantity: chaiQuantity,
+      selectedFace: chaiFace,
       zaiEnabled: false,
       chaiEnabled: true,
       match,
@@ -1712,8 +1718,8 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       matchId: currentMatchId,
       type: 'bid',
       bid: {
-        quantity: directZaiBid.quantity,
-        face: directZaiBid.face,
+        quantity: chaiQuantity,
+        face: chaiFace,
         coinBet: selectedCoinBet,
         coinAmount: selectedCoinBet,
         betAmount: selectedCoinBet,
@@ -1801,14 +1807,25 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const quantityMax = quantityValues[quantityValues.length - 1] || Math.max(1, toNumber(totalDice, 1));
   const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
   const currentBidJokerInfo = getMatchJokerDisplay(match, currentBid, tx);
-  const chaiAvailable = Boolean(currentBid && ['zai', 'zai_locked'].includes(currentBidJokerInfo?.mode) && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0));
-  const zaiAvailable = chaiAvailable || isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
+  const chaiModeActive = Boolean(currentBid && ['zai', 'zai_locked'].includes(currentBidJokerInfo?.mode));
+  const chaiAvailable = Boolean(
+    chaiModeActive
+    && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0)
+    && toNumber(selectedFace, 0) >= 1
+    && toNumber(selectedFace, 0) <= 6
+  );
+  const zaiAvailable = chaiModeActive
+    ? chaiAvailable
+    : isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
+  const jokerActionBid = chaiModeActive
+    ? { quantity: toNumber(selectedQuantity, 0), face: toNumber(selectedFace, 0) }
+    : directZaiBid;
   const showCurrentBidJokerBadge = Boolean(currentBid && currentBidJokerInfo?.mode && currentBidJokerInfo.mode !== 'normal');
   const showDangerTurnTimer = Boolean(match?.status === 'active' && Number(liveTurnSeconds) > 0 && Number(liveTurnSeconds) <= 10);
   const selectedBidJokerInfo = getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, chaiEnabled, match, tx });
   const directZaiSubtitle = zaiAvailable
-    ? `${directZaiBid.quantity} x ${directZaiBid.face} · ${tx(chaiAvailable ? 'Joker ON' : 'Joker OFF')}`
-    : tx(chaiAvailable ? 'Joker ON' : 'Joker OFF');
+    ? `${jokerActionBid.quantity} x ${jokerActionBid.face} · ${tx(chaiModeActive ? 'Joker ON' : 'Joker OFF')}`
+    : tx(chaiModeActive ? 'Joker ON' : 'Joker OFF');
   const chaiHint = '';
   const bidSubmitSubtitle = openingBidError || (bidIsValid ? (coinBetIsValid ? selectedBidJokerInfo.detail : tx('Coin bet out of range')) : tx('Bid must be higher'));
   useEffect(() => {
@@ -1883,8 +1900,8 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const pekDisabled = !canCallPek;
   const rerollDisabled = !canReroll;
   const bidDisabled = !canSubmitBid || !bidIsValid || !coinBetIsValid;
-  const zaiDisabled = chaiAvailable
-    ? (!canSubmitBid || !zaiAvailable || !coinBetIsValid)
+  const zaiDisabled = chaiModeActive
+    ? (!canSubmitBid || !chaiAvailable || !coinBetIsValid)
     : (!canSubmitZai || !zaiAvailable);
   const rerollButtonSubtitle = rerollSubtitle(rerollState, tx);
   const turnName = playerName(activePlayer, myTurn ? 'You' : 'Player');
@@ -2124,9 +2141,17 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
                     && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0)
                     && toNumber(value, 0) === toNumber(currentBid.face, 0)
                   );
-                  const currentBidActionFaceAllowed = sameCurrentBidFace
-                    && (chaiAvailable ? canSubmitBid : canSubmitZai);
-                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed;
+                  const chaiFaceAllowed = Boolean(
+                    chaiModeActive
+                    && toNumber(selectedQuantity, 0) === toNumber(currentBid?.quantity, 0)
+                    && value >= 1
+                    && value <= 6
+                    && canSubmitBid
+                  );
+                  const currentBidActionFaceAllowed = !chaiModeActive
+                    && sameCurrentBidFace
+                    && canSubmitZai;
+                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed && !chaiFaceAllowed;
                   return (
                     <button
                       key={`face-${value}`}
@@ -2163,7 +2188,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
             disabled={zaiDisabled}
           >
             <img className="gameplay-action__skin" src={`${asset}B3.png`} alt="" draggable="false" />
-            <span className="gameplay-action__title">{tx(chaiAvailable ? 'CHAI' : 'ZAI')}</span>
+            <span className="gameplay-action__title">{tx(chaiModeActive ? 'CHAI' : 'ZAI')}</span>
             <span className="gameplay-action__subtitle">{directZaiSubtitle}</span>
           </button>
         </div>
