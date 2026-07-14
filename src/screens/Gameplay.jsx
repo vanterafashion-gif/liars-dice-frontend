@@ -1249,11 +1249,15 @@ function isValidBid(currentBid, quantity, face, options = {}) {
   return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && bidFaceRank(normalizedFace) > bidFaceRank(currentFace));
 }
 
-function getDirectZaiBid({ selectedQuantity, selectedFace }) {
+function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) {
+  const controls = getBidControls(match);
+  const serverZaiBid = controls?.zaiBid || controls?.zaiAction || null;
+  const sourceBid = serverZaiBid || currentBid || null;
+
   return {
-    quantity: toNumber(selectedQuantity, 0),
-    face: toNumber(selectedFace, 0),
-    source: 'selected_bid',
+    quantity: toNumber(sourceBid?.quantity, toNumber(selectedQuantity, 0)),
+    face: toNumber(sourceBid?.face, toNumber(selectedFace, 0)),
+    source: serverZaiBid ? 'server_bid_controls' : currentBid ? 'current_bid' : 'selected_bid',
   };
 }
 
@@ -1359,6 +1363,16 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const disabledActions = normalizedActionList(match?.disabledActions);
   const hasServerActionRules = availableActions.length > 0 || disabledActions.length > 0;
   const canSubmitBid = canAct && (!hasServerActionRules || availableActions.includes('bid')) && !disabledActions.includes('bid');
+  const zaiActionAliases = ['zai', 'call_zai', 'declare_zai'];
+  const serverAdvertisesZai = zaiActionAliases.some((action) => availableActions.includes(action))
+    || truthyFlag(match?.bidControls?.zaiAvailable)
+    || truthyFlag(match?.bidControls?.canDeclareZai)
+    || truthyFlag(match?.bidControls?.zaiSameBidAllowed)
+    || truthyFlag(match?.bidRules?.zaiAvailable)
+    || truthyFlag(match?.bidRules?.canDeclareZai)
+    || truthyFlag(match?.bidRules?.zaiSameBidAllowed);
+  const serverDisablesZai = zaiActionAliases.some((action) => disabledActions.includes(action));
+  const canSubmitZai = canAct && (!hasServerActionRules || serverAdvertisesZai) && !serverDisablesZai;
   const canCallLiar = canAct && Boolean(currentBid) && (!hasServerActionRules || availableActions.includes('call_liar') || availableActions.includes('call_lira')) && !disabledActions.includes('call_liar') && !disabledActions.includes('call_lira');
   const pekSettings = getPekSettings(match);
   const bidderPlayer = getBidderPlayer(match);
@@ -1669,18 +1683,28 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   };
 
   const submitZaiBid = () => {
-    if (!canSubmitBid || isTurnIntroPlaying) return;
-    const directZaiBid = getDirectZaiBid({ currentBid, selectedQuantity, selectedFace });
+    if (isTurnIntroPlaying) return;
+
     const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
     const shouldChai = ['zai', 'zai_locked'].includes(currentMode);
-    if (!shouldChai && !isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount })) return;
 
+    if (!shouldChai) {
+      if (!canSubmitZai || !currentBid) return;
+      backendActions?.submitGameAction?.({
+        matchId: currentMatchId,
+        type: 'zai',
+      });
+      return;
+    }
+
+    if (!canSubmitBid) return;
+    const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
     const jokerPayload = buildBidJokerPayload({
       currentBid,
       selectedQuantity: directZaiBid.quantity,
       selectedFace: directZaiBid.face,
-      zaiEnabled: !shouldChai,
-      chaiEnabled: shouldChai,
+      zaiEnabled: false,
+      chaiEnabled: true,
       match,
     });
 
@@ -1775,7 +1799,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const coinBetIsValid = selectedCoinBet >= minRequiredCoinBet && selectedCoinBet <= maxAllowedCoinBet;
   const quantityMin = currentBid ? 1 : getOpeningMinimumQuantity(match, tablePlayerCount, selectedFace);
   const quantityMax = quantityValues[quantityValues.length - 1] || Math.max(1, toNumber(totalDice, 1));
-  const directZaiBid = getDirectZaiBid({ currentBid, selectedQuantity, selectedFace });
+  const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
   const currentBidJokerInfo = getMatchJokerDisplay(match, currentBid, tx);
   const chaiAvailable = Boolean(currentBid && ['zai', 'zai_locked'].includes(currentBidJokerInfo?.mode) && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0));
   const zaiAvailable = chaiAvailable || isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
@@ -1859,7 +1883,9 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const pekDisabled = !canCallPek;
   const rerollDisabled = !canReroll;
   const bidDisabled = !canSubmitBid || !bidIsValid || !coinBetIsValid;
-  const zaiDisabled = !canSubmitBid || !zaiAvailable || !coinBetIsValid;
+  const zaiDisabled = chaiAvailable
+    ? (!canSubmitBid || !zaiAvailable || !coinBetIsValid)
+    : (!canSubmitZai || !zaiAvailable);
   const rerollButtonSubtitle = rerollSubtitle(rerollState, tx);
   const turnName = playerName(activePlayer, myTurn ? 'You' : 'Player');
   const currentCoinBet = getMatchCoinBet(match);
