@@ -321,14 +321,6 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   color: #fff8e3;
 }
 
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--you {
-  left: 152px !important;
-  top: 746px !important;
-  width: 416px !important;
-  height: 128px !important;
-  color: #180f05;
-  z-index: 58 !important;
-}
 
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--fourth .gameplay-player__avatar,
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--sophie .gameplay-player__avatar,
@@ -417,10 +409,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   left: 144px !important;
 }
 
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-screen--players-2 .gameplay-player--you {
-  left: 152px !important;
-  top: 744px !important;
-}
+
 
 /* Middle table assets */
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-cups {
@@ -1380,13 +1369,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   top: 300px !important;
 }
 
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--you {
-  left: 8px !important;
-  right: auto !important;
-  top: 746px !important;
-  color: #170b03 !important;
-  z-index: 72 !important;
-}
+
 
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--fourth {
   left: auto !important;
@@ -1405,12 +1388,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   height: 286px !important;
 }
 
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-screen--players-2 .gameplay-player--you {
-  left: -2px !important;
-  top: 746px !important;
-  width: 150px !important;
-  height: 286px !important;
-}
+
 
 /* Current bid uses its existing asset panel. No CSS-drawn red button/header. */
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid {
@@ -1773,22 +1751,6 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   --dice-y: 50px;
 }
 
-/* Bottom-left local player panel. */
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-player--you {
-   --panel-x: 0px;
-  --panel-y: 0px;
-  --skin-x: -100px;
-  --skin-y: -12px;
-  --skin-rotate: 90deg;
-  --avatar-x: 30px;
-  --avatar-y: -20px;
-  --name-x: -140px;
-  --name-y: 40px;
-  --count-x: -140px;
-  --count-y: 45px;
-  --dice-x: -140px;
-  --dice-y: 55px;
-}
 
 
 /* Bottom-right player panel. */
@@ -1838,8 +1800,8 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
   --pg-timer-y: 0px;
   --pg-timer-scale: 1;
 
-  --pg-round-left: 140px;
-  --pg-round-top: 205px;
+  --pg-round-left: 90px;
+  --pg-round-top: 220px;
   --pg-round-width: 106px;
   --pg-round-height: 68px;
   --pg-round-x: 0px;
@@ -1889,7 +1851,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
 
   /* Player panels */
   --pg-sophie-left: 17px;
-  --pg-sophie-top: 408px;
+  --pg-sophie-top: 558px;
   --pg-sophie-width: 260px;
   --pg-sophie-height: 102px;
   --pg-sophie-x: -20px;
@@ -1906,7 +1868,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
   --pg-sophie-avatar-scale: 0.8;
 
   --pg-you-left: 0px;
-  --pg-you-top: 585px;
+  --pg-you-top: 700px;
   --pg-you-width: 260px;
   --pg-you-height: 102px;
   --pg-you-x: 0px;
@@ -1922,7 +1884,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
   --pg-you-avatar-scale: 0.9;
 
   --pg-dragon-left: 438px;
-  --pg-dragon-top: 408px;
+  --pg-dragon-top: 558px;
   --pg-dragon-width: 260px;
   --pg-dragon-height: 102px;
   --pg-dragon-x: 40px;
@@ -1938,7 +1900,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
   --pg-dragon-avatar-scale: 1;
 
   --pg-fourth-left: 438px;
-  --pg-fourth-top: 585px;
+  --pg-fourth-top: 700px;
   --pg-fourth-width: 260px;
   --pg-fourth-height: 102px;
   --pg-fourth-x: 40px;

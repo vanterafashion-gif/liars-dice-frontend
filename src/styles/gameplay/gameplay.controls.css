@@ -30,10 +30,10 @@ html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay {
 
 html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .gameplay-screen {
   /* Current Bid */
-  --pg-current-bid-left: 250px;
-  --pg-current-bid-top: 200px;
+  --pg-current-bid-left: 200px;
+  --pg-current-bid-top: 220px;
   --pg-current-bid-width: 306.25px;
-  --pg-current-bid-height: 225px;
+  --pg-current-bid-height: 215px;
 
   /* Cups */
   --pg-cups-left: 160px;
