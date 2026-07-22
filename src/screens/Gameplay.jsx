@@ -348,7 +348,9 @@ function getOpeningBidRules(match = {}, playerCount = 2) {
       rawRules.minOnesQuantity
         ?? rawRules.minimumOnesQuantity
         ?? rawRules.minOnesBid
+        ?? rawRules.onesQuantity
         ?? rawRules.ones
+        ?? rawRules.byFace?.[1]
         ?? controls.minOpeningOnesQuantity,
       fallback.ones,
     ))),
@@ -356,7 +358,9 @@ function getOpeningBidRules(match = {}, playerCount = 2) {
       rawRules.minOpenQuantity
         ?? rawRules.minimumOpenQuantity
         ?? rawRules.minOpenBid
+        ?? rawRules.openQuantity
         ?? rawRules.open
+        ?? rawRules.byFace?.[2]
         ?? controls.minOpeningOpenQuantity,
       fallback.open,
     ))),
@@ -1285,7 +1289,22 @@ function isValidBid(currentBid, quantity, face, options = {}) {
 
 function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) {
   const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
-  const totalDice = Math.max(1, toNumber(match?.totalDiceInPlay, 1));
+  const inferredTotalDice = (match?.players || []).reduce(
+    (sum, player) => sum + getPlayerDiceCount(player, 0),
+    0,
+  );
+  const totalDice = Math.max(1, toNumber(match?.totalDiceInPlay, inferredTotalDice || 1));
+
+  if (!currentBid) {
+    const face = Math.max(1, Math.min(6, toNumber(selectedFace, 1)));
+    const openingRules = getOpeningBidRules(match, match?.players?.length || 2);
+    const minimumQuantity = getOpeningMinimumQuantity(match, openingRules.playerCount, face);
+    return {
+      quantity: Math.min(totalDice, Math.max(minimumQuantity, toNumber(selectedQuantity, minimumQuantity))),
+      face,
+      source: 'opening_zai',
+    };
+  }
 
   if (currentBid && currentMode === 'zai') {
     const minimumFeiQuantity = toNumber(currentBid.quantity, 0) + getFeiQuantityStep(match);
@@ -1300,7 +1319,7 @@ function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) 
     // ZAI may repeat the exact claim or attach to any valid higher selected bid.
     quantity: toNumber(selectedQuantity, toNumber(currentBid?.quantity, 1)),
     face: Math.max(1, Math.min(6, toNumber(selectedFace, toNumber(currentBid?.face, 1)))),
-    source: currentBid ? 'selected_same_or_higher_zai' : 'zai_requires_previous_bid',
+    source: 'selected_same_or_higher_zai',
   };
 }
 
@@ -1309,8 +1328,20 @@ function isValidZaiBid(currentBid, quantity, face, options = {}) {
   const normalizedFace = toNumber(face, 0);
   if (normalizedFace < 1 || normalizedFace > 6) return false;
 
-  if (!currentBid) return false;
   if (faceOneTriggeredZaiThisRound(options.match || {})) return false;
+
+  if (!currentBid) {
+    // Opening ZAI is legal only on faces 2-6 and must satisfy the
+    // player-count-specific opening minimum (3 x 2-6 for two players).
+    if (normalizedFace === 1) return false;
+    const minOpeningQuantity = getOpeningMinimumQuantity(
+      options.match || {},
+      options.playerCount || 2,
+      normalizedFace,
+    );
+    return normalizedQuantity >= minOpeningQuantity;
+  }
+
   if (isBidZai(currentBid)) return false;
 
   const currentQuantity = toNumber(currentBid.quantity, 0);
@@ -1412,9 +1443,11 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     || truthyFlag(match?.bidControls?.zaiAvailable)
     || truthyFlag(match?.bidControls?.canDeclareZai)
     || truthyFlag(match?.bidControls?.zaiSameBidAllowed)
+    || truthyFlag(match?.bidControls?.zaiOpeningAllowed)
     || truthyFlag(match?.bidRules?.zaiAvailable)
     || truthyFlag(match?.bidRules?.canDeclareZai)
-    || truthyFlag(match?.bidRules?.zaiSameBidAllowed);
+    || truthyFlag(match?.bidRules?.zaiSameBidAllowed)
+    || truthyFlag(match?.bidRules?.zaiOpeningAllowed);
   const serverDisablesZai = zaiActionAliases.some((action) => disabledActions.includes(action));
   const canSubmitZai = canAct && (!hasServerActionRules || serverAdvertisesZai) && !serverDisablesZai;
   const feiActionAliases = ['fei', 'call_fei', 'declare_fei'];
@@ -2191,7 +2224,11 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
                     && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0)
                     && (feiAvailable ? canSubmitFei : canSubmitZai)
                   );
-                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed;
+                  const openingFaceAllowed = Boolean(
+                    !currentBid
+                    && getOpeningMinimumQuantity(match, tablePlayerCount, value) <= quantityMax
+                  );
+                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed && !openingFaceAllowed;
                   return (
                     <button
                       key={`face-${value}`}
@@ -2199,6 +2236,10 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
                       className={`gameplay-bid-selector__faceBtn gameplay-bid-selector__faceBtn--slot-${index}`}
                       onClick={() => {
                         setSelectedFace(value);
+                        if (!currentBid) {
+                          const openingMinimum = getOpeningMinimumQuantity(match, tablePlayerCount, value);
+                          setSelectedQuantity((quantity) => Math.max(toNumber(quantity, openingMinimum), openingMinimum));
+                        }
                         setDiceFacePickerOpen(false);
                       }}
                       role="option"
