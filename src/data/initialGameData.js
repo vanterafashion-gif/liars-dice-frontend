@@ -11,7 +11,7 @@ export const defaultCreateRoomSettings = {
   roomMode: 'normal',
   isPrivate: true,
   roomCode: '',
-  rulesCopy: 'Rules: 5 dice each • 1s are wild until 1s are called • bid or call liar only',
+  rulesCopy: 'Rules: 5 dice each • 1s start Wild • Face 1 or ZAI turns Wild OFF • FEI (+2, same face) turns Wild ON',
 };
 
 export const initialGameData = {

@@ -442,11 +442,27 @@ function getMatchJokerDisplay(match = {}, bid = null, tx = (value) => value) {
   return { mode: 'normal', label: tx('Joker ON'), detail: tx('1s are wild'), className: 'is-normal', jokerWildActive: true };
 }
 
+function faceOneTriggeredZaiThisRound(match = {}) {
+  return Boolean(
+    truthyFlag(match?.faceOneTriggeredZaiThisRound)
+    || truthyFlag(match?.bidControls?.faceOneTriggeredZaiThisRound)
+    || truthyFlag(match?.bidControls?.zaiBlockedAfterFaceOne)
+    || truthyFlag(match?.bidRules?.faceOneTriggeredZaiThisRound)
+    || truthyFlag(match?.bidRules?.zaiBlockedAfterFaceOne)
+  );
+}
+
 function buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, feiEnabled = false, match }) {
   const currentJokerInfo = getMatchJokerDisplay(match, currentBid);
   const face = toNumber(selectedFace, 1);
   const fei = Boolean(feiEnabled && currentBid && currentJokerInfo.mode === 'zai');
-  const explicitZai = Boolean(!fei && zaiEnabled);
+  const explicitZai = Boolean(
+    !fei
+    && zaiEnabled
+    && currentBid
+    && currentJokerInfo.mode !== 'zai'
+    && !faceOneTriggeredZaiThisRound(match)
+  );
   const faceOneTriggersZai = Boolean(!fei && face === 1);
   const zaiInherited = Boolean(!fei && !explicitZai && !faceOneTriggersZai && currentBid && currentJokerInfo.mode === 'zai');
   const zai = explicitZai || faceOneTriggersZai;
@@ -1284,7 +1300,7 @@ function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) 
     // ZAI may repeat the exact claim or attach to any valid higher selected bid.
     quantity: toNumber(selectedQuantity, toNumber(currentBid?.quantity, 1)),
     face: Math.max(1, Math.min(6, toNumber(selectedFace, toNumber(currentBid?.face, 1)))),
-    source: currentBid ? 'selected_same_or_higher_zai' : 'opening_zai',
+    source: currentBid ? 'selected_same_or_higher_zai' : 'zai_requires_previous_bid',
   };
 }
 
@@ -1293,9 +1309,8 @@ function isValidZaiBid(currentBid, quantity, face, options = {}) {
   const normalizedFace = toNumber(face, 0);
   if (normalizedFace < 1 || normalizedFace > 6) return false;
 
-  if (!currentBid) {
-    return isValidBid(null, normalizedQuantity, normalizedFace, options);
-  }
+  if (!currentBid) return false;
+  if (faceOneTriggeredZaiThisRound(options.match || {})) return false;
   if (isBidZai(currentBid)) return false;
 
   const currentQuantity = toNumber(currentBid.quantity, 0);
@@ -1724,6 +1739,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
 
     if (!shouldFei) {
       if (!canSubmitZai) return;
+      if (!isValidZaiBid(currentBid, specialBid.quantity, specialBid.face, { match, playerCount: tablePlayerCount })) return;
       backendActions?.submitGameAction?.({
         matchId: currentMatchId,
         type: 'zai',
