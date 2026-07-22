@@ -28,23 +28,15 @@ function clone(value) {
 
 function normalizeJokerMode(source = {}) {
   const rawMode = String(source.jokerMode || source.wildMode || source.onesMode || '').toLowerCase();
-  if (source.zai || source.isZai || rawMode === 'zai' || rawMode === 'joker_off') return 'zai';
-  if (source.chai || source.isChai || rawMode === 'chai' || rawMode === 'joker_on') return 'chai';
-  if (
-    source.jokerLockedThisRound
-    || source.onesWereCalledThisRound
-    || source.onesLocked
-    || rawMode === 'ones_locked'
-    || rawMode === 'locked'
-    || Number(source.face) === 1
-  ) return 'ones_locked';
+  if (source.fei || source.isFei || source.chai || source.isChai || rawMode === 'fei' || rawMode === 'chai' || rawMode === 'joker_on') return 'fei';
+  if (source.zai || source.isZai || Number(source.face) === 1 || rawMode === 'zai' || rawMode === 'zai_locked' || rawMode === 'ones_locked' || rawMode === 'joker_off') return 'zai';
   return 'normal';
 }
 
 function countBidDice(players = [], bid = {}, match = {}) {
   const face = asNumber(bid.face, 1);
   const mode = normalizeJokerMode({ ...match, ...bid });
-  const onesAreWild = mode === 'normal' || mode === 'chai';
+  const onesAreWild = mode === 'normal' || mode === 'fei';
 
   return players.reduce((total, player) => {
     const dice = Array.isArray(player.dice) ? player.dice : [];
@@ -60,7 +52,7 @@ function countBidDice(players = [], bid = {}, match = {}) {
 function countWildOnes(players = [], bid = {}, match = {}) {
   const face = asNumber(bid.face, 1);
   const mode = normalizeJokerMode({ ...match, ...bid });
-  if (face === 1 || !(mode === 'normal' || mode === 'chai')) return 0;
+  if (face === 1 || !(mode === 'normal' || mode === 'fei')) return 0;
   return players.reduce((total, player) => total + (Array.isArray(player.dice) ? player.dice.filter((die) => Number(die) === 1).length : 0), 0);
 }
 
@@ -143,8 +135,8 @@ const mockCurrentBid = {
   bidderName: 'Sophie',
   zai: true,
   isZai: true,
-  chai: false,
-  isChai: false,
+  fei: false,
+  isFei: false,
   jokerMode: 'zai',
   jokerWildActive: false,
   createdAt: nowIso(),
@@ -186,7 +178,7 @@ const mockRoundResult = {
   jokerMode: 'zai',
   jokerWildActive: false,
   zaiActive: true,
-  chaiActive: false,
+  feiActive: false,
   jokerLockedThisRound: false,
   jokerLockReason: null,
   onesWereCalledThisRound: false,
@@ -201,8 +193,8 @@ function buildMockMatch(overrides = {}) {
   const wildOnesCount = countWildOnes(players, currentBid, { jokerMode: currentBid.jokerMode });
 
   return {
-    id: 'mock-match-static-zai-chai',
-    matchId: 'mock-match-static-zai-chai',
+    id: 'mock-match-static-zai-fei',
+    matchId: 'mock-match-static-zai-fei',
     roomId: 'mock-room-bots-direct',
     roomCode: 'MOCK-PEK',
     status: 'active',
@@ -291,9 +283,9 @@ function buildMockMatch(overrides = {}) {
         minOnesQuantity: 4,
         minOpenQuantity: 6,
       },
-      chaiQuantityStep: 2,
+      feiQuantityStep: 2,
       zaiEnabled: true,
-      chaiEnabled: true,
+      feiEnabled: true,
       jokerRulesEnabled: true,
       pekOptions: [25, 50, 100],
       selectedPekPercentage: PEK_PERCENTAGE,
@@ -303,10 +295,10 @@ function buildMockMatch(overrides = {}) {
       minOnesQuantity: 4,
       minOpenQuantity: 6,
     },
-    chaiQuantityStep: 2,
+    feiQuantityStep: 2,
     jokerMode: 'zai',
     zaiActive: true,
-    chaiActive: false,
+    feiActive: false,
     jokerWildActive: false,
     jokerLockedThisRound: false,
     jokerLockReason: null,
@@ -324,8 +316,8 @@ function buildMockMatch(overrides = {}) {
       onesAreWild: true,
       onesDisableAfterCalled: true,
       zaiEnabled: true,
-      chaiEnabled: true,
-      chaiQuantityStep: 2,
+      feiEnabled: true,
+      feiQuantityStep: 2,
       jokerMode: 'zai',
       openingBidRules: {
         playerCount: PLAYER_COUNT,
@@ -473,9 +465,9 @@ function applyMockBid(match = {}, action = {}) {
     bidderName: 'You',
     zai: Boolean(incomingBid.zai || incomingBid.isZai),
     isZai: Boolean(incomingBid.zai || incomingBid.isZai),
-    chai: Boolean(incomingBid.chai || incomingBid.isChai),
-    isChai: Boolean(incomingBid.chai || incomingBid.isChai),
-    jokerMode: incomingBid.jokerMode || (incomingBid.zai || incomingBid.isZai ? 'zai' : incomingBid.chai || incomingBid.isChai ? 'chai' : Number(incomingBid.face) === 1 ? 'ones_locked' : 'normal'),
+    fei: Boolean(incomingBid.fei || incomingBid.isFei),
+    isFei: Boolean(incomingBid.fei || incomingBid.isFei),
+    jokerMode: incomingBid.jokerMode || (incomingBid.zai || incomingBid.isZai ? 'zai' : incomingBid.fei || incomingBid.isFei ? 'fei' : Number(incomingBid.face) === 1 ? 'zai' : 'normal'),
     jokerWildActive: Boolean(incomingBid.jokerWildActive ?? !(incomingBid.zai || incomingBid.isZai || Number(incomingBid.face) === 1)),
     createdAt: nowIso(),
   };
@@ -492,10 +484,10 @@ function applyMockBid(match = {}, action = {}) {
     myTurn: false,
     jokerMode: mode,
     zaiActive: mode === 'zai',
-    chaiActive: mode === 'chai',
-    jokerWildActive: mode === 'normal' || mode === 'chai',
-    jokerLockedThisRound: mode === 'ones_locked' || Boolean(match.jokerLockedThisRound),
-    onesWereCalledThisRound: mode === 'ones_locked' || Boolean(match.onesWereCalledThisRound),
+    feiActive: mode === 'fei',
+    jokerWildActive: mode === 'normal' || mode === 'fei',
+    jokerLockedThisRound: false,
+    onesWereCalledThisRound: false,
     wildOnesCount,
     actualCount,
     roundResult: null,
@@ -503,7 +495,7 @@ function applyMockBid(match = {}, action = {}) {
       type: 'bid',
       by: MOCK_USER_ID,
       playerId: MOCK_USER_ID,
-      label: `You placed ${currentBid.quantity} x ${currentBid.face}${mode === 'zai' ? ' ZAI' : mode === 'chai' ? ' CHAI' : ''}`,
+      label: `You placed ${currentBid.quantity} x ${currentBid.face}${mode === 'zai' ? ' ZAI' : mode === 'fei' ? ' FEI' : ''}`,
       createdAt: nowIso(),
     },
   };
@@ -561,12 +553,12 @@ function applyMockChallenge(match = {}, action = {}) {
     actualCount,
     wildOnesCount,
     jokerMode: normalizeJokerMode({ ...match, ...bid }),
-    jokerWildActive: normalizeJokerMode({ ...match, ...bid }) === 'normal' || normalizeJokerMode({ ...match, ...bid }) === 'chai',
+    jokerWildActive: normalizeJokerMode({ ...match, ...bid }) === 'normal' || normalizeJokerMode({ ...match, ...bid }) === 'fei',
     zaiActive: normalizeJokerMode({ ...match, ...bid }) === 'zai',
-    chaiActive: normalizeJokerMode({ ...match, ...bid }) === 'chai',
-    jokerLockedThisRound: Boolean(match.jokerLockedThisRound),
-    jokerLockReason: match.jokerLockReason || null,
-    onesWereCalledThisRound: Boolean(match.onesWereCalledThisRound),
+    feiActive: normalizeJokerMode({ ...match, ...bid }) === 'fei',
+    jokerLockedThisRound: false,
+    jokerLockReason: null,
+    onesWereCalledThisRound: false,
     revealedDice: buildRevealedDice(transfer.players),
     createdAt: nowIso(),
   };

@@ -3261,7 +3261,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell.app-shell--ga
 }
 
 
-/* Patch C: portrait Zai / Chai / Joker status controls. */
+/* Patch C: portrait Zai / FEI / Joker status controls. */
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid__jokerBadge {
   position: absolute !important;
   left: 42px !important;
@@ -3291,7 +3291,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid__jokerBadge.is-locked {
   border-color: rgba(255, 146, 105, .86) !important;
 }
-html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid__jokerBadge.is-chai {
+html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid__jokerBadge.is-fei {
   border-color: rgba(172, 255, 151, .78) !important;
 }
 html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .gameplay-current-bid__metaLabel--coin { top: 133px !important; }

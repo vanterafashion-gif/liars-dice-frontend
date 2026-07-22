@@ -172,7 +172,7 @@ html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .ga
 
 
 /* ===== SOURCE: ./styles/base/gameplay-zai-timer-patch.css ===== */
-/* Patch: current bid ZAI/CHAI state + existing timer danger-center + RoomSelect player count button */
+/* Patch: current bid ZAI/FEI state + existing timer danger-center + RoomSelect player count button */
 .app-shell--gameplay .gameplay-current-bid__jokerBadge {
   position: absolute !important;
   left: 50% !important;
@@ -217,7 +217,7 @@ html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .ga
   box-shadow: 0 0 16px rgba(78, 255, 151, 0.65), inset 0 0 10px rgba(255, 255, 255, 0.16) !important;
 }
 
-.app-shell--gameplay .gameplay-current-bid__jokerBadge.is-chai {
+.app-shell--gameplay .gameplay-current-bid__jokerBadge.is-fei {
   border-color: rgba(255, 211, 92, 0.95) !important;
   color: #fff0a8 !important;
 }
@@ -450,7 +450,7 @@ html[data-device='mobile'] .app-shell--roomselect .room-select-card__playersButt
 
 /* Patch: Current Bid joker state must remain visible.
    Older gameplay cleanup CSS hides .gameplay-current-bid__jokerBadge with display:none!important.
-   This file is imported last, so force the existing badge back on for ZAI/CHAI/locked states. */
+   This file is imported last, so force the existing badge back on for ZAI/FEI/locked states. */
 html[data-device='desktop'] .app-shell--gameplay .gameplay-current-bid__jokerBadge,
 html[data-device='mobile'] .app-shell--gameplay .gameplay-current-bid__jokerBadge,
 html[data-physical-device='mobile'] .app-shell--gameplay .gameplay-current-bid__jokerBadge,

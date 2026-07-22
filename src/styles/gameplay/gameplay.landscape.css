@@ -1783,7 +1783,7 @@ html[data-device="desktop"] .gameplay-action--call { left: 528px; }
 html[data-device="desktop"] .gameplay-action--slam { left: 711px; }
 html[data-device="desktop"] .gameplay-action--slam .gameplay-action__title { left: 51px; top: 30px; font-size: 14px; }
 
-/* Patch C: Zai / Chai / Joker status controls. */
+/* Patch C: Zai / FEI / Joker status controls. */
 html[data-device="desktop"] .gameplay-current-bid__jokerBadge {
   position: absolute;
   left: 30px;
@@ -1813,7 +1813,7 @@ html[data-device="desktop"] .gameplay-current-bid__jokerBadge.is-zai,
 html[data-device="desktop"] .gameplay-current-bid__jokerBadge.is-locked {
   border-color: rgba(255, 146, 105, .86);
 }
-html[data-device="desktop"] .gameplay-current-bid__jokerBadge.is-chai {
+html[data-device="desktop"] .gameplay-current-bid__jokerBadge.is-fei {
   border-color: rgba(172, 255, 151, .78);
 }
 html[data-device="desktop"] .gameplay-current-bid__metaLabel--coin { top: 139px; }
@@ -3150,7 +3150,7 @@ html[data-device="mobile"] .gameplay-action--call { left: 528px; }
 html[data-device="mobile"] .gameplay-action--slam { left: 711px; }
 html[data-device="mobile"] .gameplay-action--slam .gameplay-action__title { left: 51px; top: 30px; font-size: 14px; }
 
-/* Patch C: Zai / Chai / Joker status controls for mobile landscape. */
+/* Patch C: Zai / FEI / Joker status controls for mobile landscape. */
 html[data-device="mobile"] .gameplay-current-bid__jokerBadge {
   position: absolute;
   left: 30px;
@@ -3174,7 +3174,7 @@ html[data-device="mobile"] .gameplay-current-bid__jokerBadge {
 html[data-device="mobile"] .gameplay-current-bid__jokerBadge small { font-size: 9px; font-weight: 900; opacity: .92; }
 html[data-device="mobile"] .gameplay-current-bid__jokerBadge.is-zai,
 html[data-device="mobile"] .gameplay-current-bid__jokerBadge.is-locked { border-color: rgba(255, 146, 105, .86); }
-html[data-device="mobile"] .gameplay-current-bid__jokerBadge.is-chai { border-color: rgba(172, 255, 151, .78); }
+html[data-device="mobile"] .gameplay-current-bid__jokerBadge.is-fei { border-color: rgba(172, 255, 151, .78); }
 html[data-device="mobile"] .gameplay-current-bid__metaLabel--coin { top: 139px; }
 html[data-device="mobile"] .gameplay-current-bid__coinRow { top: 158px; }
 html[data-device="mobile"] .gameplay-current-bid__metaLabel--pot { top: 187px; }
