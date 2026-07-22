@@ -32,14 +32,14 @@ html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .ga
   /* Current Bid */
   --pg-current-bid-left: 250px;
   --pg-current-bid-top: 200px;
-  --pg-current-bid-width: 245px;
-  --pg-current-bid-height: 180px;
+  --pg-current-bid-width: 306.25px;
+  --pg-current-bid-height: 225px;
 
   /* Cups */
-  --pg-cups-left: 140px;
-  --pg-cups-top: 446px;
-  --pg-cups-width: 440px;
-  --pg-cups-height: 255px;
+  --pg-cups-left: 160px;
+  --pg-cups-top: 576px;
+  --pg-cups-width: 420px;
+  --pg-cups-height: 225px;
 }
 
 /* =========================================================

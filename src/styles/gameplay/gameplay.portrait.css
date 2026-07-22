@@ -971,7 +971,7 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay {
   --pg-cup-filter: drop-shadow(0 9px 11px rgba(0, 0, 0, .34));
 
   --pg-cup-2-width: 46%;
-  --pg-cup-2-1-left: 4%;
+  --pg-cup-2-1-left: 5%;
   --pg-cup-2-1-top: 34%;
   --pg-cup-2-1-transform: none;
   --pg-cup-2-2-left: 50%;
@@ -3567,16 +3567,16 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
   --pg-current-bid-header-width: 200px;
   --pg-current-bid-header-font: 19px;
 
-  --pg-current-bid-main-left: 31px;
+  --pg-current-bid-main-left: 50px;
   --pg-current-bid-main-top: 62px;
   --pg-current-bid-main-width: 184px;
   --pg-current-bid-main-height: 58px;
   --pg-current-bid-main-gap: 12px;
 
-  --pg-current-bid-total-font: 40px;
-  --pg-current-bid-die-size: 45px;
+  --pg-current-bid-total-font: 70px;
+  --pg-current-bid-die-size: 65px;
 
-  --pg-current-bid-joker-left: 120px;
+  --pg-current-bid-joker-left: 150px;
   --pg-current-bid-joker-top: 139px;
   --pg-current-bid-joker-width: 124px;
   --pg-current-bid-joker-height: 38px;
@@ -3594,10 +3594,10 @@ html[data-device="mobile"][data-orientation="portrait"] .app-shell--gameplay .ga
 
   /* 2 PLAYERS */
   --pg-cup-2-width: 13%;
-  --pg-cup-2-1-left: 45%;
+  --pg-cup-2-1-left: 40%;
   --pg-cup-2-1-top: 40%;
   --pg-cup-2-1-transform: none;
-  --pg-cup-2-2-left: 45%;
+  --pg-cup-2-2-left: 40%;
   --pg-cup-2-2-top: 60%;
   --pg-cup-2-2-transform: none;
 
