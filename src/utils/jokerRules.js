@@ -9,6 +9,12 @@ export const OFFICIAL_FEI_QUANTITY_STEP = 2;
 export const OFFICIAL_DICE_FACES = Object.freeze([1, 2, 3, 4, 5, 6]);
 export const OFFICIAL_BID_FACE_ORDER = Object.freeze([2, 3, 4, 5, 6, 1]);
 
+// Face 1 is a state-changing bid (it turns Joker OFF / enters ZAI), so it
+// must never be chosen automatically by the normal Raise Bid suggestion.
+// Keep it in OFFICIAL_BID_FACE_ORDER for legality/rank comparisons, but use
+// this reduced order when picking a passive/default normal raise.
+const OFFICIAL_NORMAL_AUTO_RAISE_FACE_ORDER = Object.freeze([2, 3, 4, 5, 6]);
+
 function asNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
@@ -192,6 +198,9 @@ export function getOfficialSpecialActionMode({ currentBid = null, currentMode = 
 
 export function getOfficialDefaultBid({ currentBid = null, totalDice = 1, currentMode = 'normal' } = {}) {
   const safeTotalDice = Math.max(1, Math.trunc(asNumber(totalDice, 1)));
+
+  // Keep the existing opening default. The bug only concerns automatic raises
+  // after a current bid already exists.
   if (!currentBid) return { quantity: 1, face: 1, source: 'opening_default' };
 
   const currentQuantity = Math.max(1, Math.trunc(asNumber(currentBid.quantity, 1)));
@@ -207,19 +216,21 @@ export function getOfficialDefaultBid({ currentBid = null, totalDice = 1, curren
     };
   }
 
-  const currentRank = officialBidFaceRank(currentFace);
-  if (currentRank >= 0 && currentRank < OFFICIAL_BID_FACE_ORDER.length - 1) {
+  const currentNormalRank = OFFICIAL_NORMAL_AUTO_RAISE_FACE_ORDER.indexOf(currentFace);
+  if (currentNormalRank >= 0 && currentNormalRank < OFFICIAL_NORMAL_AUTO_RAISE_FACE_ORDER.length - 1) {
     return {
       quantity: currentQuantity,
-      face: OFFICIAL_BID_FACE_ORDER[currentRank + 1],
-      source: 'next_higher_face',
+      face: OFFICIAL_NORMAL_AUTO_RAISE_FACE_ORDER[currentNormalRank + 1],
+      source: 'next_higher_normal_face',
     };
   }
 
+  // From face 6 (or from face 1 after a special-state transition), the next
+  // passive raise is the next quantity on face 2 — never an automatic face 1.
   return {
     quantity: Math.min(currentQuantity + 1, safeTotalDice),
-    face: OFFICIAL_BID_FACE_ORDER[0],
-    source: 'next_higher_quantity',
+    face: OFFICIAL_NORMAL_AUTO_RAISE_FACE_ORDER[0],
+    source: 'next_higher_normal_quantity',
   };
 }
 

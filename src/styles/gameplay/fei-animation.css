@@ -1,0 +1,329 @@
+.fei-animation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 96;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  contain: layout paint;
+}
+
+.fei-animation-overlay.is-active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.fei-animation-overlay__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 64%;
+}
+
+.fei-animation-overlay.is-active .fei-animation-overlay__stage {
+  animation: feiStageShake 1480ms cubic-bezier(.2,.72,.15,1) both;
+}
+
+.fei-animation-overlay__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 69%, rgba(255, 145, 22, .28) 0 18%, rgba(65, 18, 3, .36) 43%, rgba(0, 0, 0, .72) 100%);
+  opacity: 0;
+}
+
+.fei-animation-overlay.is-active .fei-animation-overlay__stage::before {
+  animation: feiBackdrop 1480ms ease-out both;
+}
+
+.fei-layer {
+  position: absolute;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  object-fit: contain;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.fei-layer--speed-lines {
+  z-index: 1;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
+  object-fit: cover;
+}
+
+.fei-layer--impact-glow {
+  z-index: 2;
+  left: 50%;
+  bottom: -7%;
+  width: min(94vw, 1160px);
+  height: auto;
+  transform: translateX(-50%);
+  transform-origin: 50% 88%;
+}
+
+.fei-layer--platform {
+  z-index: 3;
+  left: 50%;
+  bottom: 1.5%;
+  width: min(67vw, 760px);
+  height: auto;
+  transform: translateX(-50%);
+  transform-origin: 50% 64%;
+}
+
+.fei-layer--debris {
+  z-index: 5;
+  left: 50%;
+  bottom: -3%;
+  width: min(92vw, 1160px);
+  height: auto;
+  transform: translateX(-50%);
+  transform-origin: 50% 85%;
+}
+
+.fei-layer--cup {
+  z-index: 8;
+  left: 50%;
+  top: 43%;
+  width: clamp(220px, 28vw, 410px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: 52% 56%;
+}
+
+.fei-layer--die {
+  z-index: 10;
+  left: 50%;
+  top: 58%;
+  width: clamp(68px, 8.4vw, 126px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.fei-layer--die-1 { z-index: 9; }
+.fei-layer--die-2 { z-index: 12; }
+.fei-layer--die-3 { z-index: 11; }
+.fei-layer--die-4 { z-index: 13; }
+
+.fei-layer--z-text {
+  z-index: 20;
+  left: 50%;
+  top: 12%;
+  width: min(43vw, 520px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.fei-layer--joker-on {
+  z-index: 21;
+  left: 18%;
+  top: 47%;
+  width: min(27vw, 340px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.fei-layer--fei-text {
+  z-index: 22;
+  left: 81%;
+  top: 49%;
+  width: min(29vw, 370px);
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.fei-animation-overlay.is-active .fei-layer--speed-lines { animation: feiSpeedLines 1480ms ease-out both; }
+.fei-animation-overlay.is-active .fei-layer--impact-glow { animation: feiImpactGlow 1480ms ease-out both; }
+.fei-animation-overlay.is-active .fei-layer--platform { animation: feiPlatform 1480ms cubic-bezier(.2,.8,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--debris { animation: feiDebris 1480ms cubic-bezier(.18,.8,.24,1) both; }
+.fei-animation-overlay.is-active .fei-layer--cup { animation: feiCupFlip 1480ms cubic-bezier(.22,.72,.18,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-1 { animation: feiDie1 1480ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-2 { animation: feiDie2 1480ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-3 { animation: feiDie3 1480ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-4 { animation: feiDie4 1480ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--z-text { animation: feiZPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--joker-on { animation: feiJokerPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--fei-text { animation: feiTextPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
+
+@keyframes feiBackdrop {
+  0%, 10% { opacity: 0; }
+  20% { opacity: .42; }
+  30%, 82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes feiStageShake {
+  0%, 24% { transform: translate3d(0,0,0) scale(1); }
+  27% { transform: translate3d(-8px, 5px, 0) scale(1.007); }
+  29% { transform: translate3d(9px, -6px, 0) scale(1.012); }
+  31% { transform: translate3d(-6px, -3px, 0) scale(1.009); }
+  33% { transform: translate3d(5px, 4px, 0) scale(1.005); }
+  36% { transform: translate3d(-2px, 1px, 0) scale(1.002); }
+  40%, 100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+@keyframes feiSpeedLines {
+  0%, 8% { opacity: 0; transform: scale(1.16); }
+  16% { opacity: .42; }
+  27% { opacity: 1; transform: scale(1); }
+  46% { opacity: .82; transform: scale(1.025); }
+  72% { opacity: .36; }
+  100% { opacity: 0; transform: scale(1.075); }
+}
+
+@keyframes feiImpactGlow {
+  0%, 24% { opacity: 0; transform: translateX(-50%) scale(.12); }
+  28% { opacity: 1; transform: translateX(-50%) scale(.78); }
+  35% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+  48% { opacity: .7; transform: translateX(-50%) scale(1.14); }
+  72% { opacity: .28; }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.2); }
+}
+
+@keyframes feiPlatform {
+  0%, 19% { opacity: 0; transform: translateX(-50%) translateY(8%) scale(.72); }
+  25% { opacity: 1; transform: translateX(-50%) translateY(2%) scale(.92); }
+  31% { transform: translateX(-50%) translateY(-1%) scale(1.035); }
+  39%, 84% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(2%) scale(1.012); }
+}
+
+@keyframes feiDebris {
+  0%, 24% { opacity: 0; transform: translateX(-50%) translateY(22%) scale(.34); }
+  29% { opacity: 1; transform: translateX(-50%) translateY(8%) scale(.72); }
+  42% { opacity: .96; transform: translateX(-50%) translateY(-5%) scale(1.03); }
+  64% { opacity: .72; transform: translateX(-50%) translateY(-11%) scale(1.1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-18%) scale(1.16); }
+}
+
+@keyframes feiCupFlip {
+  0% { opacity: 0; transform: translate(-50%, -180%) rotate(-32deg) scale(.68); }
+  8% { opacity: .75; }
+  20% { opacity: 1; transform: translate(-50%, -88%) rotate(-18deg) scale(.9); }
+  28% { opacity: 1; transform: translate(-50%, -32%) rotate(10deg) scale(1.06); }
+  32% { transform: translate(-50%, -23%) rotate(17deg) scale(1.1); }
+  40% { transform: translate(-50%, -36%) rotate(11deg) scale(1.02); }
+  52%, 80% { opacity: 1; transform: translate(-50%, -38%) rotate(12deg) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54%) rotate(17deg) scale(.96); }
+}
+
+@keyframes feiDie1 {
+  0%, 28% { opacity: 0; transform: translate(-50%, -95%) rotate(-25deg) scale(.24); }
+  32% { opacity: 1; }
+  47% { transform: translate(-70%, -215%) rotate(-78deg) scale(.84); }
+  58% { transform: translate(-68%, -190%) rotate(-58deg) scale(.78); }
+  82% { opacity: 1; transform: translate(-68%, -196%) rotate(-63deg) scale(.8); }
+  100% { opacity: 0; transform: translate(-68%, -203%) rotate(-63deg) scale(.78); }
+}
+
+@keyframes feiDie2 {
+  0%, 28% { opacity: 0; transform: translate(-50%, -80%) rotate(14deg) scale(.24); }
+  32% { opacity: 1; }
+  47% { transform: translate(-255%, 12%) rotate(-58deg) scale(1.02); }
+  58% { transform: translate(-232%, -2%) rotate(-40deg) scale(.94); }
+  82% { opacity: 1; transform: translate(-238%, 2%) rotate(-44deg) scale(.97); }
+  100% { opacity: 0; transform: translate(-244%, 8%) rotate(-44deg) scale(.95); }
+}
+
+@keyframes feiDie3 {
+  0%, 28% { opacity: 0; transform: translate(-50%, -80%) rotate(-12deg) scale(.24); }
+  32% { opacity: 1; }
+  47% { transform: translate(120%, -12%) rotate(67deg) scale(1.02); }
+  58% { transform: translate(102%, -25%) rotate(48deg) scale(.94); }
+  82% { opacity: 1; transform: translate(108%, -21%) rotate(52deg) scale(.97); }
+  100% { opacity: 0; transform: translate(114%, -15%) rotate(52deg) scale(.95); }
+}
+
+@keyframes feiDie4 {
+  0%, 28% { opacity: 0; transform: translate(-50%, -70%) rotate(7deg) scale(.24); }
+  32% { opacity: 1; }
+  47% { transform: translate(-28%, 118%) rotate(-72deg) scale(1.12); }
+  58% { transform: translate(-32%, 93%) rotate(-52deg) scale(1.02); }
+  82% { opacity: 1; transform: translate(-30%, 100%) rotate(-57deg) scale(1.06); }
+  100% { opacity: 0; transform: translate(-28%, 108%) rotate(-57deg) scale(1.03); }
+}
+
+@keyframes feiZPop {
+  0%, 37% { opacity: 0; transform: translate(-50%, -50%) rotate(-8deg) scale(.28); }
+  42% { opacity: 1; transform: translate(-50%, -50%) rotate(-3deg) scale(1.2); }
+  48% { transform: translate(-50%, -50%) rotate(-2deg) scale(.94); }
+  54% { transform: translate(-50%, -50%) rotate(-2deg) scale(1.035); }
+  60%, 88% { opacity: 1; transform: translate(-50%, -50%) rotate(-2deg) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54%) rotate(-2deg) scale(1.025); }
+}
+
+@keyframes feiJokerPop {
+  0%, 44% { opacity: 0; transform: translate(-50%, -50%) translateX(-28%) rotate(-8deg) scale(.38); }
+  50% { opacity: 1; transform: translate(-50%, -50%) translateX(0) rotate(-3deg) scale(1.16); }
+  56% { transform: translate(-50%, -50%) rotate(-2deg) scale(.95); }
+  62%, 88% { opacity: 1; transform: translate(-50%, -50%) rotate(-2deg) scale(1); }
+  100% { opacity: 0; transform: translate(-53%, -53%) rotate(-2deg) scale(1.02); }
+}
+
+@keyframes feiTextPop {
+  0%, 48% { opacity: 0; transform: translate(-50%, -50%) translateX(30%) rotate(7deg) scale(.34); }
+  54% { opacity: 1; transform: translate(-50%, -50%) translateX(0) rotate(3deg) scale(1.2); }
+  60% { transform: translate(-50%, -50%) rotate(2deg) scale(.94); }
+  66%, 89% { opacity: 1; transform: translate(-50%, -50%) rotate(2deg) scale(1); }
+  100% { opacity: 0; transform: translate(-47%, -53%) rotate(2deg) scale(1.02); }
+}
+
+@media (orientation: portrait), (max-aspect-ratio: 4/5) {
+  .fei-layer--platform {
+    bottom: 13%;
+    width: min(92vw, 720px);
+  }
+
+  .fei-layer--impact-glow,
+  .fei-layer--debris {
+    bottom: 7%;
+    width: 128vw;
+  }
+
+  .fei-layer--cup {
+    top: 42%;
+    width: clamp(220px, 52vw, 430px);
+  }
+
+  .fei-layer--die {
+    top: 57%;
+    width: clamp(76px, 17vw, 132px);
+  }
+
+  .fei-layer--z-text {
+    top: 14%;
+    width: min(72vw, 520px);
+  }
+
+  .fei-layer--joker-on {
+    left: 26%;
+    top: 51%;
+    width: min(43vw, 330px);
+  }
+
+  .fei-layer--fei-text {
+    left: 75%;
+    top: 51%;
+    width: min(43vw, 350px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fei-animation-overlay.is-active .fei-animation-overlay__stage,
+  .fei-animation-overlay.is-active .fei-layer,
+  .fei-animation-overlay.is-active .fei-animation-overlay__stage::before {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
