@@ -86,6 +86,11 @@ html[data-language='zh'] .app-shell--help {
   background-image: url('/assets/liars-dice/room-select/BG.png');
 }
 
+.app-shell--tutorial {
+  background-color: #050200;
+  background-image: none;
+}
+
 .app-shell--roomlobby {
   background-image: var(--room-lobby-background-image, url('/assets/liars-dice/room-select/BG.png'));
 }
@@ -105,7 +110,8 @@ html[data-language='zh'] .app-shell--help {
 .app-shell--profile .game-frame,
 .app-shell--specialevent .game-frame,
 .app-shell--dailyreward .game-frame,
-.app-shell--tournamentpass .game-frame {
+.app-shell--tournamentpass .game-frame,
+.app-shell--tutorial .game-frame {
   background: transparent;
 }
 

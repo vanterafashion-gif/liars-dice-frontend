@@ -1,0 +1,119 @@
+/* Image-only tutorial. The artwork is confined to the same fixed game-frame
+   canvas as the rest of the UI. Nothing is rendered outside that canvas. */
+.app-shell--tutorial {
+  background: #050200 !important;
+  background-image: none !important;
+}
+
+.app-shell--tutorial .game-frame {
+  background: #050200 !important;
+  background-image: none !important;
+}
+
+.tutorial-screen {
+  position: absolute;
+  inset: 0;
+  width: var(--design-width);
+  height: var(--design-height);
+  overflow: hidden;
+  background: #050200;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.tutorial-screen__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.tutorial-screen__hotspot {
+  position: absolute;
+  z-index: 5;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  outline: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tutorial-screen__hotspot:focus-visible {
+  opacity: .08;
+  outline: 4px solid rgba(255, 237, 166, .9);
+  outline-offset: -4px;
+}
+
+.tutorial-screen__error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  padding: 48px;
+  color: #fff;
+  background: #050200;
+  font: 700 24px/1.4 Arial, sans-serif;
+  text-align: center;
+}
+
+.tutorial-screen__error code {
+  display: block;
+  color: #ffd66f;
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+
+
+.tutorial-screen__skip-button {
+  position: absolute;
+  z-index: 7;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tutorial-screen__skip-button--landscape {
+  top: 24px;
+  right: 28px;
+  width: 210px;
+}
+
+.tutorial-screen__skip-button--portrait {
+  top: 30px;
+  right: 26px;
+  width: 195px;
+}
+
+.tutorial-screen__skip-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.tutorial-screen__skip-button:focus-visible {
+  border-radius: 18px;
+  outline: 4px solid rgba(255, 237, 166, .9);
+  outline-offset: 2px;
+}

@@ -1,0 +1,412 @@
+/* =========================================================
+   ZAI CINEMATIC OVERLAY
+   13 transparent layers from /public/zai.
+   Sequence: pressure -> hand slam -> impact/crack -> debris ->
+   five wild-1 dice lock -> 齋! + ZAI / NO MORE WILD 1 reveal.
+   ========================================================= */
+
+.zai-animation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 480;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.zai-animation-overlay::before,
+.zai-animation-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.zai-animation-overlay::before {
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 62%, rgba(255, 129, 0, .16), transparent 43%),
+    rgba(3, 1, 0, .48);
+  opacity: 0;
+}
+
+.zai-animation-overlay::after {
+  z-index: 90;
+  background: rgba(255, 229, 146, .92);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.zai-animation-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.zai-animation-overlay.is-active::before {
+  animation: zaiBackdrop 1500ms linear both;
+}
+
+.zai-animation-overlay.is-active::after {
+  animation: zaiImpactFlash 1500ms linear both;
+}
+
+.zai-animation-overlay__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  transform-origin: 50% 58%;
+}
+
+.zai-animation-overlay.is-active .zai-animation-overlay__stage {
+  animation: zaiCamera 1500ms linear both;
+}
+
+.zai-layer {
+  position: absolute;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+/* Pressure frame */
+.zai-layer--speed-lines {
+  z-index: 6;
+  left: 50%;
+  top: 50%;
+  width: 115%;
+  height: 115%;
+  object-fit: fill;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.78);
+  filter: saturate(1.08) contrast(1.06);
+}
+
+.zai-animation-overlay.is-active .zai-layer--speed-lines {
+  animation: zaiSpeedLines 1500ms cubic-bezier(.16, .84, .18, 1) both;
+}
+
+/* Impact / ground */
+.zai-layer--impact-glow {
+  z-index: 10;
+  left: 50%;
+  top: 48%;
+  width: 78%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.16);
+  mix-blend-mode: screen;
+  filter: saturate(1.15) brightness(1.06);
+}
+
+.zai-layer--debris-back {
+  z-index: 12;
+  left: 50%;
+  top: 58%;
+  width: 80%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.34);
+}
+
+.zai-layer--ground-crack {
+  z-index: 14;
+  left: 50%;
+  bottom: -14%;
+  width: 95%;
+  opacity: 0;
+  transform: translateX(-50%) scale(.62);
+  filter: drop-shadow(0 24px 28px rgba(0, 0, 0, .52));
+}
+
+.zai-layer--debris-front {
+  z-index: 42;
+  left: 50%;
+  top: 65%;
+  width: 102%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.28);
+}
+
+.zai-animation-overlay.is-active .zai-layer--impact-glow {
+  animation: zaiImpactGlow 1500ms cubic-bezier(.16, .9, .18, 1) both;
+}
+
+.zai-animation-overlay.is-active .zai-layer--debris-back {
+  animation: zaiDebrisBack 1500ms cubic-bezier(.14, .82, .18, 1) both;
+}
+
+.zai-animation-overlay.is-active .zai-layer--ground-crack {
+  animation: zaiGroundCrack 1500ms cubic-bezier(.16, .88, .18, 1) both;
+}
+
+.zai-animation-overlay.is-active .zai-layer--debris-front {
+  animation: zaiDebrisFront 1500ms cubic-bezier(.14, .82, .18, 1) both;
+}
+
+/* Slam hand */
+.zai-layer--hand {
+  z-index: 32;
+  left: 50%;
+  top: -6%;
+  width: 34%;
+  opacity: 0;
+  transform: translate(-50%, -76%) scale(.92);
+  filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .56));
+}
+
+.zai-animation-overlay.is-active .zai-layer--hand {
+  animation: zaiHandSlam 1500ms cubic-bezier(.12, .82, .14, 1) both;
+}
+
+/* Five wild-one dice. All launch from the center and settle around the crack. */
+.zai-layer--die {
+  z-index: 30;
+  left: 50%;
+  top: 62%;
+  width: 13%;
+  opacity: 0;
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .58));
+}
+
+.zai-layer--die-1 { transform: translate(-50%, -50%) rotate(-14deg) scale(.22); }
+.zai-layer--die-2 { transform: translate(-50%, -50%) rotate(11deg) scale(.22); }
+.zai-layer--die-3 { transform: translate(-50%, -50%) rotate(-5deg) scale(.22); }
+.zai-layer--die-4 { transform: translate(-50%, -50%) rotate(9deg) scale(.22); }
+.zai-layer--die-5 { transform: translate(-50%, -50%) rotate(-10deg) scale(.22); }
+
+.zai-animation-overlay.is-active .zai-layer--die-1 { animation: zaiDie1 1500ms cubic-bezier(.16, .78, .16, 1) both; }
+.zai-animation-overlay.is-active .zai-layer--die-2 { animation: zaiDie2 1500ms cubic-bezier(.16, .78, .16, 1) both; }
+.zai-animation-overlay.is-active .zai-layer--die-3 { animation: zaiDie3 1500ms cubic-bezier(.16, .78, .16, 1) both; }
+.zai-animation-overlay.is-active .zai-layer--die-4 { animation: zaiDie4 1500ms cubic-bezier(.16, .78, .16, 1) both; }
+.zai-animation-overlay.is-active .zai-layer--die-5 { animation: zaiDie5 1500ms cubic-bezier(.16, .78, .16, 1) both; }
+
+/* ZAI callouts */
+.zai-layer--kanji {
+  z-index: 52;
+  left: 50%;
+  top: 23%;
+  width: 31%;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-3deg) scale(.3);
+  filter: drop-shadow(0 15px 11px rgba(0, 0, 0, .58));
+}
+
+.zai-layer--text {
+  z-index: 54;
+  left: 50%;
+  top: 49%;
+  width: 37%;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(1.5deg) scale(.3);
+  filter: drop-shadow(0 17px 12px rgba(0, 0, 0, .62));
+}
+
+.zai-animation-overlay.is-active .zai-layer--kanji {
+  animation: zaiKanjiPop 1500ms cubic-bezier(.18, .92, .18, 1) both;
+}
+
+.zai-animation-overlay.is-active .zai-layer--text {
+  animation: zaiTextPop 1500ms cubic-bezier(.18, .92, .18, 1) both;
+}
+
+@keyframes zaiBackdrop {
+  0% { opacity: 0; }
+  5% { opacity: .5; }
+  88% { opacity: .5; }
+  100% { opacity: 0; }
+}
+
+@keyframes zaiImpactFlash {
+  0%, 25% { opacity: 0; }
+  27% { opacity: .88; }
+  29% { opacity: .14; }
+  32% { opacity: .34; }
+  35%, 100% { opacity: 0; }
+}
+
+@keyframes zaiCamera {
+  0%, 25% { transform: translate3d(0, 0, 0) rotate(0) scale(1); }
+  27% { transform: translate3d(-13px, 9px, 0) rotate(-.4deg) scale(1.008); }
+  29% { transform: translate3d(12px, -8px, 0) rotate(.36deg) scale(1.007); }
+  31% { transform: translate3d(-9px, 6px, 0) rotate(-.27deg) scale(1.004); }
+  33% { transform: translate3d(7px, -4px, 0) rotate(.2deg) scale(1.003); }
+  36% { transform: translate3d(-4px, 3px, 0) rotate(-.11deg); }
+  40% { transform: translate3d(2px, -1px, 0) rotate(.05deg); }
+  44%, 100% { transform: translate3d(0, 0, 0) rotate(0) scale(1); }
+}
+
+@keyframes zaiSpeedLines {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.76); }
+  5% { opacity: .34; }
+  16% { opacity: .84; transform: translate(-50%, -50%) scale(.9); }
+  27% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  44% { opacity: .62; transform: translate(-50%, -50%) scale(1.12); }
+  76% { opacity: .28; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes zaiHandSlam {
+  0% { opacity: 0; transform: translate(-50%, -86%) scale(.9); }
+  5% { opacity: 1; }
+  12% { opacity: 1; transform: translate(-50%, -66%) scale(.94); }
+  23% { opacity: 1; transform: translate(-50%, -28%) scale(.98); }
+  27% { opacity: 1; transform: translate(-50%, 6%) scale(1.03); }
+  32% { opacity: 1; transform: translate(-50%, 1%) scale(1); }
+  45%, 66% { opacity: 1; transform: translate(-50%, 2%) scale(1); }
+  84% { opacity: .7; transform: translate(-50%, -5%) scale(.99); }
+  100% { opacity: 0; transform: translate(-50%, -16%) scale(.98); }
+}
+
+@keyframes zaiImpactGlow {
+  0%, 24% { opacity: 0; transform: translate(-50%, -50%) scale(.16); }
+  27% { opacity: 1; transform: translate(-50%, -50%) scale(.65); }
+  32% { opacity: .96; transform: translate(-50%, -50%) scale(1.08); }
+  48% { opacity: .62; transform: translate(-50%, -50%) scale(1.16); }
+  72% { opacity: .24; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.24); }
+}
+
+@keyframes zaiGroundCrack {
+  0%, 24% { opacity: 0; transform: translateX(-50%) scale(.62); }
+  27% { opacity: 1; transform: translateX(-50%) scale(.82); }
+  34% { opacity: 1; transform: translateX(-50%) scale(1.055); }
+  42% { opacity: 1; transform: translateX(-50%) scale(.99); }
+  52%, 88% { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.018); }
+}
+
+@keyframes zaiDebrisBack {
+  0%, 24% { opacity: 0; transform: translate(-50%, -50%) scale(.3); }
+  28% { opacity: 1; transform: translate(-50%, -50%) scale(.72); }
+  38% { opacity: 1; transform: translate(-50%, -54%) scale(1.05); }
+  60% { opacity: .8; transform: translate(-50%, -59%) scale(1.12); }
+  100% { opacity: 0; transform: translate(-50%, -68%) scale(1.18); }
+}
+
+@keyframes zaiDebrisFront {
+  0%, 25% { opacity: 0; transform: translate(-50%, -50%) scale(.25); }
+  29% { opacity: 1; transform: translate(-50%, -50%) scale(.74); }
+  39% { opacity: 1; transform: translate(-50%, -56%) scale(1.06); }
+  64% { opacity: .72; transform: translate(-50%, -63%) scale(1.14); }
+  100% { opacity: 0; transform: translate(-50%, -72%) scale(1.22); }
+}
+
+@keyframes zaiDie1 {
+  0%, 27% { opacity: 0; transform: translate(-50%, -50%) rotate(-14deg) scale(.22); }
+  31% { opacity: 1; }
+  46% { opacity: 1; transform: translate(-290%, -165%) rotate(-49deg) scale(1.03); }
+  58% { transform: translate(-270%, -145%) rotate(-34deg) scale(.96); }
+  82% { opacity: 1; transform: translate(-270%, -150%) rotate(-38deg) scale(1); }
+  100% { opacity: 0; transform: translate(-270%, -155%) rotate(-38deg) scale(.98); }
+}
+
+@keyframes zaiDie2 {
+  0%, 27% { opacity: 0; transform: translate(-50%, -50%) rotate(11deg) scale(.22); }
+  31% { opacity: 1; }
+  46% { opacity: 1; transform: translate(175%, -170%) rotate(55deg) scale(1.02); }
+  58% { transform: translate(155%, -145%) rotate(38deg) scale(.95); }
+  82% { opacity: 1; transform: translate(160%, -150%) rotate(42deg) scale(1); }
+  100% { opacity: 0; transform: translate(160%, -155%) rotate(42deg) scale(.98); }
+}
+
+@keyframes zaiDie3 {
+  0%, 27% { opacity: 0; transform: translate(-50%, -50%) rotate(-5deg) scale(.22); }
+  31% { opacity: 1; }
+  46% { opacity: 1; transform: translate(-50%, 55%) rotate(-22deg) scale(1.08); }
+  58% { transform: translate(-50%, 34%) rotate(-12deg) scale(.98); }
+  82% { opacity: 1; transform: translate(-50%, 40%) rotate(-15deg) scale(1.02); }
+  100% { opacity: 0; transform: translate(-50%, 45%) rotate(-15deg) scale(1); }
+}
+
+@keyframes zaiDie4 {
+  0%, 27% { opacity: 0; transform: translate(-50%, -50%) rotate(9deg) scale(.22); }
+  31% { opacity: 1; }
+  46% { opacity: 1; transform: translate(-330%, 70%) rotate(-62deg) scale(1.03); }
+  58% { transform: translate(-305%, 48%) rotate(-44deg) scale(.96); }
+  82% { opacity: 1; transform: translate(-310%, 54%) rotate(-48deg) scale(1); }
+  100% { opacity: 0; transform: translate(-310%, 60%) rotate(-48deg) scale(.98); }
+}
+
+@keyframes zaiDie5 {
+  0%, 27% { opacity: 0; transform: translate(-50%, -50%) rotate(-10deg) scale(.22); }
+  31% { opacity: 1; }
+  46% { opacity: 1; transform: translate(220%, 68%) rotate(64deg) scale(1.04); }
+  58% { transform: translate(195%, 46%) rotate(45deg) scale(.96); }
+  82% { opacity: 1; transform: translate(200%, 52%) rotate(49deg) scale(1); }
+  100% { opacity: 0; transform: translate(200%, 58%) rotate(49deg) scale(.98); }
+}
+
+@keyframes zaiKanjiPop {
+  0%, 34% { opacity: 0; transform: translate(-50%, -50%) rotate(-6deg) scale(.3); }
+  39% { opacity: 1; transform: translate(-50%, -50%) rotate(-3deg) scale(1.2); }
+  45% { transform: translate(-50%, -50%) rotate(-2deg) scale(.94); }
+  51% { transform: translate(-50%, -50%) rotate(-3deg) scale(1.03); }
+  58%, 87% { opacity: 1; transform: translate(-50%, -50%) rotate(-3deg) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -53%) rotate(-3deg) scale(1.02); }
+}
+
+@keyframes zaiTextPop {
+  0%, 39% { opacity: 0; transform: translate(-50%, -50%) rotate(3deg) scale(.3); }
+  44% { opacity: 1; transform: translate(-50%, -50%) rotate(1.5deg) scale(1.18); }
+  50% { transform: translate(-50%, -50%) rotate(1deg) scale(.95); }
+  56% { transform: translate(-50%, -50%) rotate(1.5deg) scale(1.025); }
+  62%, 88% { opacity: 1; transform: translate(-50%, -50%) rotate(1.5deg) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -53%) rotate(1.5deg) scale(1.02); }
+}
+
+/* Portrait tuning keeps the cinematic composition readable on 9:16 gameplay. */
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--hand {
+  width: 62%;
+  top: -1%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--ground-crack {
+  width: 130%;
+  bottom: 0;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--impact-glow {
+  width: 118%;
+  top: 44%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--debris-back {
+  width: 118%;
+  top: 55%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--debris-front {
+  width: 142%;
+  top: 62%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--kanji {
+  top: 27%;
+  width: 64%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--text {
+  top: 48%;
+  width: 72%;
+}
+
+html[data-device="mobile"][data-orientation="portrait"] .zai-layer--die {
+  top: 64%;
+  width: 22%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zai-animation-overlay.is-active .zai-animation-overlay__stage,
+  .zai-animation-overlay.is-active .zai-layer,
+  .zai-animation-overlay.is-active::before,
+  .zai-animation-overlay.is-active::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}

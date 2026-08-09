@@ -1,0 +1,389 @@
+/* =========================================================
+   CALL LIAR CINEMATIC OVERLAY
+   10 transparent layers from /public/call-liar.
+   Sequence: pressure -> ground impact -> debris/dice launch ->
+   開! pop -> CALL LIAR! pop -> clean fade back to gameplay.
+   ========================================================= */
+
+.call-liar-animation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 470;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.call-liar-animation-overlay::before,
+.call-liar-animation-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.call-liar-animation-overlay::before {
+  z-index: 0;
+  background:
+    radial-gradient(circle at 50% 66%, rgba(124, 30, 0, .18), transparent 42%),
+    rgba(3, 1, 0, .42);
+  opacity: 0;
+}
+
+.call-liar-animation-overlay::after {
+  z-index: 80;
+  background: rgba(255, 236, 180, .9);
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.call-liar-animation-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.call-liar-animation-overlay.is-active::before {
+  animation: callLiarBackdrop 1380ms linear both;
+}
+
+.call-liar-animation-overlay.is-active::after {
+  animation: callLiarImpactFlash 1380ms linear both;
+}
+
+.call-liar-animation-overlay__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  transform-origin: 50% 66%;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-animation-overlay__stage {
+  animation: callLiarCamera 1380ms linear both;
+}
+
+.call-liar-layer {
+  position: absolute;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+/* Radial pressure/speed frame */
+.call-liar-layer--speed-lines {
+  z-index: 8;
+  left: 50%;
+  top: 50%;
+  width: 118%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.72);
+  filter: saturate(1.08) contrast(1.08);
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--speed-lines {
+  animation: callLiarSpeedLines 1380ms cubic-bezier(.16, .84, .18, 1) both;
+}
+
+/* Ground crater */
+.call-liar-layer--crater {
+  z-index: 12;
+  left: 50%;
+  top: 69%;
+  width: 91%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.42);
+  filter: drop-shadow(0 24px 24px rgba(0, 0, 0, .48));
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--crater {
+  animation: callLiarCrater 1380ms cubic-bezier(.16, .88, .18, 1) both;
+}
+
+/* Blast */
+.call-liar-layer--impact-glow {
+  z-index: 18;
+  left: 50%;
+  top: 65%;
+  width: 78%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.16);
+  mix-blend-mode: screen;
+  filter: saturate(1.16) brightness(1.06);
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--impact-glow {
+  animation: callLiarGlow 1380ms cubic-bezier(.16, .9, .18, 1) both;
+}
+
+/* Rock debris */
+.call-liar-layer--debris-back,
+.call-liar-layer--debris-front {
+  left: 50%;
+  top: 61%;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.24);
+}
+
+.call-liar-layer--debris-back {
+  z-index: 20;
+  width: 92%;
+}
+
+.call-liar-layer--debris-front {
+  z-index: 38;
+  top: 66%;
+  width: 107%;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--debris-back {
+  animation: callLiarDebrisBack 1380ms cubic-bezier(.14, .82, .18, 1) both;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--debris-front {
+  animation: callLiarDebrisFront 1380ms cubic-bezier(.14, .82, .18, 1) both;
+}
+
+/* Dice start at the blast center and separate into three readable arcs. */
+.call-liar-layer--die {
+  z-index: 31;
+  width: 12.5%;
+  left: 50%;
+  top: 65%;
+  opacity: 0;
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .58));
+}
+
+.call-liar-layer--die-left {
+  transform: translate(-50%, -50%) rotate(-12deg) scale(.24);
+}
+
+.call-liar-layer--die-right {
+  transform: translate(-50%, -50%) rotate(12deg) scale(.24);
+}
+
+.call-liar-layer--die-front {
+  z-index: 34;
+  width: 13.5%;
+  transform: translate(-50%, -50%) rotate(-3deg) scale(.24);
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--die-left {
+  animation: callLiarDieLeft 1380ms cubic-bezier(.18, .78, .16, 1) both;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--die-right {
+  animation: callLiarDieRight 1380ms cubic-bezier(.18, .78, .16, 1) both;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--die-front {
+  animation: callLiarDieFront 1380ms cubic-bezier(.18, .78, .16, 1) both;
+}
+
+/* Comic callouts */
+.call-liar-layer--kai-text {
+  z-index: 46;
+  left: 7%;
+  top: 4%;
+  width: 55%;
+  opacity: 0;
+  transform: translate(-8%, -8%) rotate(-5deg) scale(.34);
+  transform-origin: 48% 58%;
+  filter: drop-shadow(0 16px 10px rgba(0, 0, 0, .52));
+}
+
+.call-liar-layer--call-text {
+  z-index: 48;
+  right: 4%;
+  top: 41%;
+  width: 38%;
+  opacity: 0;
+  transform: translateX(28%) rotate(4deg) scale(.42);
+  transform-origin: 55% 55%;
+  filter: drop-shadow(0 16px 12px rgba(0, 0, 0, .58));
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--kai-text {
+  animation: callLiarKaiPop 1380ms cubic-bezier(.18, .9, .18, 1) both;
+}
+
+.call-liar-animation-overlay.is-active .call-liar-layer--call-text {
+  animation: callLiarTextPop 1380ms cubic-bezier(.18, .9, .18, 1) both;
+}
+
+@keyframes callLiarBackdrop {
+  0% { opacity: 0; }
+  6% { opacity: .48; }
+  84% { opacity: .48; }
+  100% { opacity: 0; }
+}
+
+@keyframes callLiarImpactFlash {
+  0%, 20% { opacity: 0; }
+  22% { opacity: .85; }
+  24% { opacity: .12; }
+  27% { opacity: .34; }
+  30%, 100% { opacity: 0; }
+}
+
+@keyframes callLiarCamera {
+  0%, 20% { transform: translate3d(0, 0, 0) rotate(0) scale(1); }
+  22% { transform: translate3d(-14px, 8px, 0) rotate(-.42deg) scale(1.006); }
+  24% { transform: translate3d(13px, -7px, 0) rotate(.38deg) scale(1.006); }
+  26% { transform: translate3d(-9px, 5px, 0) rotate(-.28deg) scale(1.003); }
+  28% { transform: translate3d(7px, -4px, 0) rotate(.22deg) scale(1.002); }
+  31% { transform: translate3d(-4px, 3px, 0) rotate(-.12deg); }
+  35% { transform: translate3d(2px, -1px, 0) rotate(.05deg); }
+  39%, 100% { transform: translate3d(0, 0, 0) rotate(0) scale(1); }
+}
+
+@keyframes callLiarSpeedLines {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.7); }
+  5% { opacity: .38; }
+  13% { opacity: .88; transform: translate(-50%, -50%) scale(.86); }
+  22% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+  34% { opacity: .75; transform: translate(-50%, -50%) scale(1.12); }
+  58% { opacity: .42; transform: translate(-50%, -50%) scale(1.18); }
+  86% { opacity: .22; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.24); }
+}
+
+@keyframes callLiarCrater {
+  0%, 19% { opacity: 0; transform: translate(-50%, -50%) scale(.42); }
+  22% { opacity: 1; transform: translate(-50%, -50%) scale(.72); }
+  28% { opacity: 1; transform: translate(-50%, -50%) scale(1.075); }
+  35% { opacity: 1; transform: translate(-50%, -50%) scale(.985); }
+  43%, 88% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.02); }
+}
+
+@keyframes callLiarGlow {
+  0%, 17% { opacity: 0; transform: translate(-50%, -50%) scale(.14); }
+  21% { opacity: .45; transform: translate(-50%, -50%) scale(.45); }
+  24% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  31% { opacity: .95; transform: translate(-50%, -50%) scale(.94); }
+  43% { opacity: .62; transform: translate(-50%, -50%) scale(1.08); }
+  64% { opacity: .22; transform: translate(-50%, -50%) scale(1.18); }
+  80%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.24); }
+}
+
+@keyframes callLiarDebrisBack {
+  0%, 19% { opacity: 0; transform: translate(-50%, -50%) scale(.2) rotate(0); }
+  23% { opacity: 1; transform: translate(-50%, -50%) scale(.48) rotate(-1deg); }
+  37% { opacity: 1; transform: translate(-50%, -58%) scale(1.02) rotate(1.2deg); }
+  67% { opacity: .88; transform: translate(-50%, -64%) scale(1.12) rotate(1.8deg); }
+  100% { opacity: 0; transform: translate(-50%, -72%) scale(1.2) rotate(2.4deg); }
+}
+
+@keyframes callLiarDebrisFront {
+  0%, 20% { opacity: 0; transform: translate(-50%, -50%) scale(.18) rotate(0); }
+  24% { opacity: 1; transform: translate(-50%, -50%) scale(.5) rotate(.5deg); }
+  40% { opacity: 1; transform: translate(-50%, -47%) scale(1.05) rotate(-1deg); }
+  70% { opacity: .8; transform: translate(-50%, -41%) scale(1.15) rotate(-1.6deg); }
+  100% { opacity: 0; transform: translate(-50%, -32%) scale(1.23) rotate(-2deg); }
+}
+
+@keyframes callLiarDieLeft {
+  0%, 20% { opacity: 0; transform: translate(-50%, -50%) rotate(-12deg) scale(.24); }
+  23% { opacity: 1; }
+  34% { opacity: 1; transform: translate(calc(-50% - 82px), calc(-50% - 116px)) rotate(-62deg) scale(1.08); }
+  48% { transform: translate(calc(-50% - 116px), calc(-50% - 78px)) rotate(-31deg) scale(.95); }
+  59%, 88% { opacity: 1; transform: translate(calc(-50% - 104px), calc(-50% - 91px)) rotate(-21deg) scale(.98); }
+  100% { opacity: 0; transform: translate(calc(-50% - 104px), calc(-50% - 91px)) rotate(-18deg) scale(.98); }
+}
+
+@keyframes callLiarDieRight {
+  0%, 20% { opacity: 0; transform: translate(-50%, -50%) rotate(12deg) scale(.24); }
+  23% { opacity: 1; }
+  34% { opacity: 1; transform: translate(calc(-50% + 84px), calc(-50% - 120px)) rotate(66deg) scale(1.03); }
+  48% { transform: translate(calc(-50% + 118px), calc(-50% - 80px)) rotate(35deg) scale(.93); }
+  59%, 88% { opacity: 1; transform: translate(calc(-50% + 106px), calc(-50% - 94px)) rotate(22deg) scale(.96); }
+  100% { opacity: 0; transform: translate(calc(-50% + 106px), calc(-50% - 94px)) rotate(20deg) scale(.96); }
+}
+
+@keyframes callLiarDieFront {
+  0%, 20% { opacity: 0; transform: translate(-50%, -50%) rotate(-3deg) scale(.22); }
+  23% { opacity: 1; }
+  34% { opacity: 1; transform: translate(-50%, calc(-50% - 82px)) rotate(-34deg) scale(1.22); }
+  48% { transform: translate(-50%, calc(-50% + 18px)) rotate(14deg) scale(1.08); }
+  59%, 88% { opacity: 1; transform: translate(-50%, calc(-50% - 7px)) rotate(3deg) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, calc(-50% - 7px)) rotate(3deg) scale(1.1); }
+}
+
+@keyframes callLiarKaiPop {
+  0%, 31% { opacity: 0; transform: translate(-8%, -8%) rotate(-6deg) scale(.32); }
+  38% { opacity: 1; transform: translate(0, 0) rotate(-3deg) scale(1.19); }
+  46% { transform: translate(0, 0) rotate(-2deg) scale(.96); }
+  54%, 88% { opacity: 1; transform: translate(0, 0) rotate(-2deg) scale(1); }
+  100% { opacity: 0; transform: translate(-2%, -1%) rotate(-2deg) scale(1.03); }
+}
+
+@keyframes callLiarTextPop {
+  0%, 42% { opacity: 0; transform: translateX(30%) rotate(5deg) scale(.4); }
+  49% { opacity: 1; transform: translateX(0) rotate(2deg) scale(1.2); }
+  56% { transform: translateX(0) rotate(1deg) scale(.95); }
+  64%, 88% { opacity: 1; transform: translateX(0) rotate(1deg) scale(1); }
+  100% { opacity: 0; transform: translateX(2%) rotate(1deg) scale(1.03); }
+}
+
+/* Landscape phones/tablets: keep the cinematic inside the fixed gameplay stage. */
+html[data-device='mobile'][data-orientation='landscape'] .app-shell--gameplay .call-liar-layer--crater {
+  width: 88%;
+  top: 70%;
+}
+
+html[data-device='mobile'][data-orientation='landscape'] .app-shell--gameplay .call-liar-layer--impact-glow {
+  width: 72%;
+}
+
+/* Portrait composition for the 720x1280 gameplay stage. */
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--speed-lines {
+  width: 190%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--crater {
+  top: 66%;
+  width: 152%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--impact-glow {
+  top: 62%;
+  width: 124%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--debris-back {
+  top: 58%;
+  width: 152%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--debris-front {
+  top: 65%;
+  width: 168%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--die {
+  top: 62%;
+  width: 19%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--die-front {
+  width: 21%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--kai-text {
+  left: -10%;
+  top: 11%;
+  width: 86%;
+}
+
+html[data-device='mobile'][data-orientation='portrait'] .app-shell--gameplay .call-liar-layer--call-text {
+  right: -4%;
+  top: 43%;
+  width: 58%;
+}

@@ -5,6 +5,17 @@ import { startVoiceChatSession } from '../services/voiceChatService.js';
 import { resolveGameDataBackground, toCssBackgroundImageValue } from '../utils/gameplayBackgrounds.js';
 import { GameplayChatDrawer, GameplayPlayersLayer, GameplayStatusLayer, GameplayUtilityControls } from '../components/gameplay/GameplaySections.jsx';
 import OpeningCoinFlipOverlay from '../components/gameplay/OpeningCoinFlipOverlay.jsx';
+import SlamAnimationOverlay, { SLAM_ACTION_SUBMIT_MS, SLAM_ANIMATION_DURATION_MS } from '../components/gameplay/SlamAnimationOverlay.jsx';
+import CallLiarAnimationOverlay, { CALL_LIAR_ACTION_SUBMIT_MS, CALL_LIAR_ANIMATION_DURATION_MS } from '../components/gameplay/CallLiarAnimationOverlay.jsx';
+import ZaiAnimationOverlay, { ZAI_ACTION_SUBMIT_MS, ZAI_ANIMATION_DURATION_MS } from '../components/gameplay/ZaiAnimationOverlay.jsx';
+import {
+  OFFICIAL_FEI_QUANTITY_STEP,
+  getOfficialDefaultBid,
+  getOfficialSpecialActionMode,
+  officialBidFaceRank,
+  validateOfficialFeiSelection,
+  validateOfficialZaiSelection,
+} from '../utils/jokerRules.js';
 
 const asset = '/assets/liars-dice/gameplay/';
 
@@ -246,7 +257,6 @@ const OPENING_BID_DEFAULTS = Object.freeze({
   4: { ones: 4, open: 6 },
 });
 
-const FEI_DEFAULT_STEP = 2;
 
 function truthyFlag(value) {
   return value === true || value === 1 || value === '1' || String(value || '').toLowerCase() === 'true';
@@ -307,26 +317,10 @@ function normalizeJokerMode(source = {}) {
   return 'normal';
 }
 
-function isBidZai(bid = {}) {
-  return normalizeJokerMode(bid) === 'zai';
-}
-
-function isBidFei(bid = {}) {
-  return normalizeJokerMode(bid) === 'fei';
-}
-
-function getFeiQuantityStep(match = {}) {
-  const controls = getBidControls(match);
-  return Math.max(2, Math.trunc(readNumber(
-    controls.feiQuantityStep
-      ?? controls.chaiQuantityStep
-      ?? match?.feiQuantityStep
-      ?? match?.chaiQuantityStep
-      ?? match?.gameRules?.feiQuantityStep
-      ?? match?.gameRules?.chaiQuantityStep
-      ?? FEI_DEFAULT_STEP,
-    FEI_DEFAULT_STEP,
-  )));
+function getFeiQuantityStep() {
+  // Official client rules are fixed at +2. The backend Patch 1 exposes the
+  // same value; stale room settings must not silently change the UI rule.
+  return OFFICIAL_FEI_QUANTITY_STEP;
 }
 
 function getOpeningBidRules(match = {}, playerCount = 2) {
@@ -1040,6 +1034,8 @@ function describeLastAction(match, tx) {
 
   const actor = getActorName(match, action.by || action.playerId);
   if (action.type === 'bid') return `${actor} ${tx('raised the bid')}`;
+  if (action.type === 'zai' || action.type === 'call_zai' || action.type === 'declare_zai') return `${actor} ${tx('called ZAI')}`;
+  if (action.type === 'fei' || action.type === 'call_fei' || action.type === 'declare_fei') return `${actor} ${tx('called FEI')}`;
   if (action.type === 'call_liar' || action.type === 'call_lira') return `${actor} ${tx('called liar')}`;
   if (action.type === 'pek' || action.type === 'call_pek' || action.type === 'slam' || action.type === 'call_slam') return `${actor} ${tx('called Pek/Slam')}`;
   if (action.type === 'reroll') return `${actor} ${tx('re-rolled dice')}`;
@@ -1255,23 +1251,8 @@ function revealedDiceRows(roundResult) {
   return Array.isArray(roundResult?.revealedDice) ? roundResult.revealedDice.filter(Boolean) : [];
 }
 
-const BID_FACE_ORDER = [2, 3, 4, 5, 6, 1];
-
-function bidFaceRank(face) {
-  const index = BID_FACE_ORDER.indexOf(toNumber(face, 0));
-  return index >= 0 ? index : -1;
-}
-
-function nextBidFace(face) {
-  const index = bidFaceRank(face);
-  return index >= 0 && index < BID_FACE_ORDER.length - 1 ? BID_FACE_ORDER[index + 1] : null;
-}
-
-function nextDefaultBid(currentBid, totalDice) {
-  if (!currentBid) return { quantity: Math.min(1, totalDice || 1), face: 1 };
-  const higherFace = nextBidFace(currentBid.face);
-  if (higherFace !== null) return { quantity: currentBid.quantity, face: higherFace };
-  return { quantity: Math.min(toNumber(currentBid.quantity, 1) + 1, totalDice || 7), face: 2 };
+function nextDefaultBid(currentBid, totalDice, currentMode = 'normal') {
+  return getOfficialDefaultBid({ currentBid, totalDice, currentMode });
 }
 
 function isValidBid(currentBid, quantity, face, options = {}) {
@@ -1284,71 +1265,65 @@ function isValidBid(currentBid, quantity, face, options = {}) {
   }
   const currentQuantity = toNumber(currentBid.quantity, 0);
   const currentFace = toNumber(currentBid.face, 0);
-  return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && bidFaceRank(normalizedFace) > bidFaceRank(currentFace));
+  return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && officialBidFaceRank(normalizedFace) > officialBidFaceRank(currentFace));
 }
 
 function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) {
   const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
-  const inferredTotalDice = (match?.players || []).reduce(
-    (sum, player) => sum + getPlayerDiceCount(player, 0),
-    0,
-  );
-  const totalDice = Math.max(1, toNumber(match?.totalDiceInPlay, inferredTotalDice || 1));
-
-  if (!currentBid) {
-    const face = Math.max(1, Math.min(6, toNumber(selectedFace, 1)));
-    const openingRules = getOpeningBidRules(match, match?.players?.length || 2);
-    const minimumQuantity = getOpeningMinimumQuantity(match, openingRules.playerCount, face);
-    return {
-      quantity: Math.min(totalDice, Math.max(minimumQuantity, toNumber(selectedQuantity, minimumQuantity))),
-      face,
-      source: 'opening_zai',
-    };
-  }
-
-  if (currentBid && currentMode === 'zai') {
-    const minimumFeiQuantity = toNumber(currentBid.quantity, 0) + getFeiQuantityStep(match);
-    return {
-      quantity: Math.min(totalDice, Math.max(minimumFeiQuantity, toNumber(selectedQuantity, minimumFeiQuantity))),
-      face: toNumber(currentBid.face, 1),
-      source: 'fei_same_face_plus_two',
-    };
-  }
-
   return {
-    // ZAI may repeat the exact claim or attach to any valid higher selected bid.
+    // Never rewrite the player's visible selection. Validation decides whether
+    // the exact value can be submitted as ZAI or FEI.
     quantity: toNumber(selectedQuantity, toNumber(currentBid?.quantity, 1)),
     face: Math.max(1, Math.min(6, toNumber(selectedFace, toNumber(currentBid?.face, 1)))),
-    source: 'selected_same_or_higher_zai',
+    source: getOfficialSpecialActionMode({ currentBid, currentMode }) === 'fei'
+      ? 'selected_fei'
+      : 'selected_zai',
   };
 }
 
-function isValidZaiBid(currentBid, quantity, face, options = {}) {
-  const normalizedQuantity = toNumber(quantity, 0);
-  const normalizedFace = toNumber(face, 0);
-  if (normalizedFace < 1 || normalizedFace > 6) return false;
+function specialActionSubtitle({
+  actionMode,
+  selection,
+  validation,
+  currentBid,
+  totalDice,
+  canSubmit,
+  hasServerActionRules,
+  tx,
+}) {
+  if (actionMode === 'fei') {
+    const requiredQuantity = validation.requiredQuantity
+      ?? validation.minimumQuantity
+      ?? (currentBid ? toNumber(currentBid.quantity, 0) + OFFICIAL_FEI_QUANTITY_STEP : null);
 
-  if (faceOneTriggeredZaiThisRound(options.match || {})) return false;
-
-  if (!currentBid) {
-    // Opening ZAI is legal only on faces 2-6 and must satisfy the
-    // player-count-specific opening minimum (3 x 2-6 for two players).
-    if (normalizedFace === 1) return false;
-    const minOpeningQuantity = getOpeningMinimumQuantity(
-      options.match || {},
-      options.playerCount || 2,
-      normalizedFace,
-    );
-    return normalizedQuantity >= minOpeningQuantity;
+    if (requiredQuantity && requiredQuantity > totalDice) {
+      return tx('FEI unavailable — maximum dice reached');
+    }
+    if (!canSubmit && hasServerActionRules) return tx('FEI is not available for this bid');
+    if (validation.valid) return `${selection.quantity} x ${selection.face} · ${tx('Joker ON')}`;
+    if (validation.code === 'FEI_QUANTITY_MISMATCH') {
+      return `${tx('FEI requires exactly +2 dice')}: ${requiredQuantity} x ${selection.face}`;
+    }
+    if (validation.code === 'FEI_REQUIRES_ZAI') return tx('FEI requires ZAI');
+    return tx('FEI is not available for this bid');
   }
 
-  if (isBidZai(currentBid)) return false;
-
-  const currentQuantity = toNumber(currentBid.quantity, 0);
-  const currentFaceRank = bidFaceRank(currentBid.face);
-  const nextFaceRank = bidFaceRank(normalizedFace);
-  return normalizedQuantity > currentQuantity
-    || (normalizedQuantity === currentQuantity && nextFaceRank >= currentFaceRank);
+  if (!canSubmit && hasServerActionRules) return tx('ZAI is not available for this bid');
+  if (validation.valid) return `${selection.quantity} x ${selection.face} · ${tx('Joker OFF')}`;
+  if (validation.code === 'EXPLICIT_ZAI_ON_FACE_ONE') {
+    return tx('Use Confirm Bid — Face 1 activates ZAI automatically');
+  }
+  if (validation.code === 'ZAI_BLOCKED_AFTER_FACE_ONE') {
+    return tx('ZAI cannot be used after face 1 was called');
+  }
+  if (validation.code === 'OPENING_ZAI_TOO_LOW') {
+    return `${tx('Opening ZAI minimum')} ${validation.minimumQuantity} x ${selection.face}`;
+  }
+  if (validation.code === 'ZAI_LOWER_THAN_CURRENT') {
+    return tx('ZAI must repeat or raise the current bid');
+  }
+  if (validation.code === 'ZAI_ALREADY_ACTIVE') return tx('ZAI is already active');
+  return tx('ZAI is not available for this bid');
 }
 
 function syncTurnIntroDiceTarget(screenElement, targetElement) {
@@ -1399,6 +1374,8 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const botsMatch = isBotsMatch(match);
   const totalDice = toNumber(match?.totalDiceInPlay, (match?.players || []).reduce((sum, player) => sum + getPlayerDiceCount(player, 0), 0));
   const currentBid = match?.currentBid || null;
+  const currentBidJokerInfo = getMatchJokerDisplay(match, currentBid, tx);
+  const currentBidJokerMode = currentBidJokerInfo?.mode || 'normal';
   const previousBid = match?.previousBid || null;
   const viewerPlayer = getViewerPlayer(match, user);
   const viewerEliminated = isPlayerEliminatedForMatch(match, viewerPlayer);
@@ -1428,12 +1405,24 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const lastOwnDiceRef = useRef([]);
   const gameplayScreenRef = useRef(null);
   const bidDiceTargetRef = useRef(null);
+  const [slamAnimating, setSlamAnimating] = useState(false);
+  const [slamAnimationRun, setSlamAnimationRun] = useState(0);
+  const slamTimersRef = useRef([]);
+  const slamActionSentRef = useRef(false);
+  const [callLiarAnimating, setCallLiarAnimating] = useState(false);
+  const [callLiarAnimationRun, setCallLiarAnimationRun] = useState(0);
+  const callLiarTimersRef = useRef([]);
+  const callLiarActionSentRef = useRef(false);
+  const [zaiAnimating, setZaiAnimating] = useState(false);
+  const [zaiAnimationRun, setZaiAnimationRun] = useState(0);
+  const zaiTimersRef = useRef([]);
+  const zaiActionSentRef = useRef(false);
   const turnIntroKey = isOpeningCoinFlipActive ? '' : getTurnIntroKey(match, activePlayer);
   const turnIntroResetKey = getTurnIntroResetKey(match);
   const isTurnIntroPlaying = TURN_INTRO_ACTIVE_PHASES.has(turnIntroPhase);
   const isFinished = match?.status === 'finished';
   const isBusy = Boolean(backendStatus?.loading && String(backendStatus.lastAction || '').startsWith('match.'));
-  const canAct = Boolean(currentMatchId && match && !isFinished && !isOpeningCoinFlipActive && myTurn && !viewerEliminated && !isBusy && !isTurnIntroPlaying);
+  const canAct = Boolean(currentMatchId && match && !isFinished && !isOpeningCoinFlipActive && myTurn && !viewerEliminated && !isBusy && !isTurnIntroPlaying && !slamAnimating && !callLiarAnimating && !zaiAnimating);
   const availableActions = normalizedActionList(match?.availableActions);
   const disabledActions = normalizedActionList(match?.disabledActions);
   const hasServerActionRules = availableActions.length > 0 || disabledActions.length > 0;
@@ -1457,7 +1446,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     || truthyFlag(match?.bidRules?.feiAvailable)
     || truthyFlag(match?.bidRules?.canDeclareFei);
   const serverDisablesFei = feiActionAliases.some((action) => disabledActions.includes(action));
-  const canSubmitFei = canAct && (!hasServerActionRules || serverAdvertisesFei || availableActions.includes('bid')) && !serverDisablesFei;
+  const canSubmitFei = canAct && (!hasServerActionRules || serverAdvertisesFei) && !serverDisablesFei;
   const canCallLiar = canAct && Boolean(currentBid) && (!hasServerActionRules || availableActions.includes('call_liar') || availableActions.includes('call_lira')) && !disabledActions.includes('call_liar') && !disabledActions.includes('call_lira');
   const pekSettings = getPekSettings(match);
   const bidderPlayer = getBidderPlayer(match);
@@ -1624,7 +1613,10 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     return () => window.clearInterval(interval);
   }, [match?.id, match?.status, match?.turnDeadlineAt]);
 
-  const defaultBid = useMemo(() => nextDefaultBid(currentBid, totalDice || 7), [currentBid, totalDice]);
+  const defaultBid = useMemo(
+    () => nextDefaultBid(currentBid, totalDice || 7, currentBidJokerMode),
+    [currentBid, totalDice, currentBidJokerMode],
+  );
   const quantityValues = useMemo(() => getQuantityValues(totalDice), [totalDice]);
   const dynamicCoinBetOptions = useMemo(() => getCoinBetOptions(match), [
     match?.id,
@@ -1746,7 +1738,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const submitBid = () => {
     if (!canSubmitBid || isTurnIntroPlaying) return;
     const jokerPayload = buildBidJokerPayload({ currentBid, selectedQuantity, selectedFace, zaiEnabled, feiEnabled, match });
-    backendActions?.submitGameAction?.({
+    const actionPayload = {
       matchId: currentMatchId,
       type: 'bid',
       bid: {
@@ -1760,20 +1752,26 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       ...jokerPayload,
       coinBet: selectedCoinBet,
       betAmount: selectedCoinBet,
-    });
+    };
+
+    // Face 1 activates ZAI automatically. Play the same ZAI cinematic before
+    // submitting that bid so every local transition into Joker OFF is visible.
+    if (jokerPayload.zai && !jokerPayload.fei) {
+      startZaiAnimation(() => backendActions?.submitGameAction?.(actionPayload));
+      return;
+    }
+
+    backendActions?.submitGameAction?.(actionPayload);
   };
 
   const submitZaiBid = () => {
     if (isTurnIntroPlaying) return;
 
-    const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
-    const shouldFei = Boolean(currentBid && currentMode === 'zai');
     const specialBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
 
-    if (!shouldFei) {
-      if (!canSubmitZai) return;
-      if (!isValidZaiBid(currentBid, specialBid.quantity, specialBid.face, { match, playerCount: tablePlayerCount })) return;
-      backendActions?.submitGameAction?.({
+    if (specialActionMode === 'zai') {
+      if (!canSubmitZai || !zaiSelectionValidation.valid) return;
+      const actionPayload = {
         matchId: currentMatchId,
         type: 'zai',
         bid: {
@@ -1788,13 +1786,17 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
         },
         quantity: specialBid.quantity,
         face: specialBid.face,
+        zai: true,
+        isZai: true,
+        jokerMode: 'zai',
         coinBet: selectedCoinBet,
         betAmount: selectedCoinBet,
-      });
+      };
+      startZaiAnimation(() => backendActions?.submitGameAction?.(actionPayload));
       return;
     }
 
-    if (!canSubmitFei) return;
+    if (!canSubmitFei || !feiSelectionValidation.valid) return;
     backendActions?.submitGameAction?.({
       matchId: currentMatchId,
       type: 'fei',
@@ -1818,9 +1820,116 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     });
   };
 
-  const submitSimpleAction = (type) => {
-    if (!canAct || isTurnIntroPlaying) return;
-    backendActions?.submitGameAction?.({ matchId: currentMatchId, type });
+  const clearSlamTimers = () => {
+    if (typeof window !== 'undefined') {
+      slamTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    }
+    slamTimersRef.current = [];
+  };
+
+  const clearCallLiarTimers = () => {
+    if (typeof window !== 'undefined') {
+      callLiarTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    }
+    callLiarTimersRef.current = [];
+  };
+
+  const clearZaiTimers = () => {
+    if (typeof window !== 'undefined') {
+      zaiTimersRef.current.forEach((timerId) => window.clearTimeout(timerId));
+    }
+    zaiTimersRef.current = [];
+  };
+
+  useEffect(() => {
+    return () => {
+      clearSlamTimers();
+      clearCallLiarTimers();
+      clearZaiTimers();
+    };
+    // Timers are owned by this component instance only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    clearSlamTimers();
+    clearCallLiarTimers();
+    clearZaiTimers();
+    setSlamAnimating(false);
+    setCallLiarAnimating(false);
+    setZaiAnimating(false);
+    slamActionSentRef.current = false;
+    callLiarActionSentRef.current = false;
+    zaiActionSentRef.current = false;
+    // Reset an in-flight cinematic if the match itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMatchId]);
+
+  const startZaiAnimation = (submitAction) => {
+    if (zaiAnimating || slamAnimating || callLiarAnimating || isTurnIntroPlaying || typeof window === 'undefined') return false;
+
+    clearZaiTimers();
+    zaiActionSentRef.current = false;
+    setZaiAnimationRun((run) => run + 1);
+    setZaiAnimating(true);
+
+    const actionTimer = window.setTimeout(() => {
+      if (zaiActionSentRef.current) return;
+      zaiActionSentRef.current = true;
+      submitAction?.();
+    }, ZAI_ACTION_SUBMIT_MS);
+
+    const finishTimer = window.setTimeout(() => {
+      setZaiAnimating(false);
+      zaiTimersRef.current = [];
+    }, ZAI_ANIMATION_DURATION_MS);
+
+    zaiTimersRef.current = [actionTimer, finishTimer];
+    return true;
+  };
+
+  const submitCallLiarAction = () => {
+    if (!canCallLiar || callLiarAnimating || slamAnimating || zaiAnimating || isTurnIntroPlaying || typeof window === 'undefined') return;
+
+    clearCallLiarTimers();
+    callLiarActionSentRef.current = false;
+    setCallLiarAnimationRun((run) => run + 1);
+    setCallLiarAnimating(true);
+
+    const actionTimer = window.setTimeout(() => {
+      if (callLiarActionSentRef.current) return;
+      callLiarActionSentRef.current = true;
+      backendActions?.submitGameAction?.({ matchId: currentMatchId, type: 'call_liar' });
+    }, CALL_LIAR_ACTION_SUBMIT_MS);
+
+    const finishTimer = window.setTimeout(() => {
+      setCallLiarAnimating(false);
+      callLiarTimersRef.current = [];
+    }, CALL_LIAR_ANIMATION_DURATION_MS);
+
+    callLiarTimersRef.current = [actionTimer, finishTimer];
+  };
+
+  const submitSlamAction = () => {
+    if (!canCallPek || slamAnimating || callLiarAnimating || zaiAnimating || isTurnIntroPlaying || typeof window === 'undefined') return;
+
+    clearSlamTimers();
+    slamActionSentRef.current = false;
+    setSlamAnimationRun((run) => run + 1);
+    setSlamAnimating(true);
+
+    const actionTimer = window.setTimeout(() => {
+      if (slamActionSentRef.current) return;
+      slamActionSentRef.current = true;
+      backendActions?.submitGameAction?.({ matchId: currentMatchId, type: 'call_pek' });
+    }, SLAM_ACTION_SUBMIT_MS);
+
+    const finishTimer = window.setTimeout(() => {
+      setSlamAnimating(false);
+      slamTimersRef.current = [];
+    }, SLAM_ANIMATION_DURATION_MS);
+
+    slamTimersRef.current = [actionTimer, finishTimer];
   };
 
   const submitReroll = () => {
@@ -1893,23 +2002,43 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const quantityMin = currentBid ? 1 : getOpeningMinimumQuantity(match, tablePlayerCount, selectedFace);
   const quantityMax = quantityValues[quantityValues.length - 1] || Math.max(1, toNumber(totalDice, 1));
   const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
-  const currentBidJokerInfo = getMatchJokerDisplay(match, currentBid, tx);
-  const feiMinimumQuantity = currentBid ? toNumber(currentBid.quantity, 0) + getFeiQuantityStep(match) : null;
-  const feiAvailable = Boolean(
-    currentBid
-    && currentBidJokerInfo?.mode === 'zai'
-    && feiMinimumQuantity <= quantityMax
-    && directZaiBid.face === toNumber(currentBid.face, 0)
-    && directZaiBid.quantity >= feiMinimumQuantity
-  );
-  const zaiAvailable = feiAvailable || isValidZaiBid(currentBid, directZaiBid.quantity, directZaiBid.face, { match, playerCount: tablePlayerCount });
+  const specialActionMode = getOfficialSpecialActionMode({ currentBid, currentMode: currentBidJokerMode });
+  const isFeiActionMode = specialActionMode === 'fei';
+  const feiSelectionValidation = validateOfficialFeiSelection({
+    currentBid,
+    quantity: directZaiBid.quantity,
+    face: directZaiBid.face,
+    currentMode: currentBidJokerMode,
+    totalDice: quantityMax,
+    feiEnabled: getBidControls(match)?.feiEnabled !== false,
+    quantityStep: getFeiQuantityStep(match),
+  });
+  const zaiSelectionValidation = validateOfficialZaiSelection({
+    currentBid,
+    quantity: directZaiBid.quantity,
+    face: directZaiBid.face,
+    currentMode: currentBidJokerMode,
+    faceOneTriggeredZaiThisRound: faceOneTriggeredZaiThisRound(match),
+    totalDice: quantityMax,
+    openingMinimum: getOpeningMinimumQuantity(match, tablePlayerCount, directZaiBid.face),
+    zaiEnabled: getBidControls(match)?.zaiEnabled !== false,
+  });
+  const feiAvailable = Boolean(isFeiActionMode && feiSelectionValidation.valid);
+  const zaiAvailable = Boolean(!isFeiActionMode && zaiSelectionValidation.valid);
+  const specialActionAvailable = isFeiActionMode ? feiAvailable : zaiAvailable;
   const showCurrentBidJokerBadge = Boolean(currentBid && currentBidJokerInfo?.mode && currentBidJokerInfo.mode !== 'normal');
   const showDangerTurnTimer = Boolean(match?.status === 'active' && Number(liveTurnSeconds) > 0 && Number(liveTurnSeconds) <= 10);
   const selectedBidJokerInfo = getSelectedBidJokerInfo({ currentBid, selectedQuantity, selectedFace, zaiEnabled, feiEnabled, match, tx });
-  const directZaiSubtitle = zaiAvailable
-    ? `${directZaiBid.quantity} x ${directZaiBid.face} · ${tx(feiAvailable ? 'Joker ON' : 'Joker OFF')}`
-    : tx(feiAvailable ? 'Joker ON' : 'Joker OFF');
-  const feiHint = '';
+  const directZaiSubtitle = specialActionSubtitle({
+    actionMode: specialActionMode,
+    selection: directZaiBid,
+    validation: isFeiActionMode ? feiSelectionValidation : zaiSelectionValidation,
+    currentBid,
+    totalDice: quantityMax,
+    canSubmit: isFeiActionMode ? canSubmitFei : canSubmitZai,
+    hasServerActionRules,
+    tx,
+  });
   const bidSubmitSubtitle = openingBidError || (bidIsValid ? (coinBetIsValid ? selectedBidJokerInfo.detail : tx('Coin bet out of range')) : tx('Bid must be higher'));
   useEffect(() => {
     setSelectedQuantity((value) => Math.min(quantityMax, Math.max(quantityMin, toNumber(value, quantityMin))));
@@ -1983,9 +2112,9 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const pekDisabled = !canCallPek;
   const rerollDisabled = !canReroll;
   const bidDisabled = !canSubmitBid || !bidIsValid || !coinBetIsValid;
-  const zaiDisabled = feiAvailable
-    ? (!canSubmitFei || !zaiAvailable || !coinBetIsValid)
-    : (!canSubmitZai || !zaiAvailable || !coinBetIsValid);
+  const zaiDisabled = isFeiActionMode
+    ? (!canSubmitFei || !specialActionAvailable || !coinBetIsValid)
+    : (!canSubmitZai || !specialActionAvailable || !coinBetIsValid);
   const rerollButtonSubtitle = rerollSubtitle(rerollState, tx);
   const turnName = playerName(activePlayer, myTurn ? 'You' : 'Player');
   const currentCoinBet = getMatchCoinBet(match);
@@ -2219,16 +2348,14 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
                     value,
                     { match, playerCount: tablePlayerCount },
                   );
-                  const currentBidActionFaceAllowed = Boolean(
-                    currentBid
-                    && toNumber(selectedQuantity, 0) === toNumber(currentBid.quantity, 0)
-                    && (feiAvailable ? canSubmitFei : canSubmitZai)
-                  );
                   const openingFaceAllowed = Boolean(
                     !currentBid
                     && getOpeningMinimumQuantity(match, tablePlayerCount, value) <= quantityMax
                   );
-                  const disabled = !normalBidFaceAllowed && !currentBidActionFaceAllowed && !openingFaceAllowed;
+                  // During an active bid, every face remains selectable because
+                  // the player may still raise quantity. The action buttons show
+                  // whether the exact visible selection is legal.
+                  const disabled = currentBid ? false : !normalBidFaceAllowed && !openingFaceAllowed;
                   return (
                     <button
                       key={`face-${value}`}
@@ -2257,24 +2384,28 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
 
         <div className="gameplay-bid-selector__actionRow" role="group" aria-label={tx('Bid actions')}>
           <ActionButton className="gameplay-action--raise gameplay-action--compact" skin="B!.png" title="CONFIRM BID" subtitle={bidSubmitSubtitle} onClick={submitBid} disabled={bidDisabled} tx={tx} />
-          <ActionButton className="gameplay-action--call gameplay-action--compact" skin="B2.png" title="CALL LIAR" subtitle={`Risk ${formatAmount(pekSettings.perGameAmount || currentCoinBet)}`} onClick={() => submitSimpleAction('call_liar')} disabled={challengeDisabled} tx={tx} />
+          <ActionButton className="gameplay-action--call gameplay-action--compact" skin="B2.png" title="CALL LIAR" subtitle={`Risk ${formatAmount(pekSettings.perGameAmount || currentCoinBet)}`} onClick={submitCallLiarAction} disabled={challengeDisabled || callLiarAnimating} tx={tx} />
           {pekSettings.pekEnabled ? (
-            <ActionButton className="gameplay-action--slam gameplay-action--compact" skin="B3.png" title="SLAM" subtitle={pekStackBlockReason || `Risk ${formatAmount(pekSettings.finalPekAmount)}`} onClick={() => submitSimpleAction('call_pek')} disabled={pekDisabled} tx={tx} />
+            <ActionButton className="gameplay-action--slam gameplay-action--compact" skin="B3.png" title="SLAM" subtitle={pekStackBlockReason || `Risk ${formatAmount(pekSettings.finalPekAmount)}`} onClick={submitSlamAction} disabled={pekDisabled || slamAnimating} tx={tx} />
           ) : null}
           <button
             type="button"
             className="gameplay-action gameplay-action--zai gameplay-action--compact"
             onClick={submitZaiBid}
             aria-pressed={false}
-            disabled={zaiDisabled}
+            disabled={zaiDisabled || zaiAnimating}
           >
             <img className="gameplay-action__skin" src={`${asset}B3.png`} alt="" draggable="false" />
-            <span className="gameplay-action__title">{tx(feiAvailable ? 'FEI' : 'ZAI')}</span>
+            <span className="gameplay-action__title">{tx(isFeiActionMode ? 'FEI' : 'ZAI')}</span>
             <span className="gameplay-action__subtitle">{directZaiSubtitle}</span>
           </button>
         </div>
       </div>
 
+
+      <SlamAnimationOverlay active={slamAnimating} runId={slamAnimationRun} />
+      <CallLiarAnimationOverlay active={callLiarAnimating} runId={callLiarAnimationRun} />
+      <ZaiAnimationOverlay active={zaiAnimating} runId={zaiAnimationRun} />
 
       <GameplayChatDrawer
         visible={canUseChat && chatOpen}

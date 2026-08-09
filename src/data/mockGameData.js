@@ -1,3 +1,12 @@
+import {
+  OFFICIAL_FEI_QUANTITY_STEP,
+  compareOfficialDiceClaim,
+  getOfficialJokerCapabilities,
+  normalizeOfficialJokerMode,
+  validateOfficialFeiSelection,
+  validateOfficialZaiSelection,
+} from '../utils/jokerRules.js';
+
 const MOCK_USER_ID = 'mock-you';
 const STATIC_BET = 100;
 const BUY_IN = 500;
@@ -27,10 +36,139 @@ function clone(value) {
 }
 
 function normalizeJokerMode(source = {}) {
-  const rawMode = String(source.jokerMode || source.wildMode || source.onesMode || '').toLowerCase();
-  if (source.fei || source.isFei || source.chai || source.isChai || rawMode === 'fei' || rawMode === 'chai' || rawMode === 'joker_on') return 'fei';
-  if (source.zai || source.isZai || Number(source.face) === 1 || rawMode === 'zai' || rawMode === 'zai_locked' || rawMode === 'ones_locked' || rawMode === 'joker_off') return 'zai';
-  return 'normal';
+  return normalizeOfficialJokerMode(source);
+}
+
+function getMockTotalDice(match = {}) {
+  return Math.max(1, asNumber(
+    match.totalDiceInPlay,
+    (match.players || []).reduce((total, player) => total + asNumber(player.diceCount ?? player.lives, 0), 0),
+  ));
+}
+
+function getMockOpeningRules(match = {}) {
+  const playerCount = Math.max(2, Math.min(4, asNumber(match.playerCount ?? match.players?.length, 2)));
+  const fallback = {
+    2: { ones: 2, open: 3 },
+    3: { ones: 3, open: 4 },
+    4: { ones: 4, open: 6 },
+  }[playerCount] || { ones: 4, open: 6 };
+  const rawRules = match.bidControls?.openingBidRules
+    || match.openingBidRules
+    || match.gameRules?.openingBidRules
+    || {};
+  const rawPlayerCount = asNumber(rawRules.playerCount, playerCount);
+  const useRawRules = rawPlayerCount === playerCount;
+
+  return {
+    playerCount,
+    minOnesQuantity: useRawRules
+      ? asNumber(rawRules.minOnesQuantity ?? rawRules.onesQuantity, fallback.ones)
+      : fallback.ones,
+    minOpenQuantity: useRawRules
+      ? asNumber(rawRules.minOpenQuantity ?? rawRules.openQuantity, fallback.open)
+      : fallback.open,
+  };
+}
+
+function getMockOpeningMinimum(match = {}, face = 1) {
+  const rules = getMockOpeningRules(match);
+  return Number(face) === 1 ? rules.minOnesQuantity : rules.minOpenQuantity;
+}
+
+function getMockJokerMode(match = {}, bid = match.currentBid) {
+  if (!bid) return 'normal';
+  return normalizeOfficialJokerMode({
+    ...(match || {}),
+    ...(bid || {}),
+    jokerMode: bid?.jokerMode ?? match?.currentJokerMode ?? match?.jokerMode,
+  });
+}
+
+function withMockJokerControls(match = {}) {
+  const currentBid = match.currentBid || null;
+  const totalDice = getMockTotalDice(match);
+  const openingBidRules = getMockOpeningRules(match);
+  const currentMode = getMockJokerMode(match, currentBid);
+  const faceOneTriggered = Boolean(
+    match.faceOneTriggeredZaiThisRound
+      || match.bidControls?.faceOneTriggeredZaiThisRound
+      || match.bidControls?.zaiBlockedAfterFaceOne,
+  );
+  const capabilities = getOfficialJokerCapabilities({
+    currentBid,
+    currentMode,
+    zaiActive: currentMode === 'zai',
+    feiActive: currentMode === 'fei',
+    faceOneTriggeredZaiThisRound: faceOneTriggered,
+    totalDice,
+    zaiEnabled: true,
+    feiEnabled: true,
+  });
+  const supportedActions = [
+    'bid', 'zai', 'call_zai', 'declare_zai', 'fei', 'call_fei', 'declare_fei',
+    'call_liar', 'call_lira', 'call_pek', 'pek', 'slam', 'call_slam',
+  ];
+  const availableActions = ['bid'];
+  if (currentBid) availableActions.push('call_liar', 'call_lira', 'call_pek', 'pek', 'slam', 'call_slam');
+  if (capabilities.canDeclareZai) availableActions.push('zai', 'call_zai', 'declare_zai');
+  if (capabilities.canDeclareFei) availableActions.push('fei', 'call_fei', 'declare_fei');
+
+  return {
+    ...match,
+    totalDiceInPlay: totalDice,
+    playerCount: openingBidRules.playerCount,
+    openingBidRules,
+    currentJokerMode: currentMode,
+    jokerMode: currentMode,
+    zaiActive: currentMode === 'zai',
+    feiActive: currentMode === 'fei',
+    jokerWildActive: currentMode !== 'zai',
+    faceOneTriggeredZaiThisRound: faceOneTriggered,
+    onesWereCalledThisRound: faceOneTriggered,
+    availableActions: Array.from(new Set(availableActions)),
+    disabledActions: supportedActions.filter((action) => !availableActions.includes(action)),
+    bidControls: {
+      ...(match.bidControls || {}),
+      openingBidRules,
+      zaiEnabled: true,
+      feiEnabled: true,
+      zaiAvailable: capabilities.zaiAvailable,
+      canDeclareZai: capabilities.canDeclareZai,
+      zaiOpeningAllowed: capabilities.zaiOpeningAllowed,
+      zaiSameBidAllowed: capabilities.zaiSameBidAllowed,
+      zaiHigherBidAllowed: capabilities.zaiHigherBidAllowed,
+      zaiBlockedAfterFaceOne: capabilities.zaiBlockedAfterFaceOne,
+      faceOneTriggeredZaiThisRound: faceOneTriggered,
+      feiAvailable: capabilities.feiAvailable,
+      canDeclareFei: capabilities.canDeclareFei,
+      feiRequiredToReopenJoker: capabilities.feiRequiredToReopenJoker,
+      feiQuantityStep: OFFICIAL_FEI_QUANTITY_STEP,
+      feiRequiredQuantity: capabilities.feiRequiredQuantity,
+      feiMinQuantity: capabilities.feiMinQuantity,
+      feiFace: null,
+      feiAllowedFaces: capabilities.feiAllowedFaces,
+      feiSameFaceRequired: false,
+      feiExactQuantityRequired: true,
+      jokerMode: currentMode,
+      currentJokerMode: currentMode,
+      jokerWildActive: currentMode !== 'zai',
+    },
+    gameRules: {
+      ...(match.gameRules || {}),
+      openingBidRules,
+      wildDice: true,
+      onesAreWild: true,
+      faceOneTriggersZai: true,
+      zaiEnabled: true,
+      feiEnabled: true,
+      feiQuantityStep: OFFICIAL_FEI_QUANTITY_STEP,
+      feiSameFaceRequired: false,
+      feiAnyFaceAllowed: true,
+      feiExactQuantityRequired: true,
+      jokerMode: currentMode,
+    },
+  };
 }
 
 function countBidDice(players = [], bid = {}, match = {}) {
@@ -188,11 +326,13 @@ const mockRoundResult = {
 
 function buildMockMatch(overrides = {}) {
   const players = clone(overrides.players || mockPlayers);
-  const currentBid = clone(overrides.currentBid || mockCurrentBid);
-  const actualCount = countBidDice(players, currentBid, { jokerMode: currentBid.jokerMode });
-  const wildOnesCount = countWildOnes(players, currentBid, { jokerMode: currentBid.jokerMode });
+  const hasCurrentBidOverride = Object.prototype.hasOwnProperty.call(overrides, 'currentBid');
+  const currentBid = clone(hasCurrentBidOverride ? overrides.currentBid : mockCurrentBid);
+  const initialMode = currentBid ? normalizeJokerMode(currentBid) : 'normal';
+  const actualCount = currentBid ? countBidDice(players, currentBid, { jokerMode: initialMode }) : 0;
+  const wildOnesCount = currentBid ? countWildOnes(players, currentBid, { jokerMode: initialMode }) : 0;
 
-  return {
+  const baseMatch = {
     id: 'mock-match-static-zai-fei',
     matchId: 'mock-match-static-zai-fei',
     roomId: 'mock-room-bots-direct',
@@ -314,7 +454,7 @@ function buildMockMatch(overrides = {}) {
       cupPerPlayer: 1,
       wildDice: true,
       onesAreWild: true,
-      onesDisableAfterCalled: true,
+      onesDisableAfterCalled: false,
       zaiEnabled: true,
       feiEnabled: true,
       feiQuantityStep: 2,
@@ -364,10 +504,13 @@ function buildMockMatch(overrides = {}) {
     players,
     ...overrides,
   };
+
+  return withMockJokerControls(baseMatch);
 }
 
 export function createMockGameplayData(overrides = {}) {
-  const match = buildMockMatch(overrides.match || {});
+  const { match: matchOverrides = {}, ...dataOverrides } = overrides;
+  const match = buildMockMatch(matchOverrides);
   return {
     user: {
       id: MOCK_USER_ID,
@@ -413,7 +556,8 @@ export function createMockGameplayData(overrides = {}) {
       { id: 'mock-chat-2', userId: MOCK_USER_ID, username: 'You', text: 'Call liar transfers the lost stack to the challenge winner.', createdAt: nowIso() },
     ],
     chatStatus: { loading: false, sending: false, error: null },
-    ...overrides,
+    ...dataOverrides,
+    match,
   };
 }
 
@@ -453,9 +597,74 @@ function transferStack(players = [], fromId, toId, amount) {
 
 function applyMockBid(match = {}, action = {}) {
   const incomingBid = action.bid || action;
-  const currentBid = {
-    quantity: asNumber(incomingBid.quantity, 1),
-    face: asNumber(incomingBid.face, 1),
+  const actionType = String(action.type || 'bid').toLowerCase();
+  const requestedZai = ['zai', 'call_zai', 'declare_zai'].includes(actionType)
+    || Boolean(incomingBid.zai || incomingBid.isZai);
+  const requestedFei = ['fei', 'call_fei', 'declare_fei'].includes(actionType)
+    || Boolean(incomingBid.fei || incomingBid.isFei || incomingBid.chai || incomingBid.isChai);
+  const quantity = Math.trunc(asNumber(incomingBid.quantity, 0));
+  const face = Math.trunc(asNumber(incomingBid.face, 0));
+  const currentBid = match.currentBid || null;
+  const currentMode = getMockJokerMode(match, currentBid);
+  const totalDice = getMockTotalDice(match);
+  const faceOneTriggeredBefore = Boolean(
+    match.faceOneTriggeredZaiThisRound
+      || match.bidControls?.faceOneTriggeredZaiThisRound
+      || match.bidControls?.zaiBlockedAfterFaceOne,
+  );
+
+  let validation = { valid: true, code: 'VALID_REGULAR_BID' };
+  if (requestedFei) {
+    validation = validateOfficialFeiSelection({
+      currentBid,
+      quantity,
+      face,
+      currentMode,
+      totalDice,
+      feiEnabled: true,
+      quantityStep: OFFICIAL_FEI_QUANTITY_STEP,
+    });
+  } else if (requestedZai) {
+    validation = validateOfficialZaiSelection({
+      currentBid,
+      quantity,
+      face,
+      currentMode,
+      faceOneTriggeredZaiThisRound: faceOneTriggeredBefore,
+      totalDice,
+      openingMinimum: getMockOpeningMinimum(match, face),
+      zaiEnabled: true,
+    });
+  } else if (face < 1 || face > 6 || quantity < 1 || quantity > totalDice) {
+    validation = { valid: false, code: 'INVALID_REGULAR_BID' };
+  } else if (!currentBid) {
+    const minimumQuantity = getMockOpeningMinimum(match, face);
+    if (quantity < minimumQuantity) {
+      validation = { valid: false, code: 'OPENING_BID_TOO_LOW', minimumQuantity };
+    }
+  } else if (compareOfficialDiceClaim(currentBid, { quantity, face }) <= 0) {
+    validation = { valid: false, code: 'BID_NOT_HIGHER' };
+  }
+
+  if (!validation.valid) {
+    return withMockJokerControls({
+      ...match,
+      lastActionError: {
+        code: validation.code,
+        ...validation,
+        createdAt: nowIso(),
+      },
+    });
+  }
+
+  const previousZaiActive = currentMode === 'zai';
+  const faceOneTriggersZai = !requestedFei && face === 1;
+  const mode = requestedFei
+    ? 'fei'
+    : (requestedZai || faceOneTriggersZai || previousZaiActive ? 'zai' : 'normal');
+  const nextBid = {
+    quantity,
+    face,
     coinBet: asNumber(incomingBid.coinBet ?? incomingBid.coinAmount ?? incomingBid.betAmount, STATIC_BET),
     coinAmount: asNumber(incomingBid.coinAmount ?? incomingBid.coinBet ?? incomingBid.betAmount, STATIC_BET),
     betAmount: asNumber(incomingBid.betAmount ?? incomingBid.coinBet ?? incomingBid.coinAmount, STATIC_BET),
@@ -463,42 +672,50 @@ function applyMockBid(match = {}, action = {}) {
     userId: MOCK_USER_ID,
     bidderUserId: MOCK_USER_ID,
     bidderName: 'You',
-    zai: Boolean(incomingBid.zai || incomingBid.isZai),
-    isZai: Boolean(incomingBid.zai || incomingBid.isZai),
-    fei: Boolean(incomingBid.fei || incomingBid.isFei),
-    isFei: Boolean(incomingBid.fei || incomingBid.isFei),
-    jokerMode: incomingBid.jokerMode || (incomingBid.zai || incomingBid.isZai ? 'zai' : incomingBid.fei || incomingBid.isFei ? 'fei' : Number(incomingBid.face) === 1 ? 'zai' : 'normal'),
-    jokerWildActive: Boolean(incomingBid.jokerWildActive ?? !(incomingBid.zai || incomingBid.isZai || Number(incomingBid.face) === 1)),
+    zai: mode === 'zai',
+    isZai: mode === 'zai',
+    zaiDeclared: requestedZai,
+    zaiTriggeredByFaceOne: faceOneTriggersZai,
+    zaiInherited: Boolean(previousZaiActive && !requestedFei && !requestedZai && !faceOneTriggersZai),
+    fei: requestedFei,
+    isFei: requestedFei,
+    jokerMode: mode,
+    currentJokerMode: mode,
+    jokerWildActive: mode !== 'zai',
     createdAt: nowIso(),
   };
-  const mode = normalizeJokerMode(currentBid);
-  const actualCount = countBidDice(match.players || [], currentBid, { jokerMode: mode });
-  const wildOnesCount = countWildOnes(match.players || [], currentBid, { jokerMode: mode });
+  const faceOneTriggeredZaiThisRound = faceOneTriggeredBefore || faceOneTriggersZai;
+  const actualCount = countBidDice(match.players || [], nextBid, { jokerMode: mode });
+  const wildOnesCount = countWildOnes(match.players || [], nextBid, { jokerMode: mode });
+  const loggedType = requestedFei ? 'fei' : requestedZai ? 'zai' : 'bid';
 
-  return {
+  return withMockJokerControls({
     ...match,
-    currentBid,
+    currentBid: nextBid,
     previousBid: match.currentBid || null,
     turnPlayerId: 'mock-sophie',
     activePlayerId: 'mock-sophie',
     myTurn: false,
+    currentJokerMode: mode,
     jokerMode: mode,
     zaiActive: mode === 'zai',
     feiActive: mode === 'fei',
-    jokerWildActive: mode === 'normal' || mode === 'fei',
+    jokerWildActive: mode !== 'zai',
+    faceOneTriggeredZaiThisRound,
+    onesWereCalledThisRound: faceOneTriggeredZaiThisRound,
     jokerLockedThisRound: false,
-    onesWereCalledThisRound: false,
     wildOnesCount,
     actualCount,
     roundResult: null,
+    lastActionError: null,
     lastAction: {
-      type: 'bid',
+      type: loggedType,
       by: MOCK_USER_ID,
       playerId: MOCK_USER_ID,
-      label: `You placed ${currentBid.quantity} x ${currentBid.face}${mode === 'zai' ? ' ZAI' : mode === 'fei' ? ' FEI' : ''}`,
+      label: `You placed ${nextBid.quantity} x ${nextBid.face}${mode === 'zai' ? ' ZAI' : mode === 'fei' ? ' FEI' : ''}`,
       createdAt: nowIso(),
     },
-  };
+  });
 }
 
 function applyMockChallenge(match = {}, action = {}) {
@@ -586,7 +803,7 @@ export function applyMockGameAction(currentData = mockGameData, action = {}) {
   const match = currentData.match || buildMockMatch();
   const actionType = String(action.type || '').toLowerCase();
 
-  if (actionType === 'bid') {
+  if (['bid', 'zai', 'call_zai', 'declare_zai', 'fei', 'call_fei', 'declare_fei'].includes(actionType)) {
     const nextMatch = applyMockBid(match, action);
     return { ...currentData, match: nextMatch, roundResult: null, currentMatchId: nextMatch.matchId };
   }

@@ -47,6 +47,7 @@ import PlaceholderScreen from './screens/PlaceholderScreen.jsx';
 import SpecialEvent from './screens/SpecialEvent.jsx';
 import DailyReward from './screens/DailyReward.jsx';
 import TournamentPass from './screens/TournamentPass.jsx';
+import TutorialScreen from './screens/TutorialScreen.jsx';
 
 const SCREENS = {
   starter: StarterScreen,
@@ -66,6 +67,7 @@ const SCREENS = {
   specialevent: SpecialEvent,
   dailyreward: DailyReward,
   tournamentpass: TournamentPass,
+  tutorial: TutorialScreen,
 };
 
 const SCREEN_TO_PATH = {
@@ -86,6 +88,7 @@ const SCREEN_TO_PATH = {
   specialevent: '/special-event',
   dailyreward: '/daily-reward',
   tournamentpass: '/tournament-pass',
+  tutorial: '/tutorial',
 };
 
 const PATH_TO_SCREEN = Object.entries(SCREEN_TO_PATH).reduce((routes, [screenName, path]) => {
@@ -148,7 +151,15 @@ const PRELOAD_SCREEN_LABELS = {
   matchmaking: 'matchmaking',
   gameplay: 'gameplay',
   win: 'result screen',
+  tutorial: 'tutorial',
 };
+
+const TUTORIAL_ASSETS = [
+  ...['landscape', 'portrait'].flatMap((orientation) =>
+    Array.from({ length: 10 }, (_, index) => `/assets/tutorial/${orientation}/${index + 1}.png`),
+  ),
+  '/assets/tutorial/skip.png',
+];
 
 const BOOT_PRELOAD_PHASE = 'starterShell';
 const PLAY_FLOW_PRELOAD_PHASE = 'playFlow';
@@ -1952,7 +1963,7 @@ export default function App() {
     const preloadKey = options.preloadKey || phaseName || safeScreen;
     const assets = options.assets || (phaseName ? getAssetsForPhase(phaseName) : getAssetsForScreen(safeScreen));
     const alreadyPreloaded = phaseName ? preloadedPhases.has(preloadKey) : preloadedCriticalScreens.has(preloadKey);
-    const shouldGate = assets.length > 0 && !alreadyPreloaded;
+    const shouldGate = Boolean(options.forceLoading) || (assets.length > 0 && !alreadyPreloaded);
 
     if (!shouldGate) {
       navigateToScreen(safeScreen);
@@ -2039,6 +2050,16 @@ export default function App() {
       minVisibleMs: 650,
       concurrency: 8,
     }),
+    goGuestLoading: () => preloadAndNavigate('tutorial', {
+      destinationLabel: 'game assets',
+      phaseName: PLAY_FLOW_PRELOAD_PHASE,
+      preloadKey: PLAY_FLOW_PRELOAD_PHASE,
+      assets: [...new Set([...getAssetsForPhase(PLAY_FLOW_PRELOAD_PHASE), ...TUTORIAL_ASSETS])],
+      minVisibleMs: 650,
+      concurrency: 8,
+      forceLoading: true,
+    }),
+    goTutorial: () => navigateToScreen('tutorial'),
     goMainMenu: () => preloadAndNavigate('mainmenu', {
       destinationLabel: 'game assets',
       phaseName: PLAY_FLOW_PRELOAD_PHASE,
@@ -2223,7 +2244,7 @@ export default function App() {
   const backendActions = {
     login: (credentials) => runBackendAction('auth.login', () => backendBridge.login(credentials), navigation.goLoading),
     register: (payload) => runBackendAction('auth.register', () => backendBridge.register(payload), navigation.goLoading),
-    loginAsGuest: () => runBackendAction('auth.guest', () => backendBridge.loginAsGuest(), navigation.goLoading),
+    loginAsGuest: () => runBackendAction('auth.guest', () => backendBridge.loginAsGuest(), navigation.goGuestLoading),
     updateProfile: (payload) => runBackendAction('profile.update', async () => {
       const result = await backendBridge.updateProfile(payload);
       const nextAvatar = payload?.avatar || payload?.avatarId;
@@ -2654,6 +2675,7 @@ export default function App() {
           name={renderedScreenName}
           navigation={navigation}
           mode={layout.mode}
+          orientation={layout.orientation}
           data={activeScreenData}
           backendActions={activeBackendActions}
           backendStatus={activeBackendStatus}
