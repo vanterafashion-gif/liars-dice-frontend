@@ -1763,20 +1763,9 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       betAmount: selectedCoinBet,
     };
 
-    // Face 1 still activates ZAI by rule, but the ZAI cinematic is reserved for
-    // an intentional Face-1 choice (or the dedicated ZAI action below). A plain
-    // Raise Bid must never trigger the special animation from an auto-selected
-    // default value.
-    const intentionalFaceOneZai = Boolean(
-      jokerPayload.zaiTriggeredByFaceOne
-      && Number(selectedFace) === 1
-      && (!currentBid || faceSelectionTouchedRef.current)
-    );
-    if (intentionalFaceOneZai && !jokerPayload.fei) {
-      startZaiAnimation(() => backendActions?.submitGameAction?.(actionPayload));
-      return;
-    }
-
+    // Confirm Bid is always submitted immediately. Special cinematics are
+    // reserved for their dedicated action buttons (ZAI / FEI) and must never
+    // run from the normal Confirm Bid flow, even when Face 1 activates ZAI by rule.
     backendActions?.submitGameAction?.(actionPayload);
   };
 
