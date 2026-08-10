@@ -1645,9 +1645,6 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const faceDialRef = useRef(null);
   const quantitySliderRef = useRef(null);
   const quantitySliderDraggingRef = useRef(false);
-  // Used only for the cinematic: a normal Raise Bid must not look like the
-  // player explicitly activated ZAI just because a default face happened to be 1.
-  const faceSelectionTouchedRef = useRef(false);
 
   useEffect(() => {
     if (!currentMatchId && match) return undefined;
@@ -1669,7 +1666,6 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   useEffect(() => {
     setSelectedQuantity(Math.max(1, Math.min(quantityValues.length, defaultBid.quantity || 1)));
     setSelectedFace(Math.max(1, Math.min(6, defaultBid.face || 1)));
-    faceSelectionTouchedRef.current = false;
     setZaiEnabled(false);
     setFeiEnabled(false);
     setDiceFacePickerOpen(false);
@@ -1763,9 +1759,10 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
       betAmount: selectedCoinBet,
     };
 
-    // Confirm Bid is always submitted immediately. Special cinematics are
-    // reserved for their dedicated action buttons (ZAI / FEI) and must never
-    // run from the normal Confirm Bid flow, even when Face 1 activates ZAI by rule.
+    // Confirm Bid must never trigger a special-action cinematic.
+    // The bid can still activate/inherit ZAI in its rules payload (for example
+    // when Face 1 is selected), but only the dedicated ZAI button owns the
+    // ZAI animation. Submit normal bids immediately.
     backendActions?.submitGameAction?.(actionPayload);
   };
 
@@ -2402,7 +2399,6 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
                       type="button"
                       className={`gameplay-bid-selector__faceBtn gameplay-bid-selector__faceBtn--slot-${index}`}
                       onClick={() => {
-                        faceSelectionTouchedRef.current = true;
                         setSelectedFace(value);
                         if (!currentBid) {
                           const openingMinimum = getOpeningMinimumQuantity(match, tablePlayerCount, value);
