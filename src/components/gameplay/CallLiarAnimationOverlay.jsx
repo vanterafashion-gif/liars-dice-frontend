@@ -1,5 +1,5 @@
-export const CALL_LIAR_ANIMATION_DURATION_MS = 1380;
-export const CALL_LIAR_ACTION_SUBMIT_MS = 320;
+export const CALL_LIAR_ANIMATION_DURATION_MS = 1500;
+export const CALL_LIAR_ACTION_SUBMIT_MS = 350;
 
 const CALL_LIAR_ASSET_BASE = `${import.meta.env.BASE_URL}call-liar/`;
 

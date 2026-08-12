@@ -887,7 +887,7 @@ html.keyboard-open[data-device="mobile"][data-orientation="portrait"] .app-shell
   top: var(--music-panel-top);
   z-index: 1;
   width: var(--music-panel-width);
-  min-height: 96px;
+  min-height: 160px;
   padding: 12px 14px 10px;
   border: 3px solid rgba(255, 221, 139, .94);
   border-radius: 18px;
@@ -895,6 +895,12 @@ html.keyboard-open[data-device="mobile"][data-orientation="portrait"] .app-shell
   box-shadow: 0 18px 34px rgba(0, 0, 0, .46), inset 0 2px 0 rgba(255, 255, 255, .12);
   color: #fff5d9;
   pointer-events: auto;
+}
+
+.gameplay-music-panel__section + .gameplay-music-panel__section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 221, 139, .28);
 }
 
 .gameplay-music-panel__label {
@@ -947,6 +953,15 @@ html.keyboard-open[data-device="mobile"][data-orientation="portrait"] .app-shell
   margin-top: 5px;
   font-size: 13px;
   font-weight: 900;
+  text-align: center;
+  color: #ffe6a4;
+}
+
+.gameplay-music-panel__inlineValue {
+  flex: 0 0 86px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 950;
   text-align: center;
   color: #ffe6a4;
 }

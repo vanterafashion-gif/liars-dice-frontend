@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { resolveProfileAvatarSrc as resolveAvatarSrc } from '../utils/profileAvatars.js';
 import { getTableMusicMuted, getTableMusicVolume, resumeTableMusic, setTableMusicMuted, setTableMusicVolume } from '../services/tableMusicPlayer.js';
+import { getGameSfxVolume, playGameSfx, preloadGameSfx, setGameSfxVolume } from '../services/gameSfxPlayer.js';
 import { startVoiceChatSession } from '../services/voiceChatService.js';
 import { resolveGameDataBackground, toCssBackgroundImageValue } from '../utils/gameplayBackgrounds.js';
 import { GameplayChatDrawer, GameplayPlayersLayer, GameplayStatusLayer, GameplayUtilityControls } from '../components/gameplay/GameplaySections.jsx';
@@ -1478,6 +1479,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const [musicPanelOpen, setMusicPanelOpen] = useState(false);
   const [musicVolume, setMusicVolume] = useState(() => Math.round(getTableMusicVolume() * 100));
   const [musicMuted, setMusicMuted] = useState(() => getTableMusicMuted());
+  const [sfxVolume, setSfxVolume] = useState(() => Math.round(getGameSfxVolume() * 100));
   const chatListRef = useRef(null);
   const voiceSessionRef = useRef(null);
   const canUseChat = Boolean(currentMatchId && !botsMatch);
@@ -1489,6 +1491,10 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     participants: [],
     error: null,
   });
+
+  useEffect(() => {
+    preloadGameSfx();
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
@@ -1561,6 +1567,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     syncTurnIntroDiceTarget(gameplayScreenRef.current, bidDiceTargetRef.current);
     setTurnIntroPlayer(introPlayerSnapshot);
     setTurnIntroPhase(TURN_INTRO_PHASE.SHAKE);
+    playGameSfx('roll');
 
     if (typeof window === 'undefined') {
       setTurnIntroPhase(TURN_INTRO_PHASE.IDLE);
@@ -1886,6 +1893,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     zaiActionSentRef.current = false;
     setZaiAnimationRun((run) => run + 1);
     setZaiAnimating(true);
+    playGameSfx('zai');
 
     const actionTimer = window.setTimeout(() => {
       if (zaiActionSentRef.current) return;
@@ -1909,6 +1917,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     feiActionSentRef.current = false;
     setFeiAnimationRun((run) => run + 1);
     setFeiAnimating(true);
+    playGameSfx('fei');
 
     const actionTimer = window.setTimeout(() => {
       if (feiActionSentRef.current) return;
@@ -1932,6 +1941,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     callLiarActionSentRef.current = false;
     setCallLiarAnimationRun((run) => run + 1);
     setCallLiarAnimating(true);
+    playGameSfx('callLiar');
 
     const actionTimer = window.setTimeout(() => {
       if (callLiarActionSentRef.current) return;
@@ -1954,6 +1964,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     slamActionSentRef.current = false;
     setSlamAnimationRun((run) => run + 1);
     setSlamAnimating(true);
+    playGameSfx('slam');
 
     const actionTimer = window.setTimeout(() => {
       if (slamActionSentRef.current) return;
@@ -1971,6 +1982,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
 
   const submitReroll = () => {
     if (!canReroll || isTurnIntroPlaying) return;
+    playGameSfx('roll');
     backendActions?.submitGameAction?.({ matchId: currentMatchId, type: 'reroll' });
   };
 
@@ -2000,6 +2012,12 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     const nextMuted = !musicMuted;
     setMusicMuted(setTableMusicMuted(nextMuted));
     if (!nextMuted) resumeTableMusic();
+  };
+
+  const handleSfxVolumeChange = (event) => {
+    const nextVolume = Math.min(100, Math.max(0, Number(event.target.value) || 0));
+    setSfxVolume(nextVolume);
+    setGameSfxVolume(nextVolume / 100);
   };
 
   const submitChatMessage = async (event) => {
@@ -2217,6 +2235,8 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
         musicMuted={musicMuted}
         onMusicVolumeChange={handleMusicVolumeChange}
         onToggleMusicMuted={toggleMusicMuted}
+        sfxVolume={sfxVolume}
+        onSfxVolumeChange={handleSfxVolumeChange}
       />
 
       <div className="gameplay-current-bid">

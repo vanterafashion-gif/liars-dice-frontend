@@ -46,11 +46,11 @@
 }
 
 .call-liar-animation-overlay.is-active::before {
-  animation: callLiarBackdrop 1380ms linear both;
+  animation: callLiarBackdrop 1500ms linear both;
 }
 
 .call-liar-animation-overlay.is-active::after {
-  animation: callLiarImpactFlash 1380ms linear both;
+  animation: callLiarImpactFlash 1500ms linear both;
 }
 
 .call-liar-animation-overlay__stage {
@@ -62,7 +62,7 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-animation-overlay__stage {
-  animation: callLiarCamera 1380ms linear both;
+  animation: callLiarCamera 1500ms linear both;
 }
 
 .call-liar-layer {
@@ -88,7 +88,7 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--speed-lines {
-  animation: callLiarSpeedLines 1380ms cubic-bezier(.16, .84, .18, 1) both;
+  animation: callLiarSpeedLines 1500ms cubic-bezier(.16, .84, .18, 1) both;
 }
 
 /* Ground crater */
@@ -103,7 +103,7 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--crater {
-  animation: callLiarCrater 1380ms cubic-bezier(.16, .88, .18, 1) both;
+  animation: callLiarCrater 1500ms cubic-bezier(.16, .88, .18, 1) both;
 }
 
 /* Blast */
@@ -119,7 +119,7 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--impact-glow {
-  animation: callLiarGlow 1380ms cubic-bezier(.16, .9, .18, 1) both;
+  animation: callLiarGlow 1500ms cubic-bezier(.16, .9, .18, 1) both;
 }
 
 /* Rock debris */
@@ -143,11 +143,11 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--debris-back {
-  animation: callLiarDebrisBack 1380ms cubic-bezier(.14, .82, .18, 1) both;
+  animation: callLiarDebrisBack 1500ms cubic-bezier(.14, .82, .18, 1) both;
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--debris-front {
-  animation: callLiarDebrisFront 1380ms cubic-bezier(.14, .82, .18, 1) both;
+  animation: callLiarDebrisFront 1500ms cubic-bezier(.14, .82, .18, 1) both;
 }
 
 /* Dice start at the blast center and separate into three readable arcs. */
@@ -175,15 +175,15 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--die-left {
-  animation: callLiarDieLeft 1380ms cubic-bezier(.18, .78, .16, 1) both;
+  animation: callLiarDieLeft 1500ms cubic-bezier(.18, .78, .16, 1) both;
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--die-right {
-  animation: callLiarDieRight 1380ms cubic-bezier(.18, .78, .16, 1) both;
+  animation: callLiarDieRight 1500ms cubic-bezier(.18, .78, .16, 1) both;
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--die-front {
-  animation: callLiarDieFront 1380ms cubic-bezier(.18, .78, .16, 1) both;
+  animation: callLiarDieFront 1500ms cubic-bezier(.18, .78, .16, 1) both;
 }
 
 /* Comic callouts */
@@ -210,11 +210,11 @@
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--kai-text {
-  animation: callLiarKaiPop 1380ms cubic-bezier(.18, .9, .18, 1) both;
+  animation: callLiarKaiPop 1500ms cubic-bezier(.18, .9, .18, 1) both;
 }
 
 .call-liar-animation-overlay.is-active .call-liar-layer--call-text {
-  animation: callLiarTextPop 1380ms cubic-bezier(.18, .9, .18, 1) both;
+  animation: callLiarTextPop 1500ms cubic-bezier(.18, .9, .18, 1) both;
 }
 
 @keyframes callLiarBackdrop {

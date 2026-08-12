@@ -1,5 +1,5 @@
-export const FEI_ANIMATION_DURATION_MS = 1480;
-export const FEI_ACTION_SUBMIT_MS = 430;
+export const FEI_ANIMATION_DURATION_MS = 1500;
+export const FEI_ACTION_SUBMIT_MS = 435;
 
 const FEI_ASSET_BASE = `${import.meta.env.BASE_URL}fei/`;
 

@@ -32,7 +32,7 @@
 }
 
 .slam-animation-overlay.is-active::before {
-  animation: slamBackdrop 1180ms linear both;
+  animation: slamBackdrop 1500ms linear both;
 }
 
 .slam-animation-overlay__stage {
@@ -44,7 +44,7 @@
 }
 
 .slam-animation-overlay.is-active .slam-animation-overlay__stage {
-  animation: slamCameraShake 1180ms linear both;
+  animation: slamCameraShake 1500ms linear both;
 }
 
 .slam-layer {
@@ -78,11 +78,11 @@
 }
 
 .slam-animation-overlay.is-active .slam-layer--table-clean {
-  animation: slamTableClean 1180ms linear both;
+  animation: slamTableClean 1500ms linear both;
 }
 
 .slam-animation-overlay.is-active .slam-layer--table-crack {
-  animation: slamTableCrack 1180ms cubic-bezier(.22, .86, .2, 1) both;
+  animation: slamTableCrack 1500ms cubic-bezier(.22, .86, .2, 1) both;
 }
 
 /* Impact VFX */
@@ -107,11 +107,11 @@
 }
 
 .slam-animation-overlay.is-active .slam-layer--impact-glow {
-  animation: slamImpactGlow 1180ms cubic-bezier(.2, .9, .18, 1) both;
+  animation: slamImpactGlow 1500ms cubic-bezier(.2, .9, .18, 1) both;
 }
 
 .slam-animation-overlay.is-active .slam-layer--speed-lines {
-  animation: slamSpeedLines 1180ms cubic-bezier(.12, .82, .16, 1) both;
+  animation: slamSpeedLines 1500ms cubic-bezier(.12, .82, .16, 1) both;
 }
 
 /* Debris */
@@ -128,11 +128,11 @@
 .slam-layer--debris-front { z-index: 35; width: 82%; }
 
 .slam-animation-overlay.is-active .slam-layer--debris-back {
-  animation: slamDebrisBack 1180ms cubic-bezier(.12, .82, .18, 1) both;
+  animation: slamDebrisBack 1500ms cubic-bezier(.12, .82, .18, 1) both;
 }
 
 .slam-animation-overlay.is-active .slam-layer--debris-front {
-  animation: slamDebrisFront 1180ms cubic-bezier(.12, .82, .18, 1) both;
+  animation: slamDebrisFront 1500ms cubic-bezier(.12, .82, .18, 1) both;
 }
 
 /* Hand */
@@ -147,7 +147,7 @@
 }
 
 .slam-animation-overlay.is-active .slam-layer--hand-arm {
-  animation: slamHandDrop 1180ms cubic-bezier(.12, .78, .16, 1) both;
+  animation: slamHandDrop 1500ms cubic-bezier(.12, .78, .16, 1) both;
 }
 
 /* Dice */
@@ -163,10 +163,10 @@
 .slam-layer--dice-3 { left: 69%; top: 76%; transform: translate(-50%, -50%) rotate(-4deg); }
 .slam-layer--dice-4 { left: 79%; top: 63%; transform: translate(-50%, -50%) rotate(8deg); }
 
-.slam-animation-overlay.is-active .slam-layer--dice-1 { animation: slamDie1 1180ms cubic-bezier(.18, .75, .18, 1) both; }
-.slam-animation-overlay.is-active .slam-layer--dice-2 { animation: slamDie2 1180ms cubic-bezier(.18, .75, .18, 1) both; }
-.slam-animation-overlay.is-active .slam-layer--dice-3 { animation: slamDie3 1180ms cubic-bezier(.18, .75, .18, 1) both; }
-.slam-animation-overlay.is-active .slam-layer--dice-4 { animation: slamDie4 1180ms cubic-bezier(.18, .75, .18, 1) both; }
+.slam-animation-overlay.is-active .slam-layer--dice-1 { animation: slamDie1 1500ms cubic-bezier(.18, .75, .18, 1) both; }
+.slam-animation-overlay.is-active .slam-layer--dice-2 { animation: slamDie2 1500ms cubic-bezier(.18, .75, .18, 1) both; }
+.slam-animation-overlay.is-active .slam-layer--dice-3 { animation: slamDie3 1500ms cubic-bezier(.18, .75, .18, 1) both; }
+.slam-animation-overlay.is-active .slam-layer--dice-4 { animation: slamDie4 1500ms cubic-bezier(.18, .75, .18, 1) both; }
 
 /* Comic callouts */
 .slam-layer--kai-text,
@@ -191,11 +191,11 @@
 }
 
 .slam-animation-overlay.is-active .slam-layer--kai-text {
-  animation: slamKaiPop 1180ms cubic-bezier(.2, .9, .18, 1) both;
+  animation: slamKaiPop 1500ms cubic-bezier(.2, .9, .18, 1) both;
 }
 
 .slam-animation-overlay.is-active .slam-layer--slam-text {
-  animation: slamTextPop 1180ms cubic-bezier(.2, .9, .18, 1) both;
+  animation: slamTextPop 1500ms cubic-bezier(.2, .9, .18, 1) both;
 }
 
 @keyframes slamBackdrop {

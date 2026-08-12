@@ -1,5 +1,5 @@
-export const SLAM_ANIMATION_DURATION_MS = 1180;
-export const SLAM_ACTION_SUBMIT_MS = 380;
+export const SLAM_ANIMATION_DURATION_MS = 1500;
+export const SLAM_ACTION_SUBMIT_MS = 480;
 
 const SLAM_ASSET_BASE = `${import.meta.env.BASE_URL}slam/`;
 

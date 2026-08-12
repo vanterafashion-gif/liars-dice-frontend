@@ -29,6 +29,8 @@ export function GameplayUtilityControls({
   musicMuted,
   onMusicVolumeChange,
   onToggleMusicMuted,
+  sfxVolume,
+  onSfxVolumeChange,
 }) {
   return (
     <div className="gameplay-utility-controls" data-ui-section="utility-controls">
@@ -89,29 +91,48 @@ export function GameplayUtilityControls({
 
         {musicPanelOpen ? (
           <div id="gameplay-music-volume-panel" className="gameplay-music-panel" role="group" aria-label={tx('Music volume')}>
-            <div className="gameplay-music-panel__label">{tx('MUSIC')}</div>
-            <div className="gameplay-music-panel__row">
-              <input
-                className="gameplay-music-panel__slider"
-                type="range"
-                min="0"
-                max="100"
-                step="1"
-                value={musicVolume}
-                onChange={onMusicVolumeChange}
-                aria-label={tx('Music volume')}
-              />
-              <button
-                className={`gameplay-music-panel__mute ${musicMuted ? 'is-muted' : ''}`}
-                type="button"
-                onClick={onToggleMusicMuted}
-                aria-pressed={musicMuted}
-                aria-label={tx(musicMuted ? 'Unmute music' : 'Mute music')}
-              >
-                {tx(musicMuted ? 'UNMUTE' : 'MUTE')}
-              </button>
+            <div className="gameplay-music-panel__section">
+              <div className="gameplay-music-panel__label">{tx('MUSIC')}</div>
+              <div className="gameplay-music-panel__row">
+                <input
+                  className="gameplay-music-panel__slider"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={musicVolume}
+                  onChange={onMusicVolumeChange}
+                  aria-label={tx('Music volume')}
+                />
+                <button
+                  className={`gameplay-music-panel__mute ${musicMuted ? 'is-muted' : ''}`}
+                  type="button"
+                  onClick={onToggleMusicMuted}
+                  aria-pressed={musicMuted}
+                  aria-label={tx(musicMuted ? 'Unmute music' : 'Mute music')}
+                >
+                  {tx(musicMuted ? 'UNMUTE' : 'MUTE')}
+                </button>
+              </div>
+              <div className="gameplay-music-panel__value">{musicMuted ? tx('Muted') : `${musicVolume}%`}</div>
             </div>
-            <div className="gameplay-music-panel__value">{musicMuted ? tx('Muted') : `${musicVolume}%`}</div>
+
+            <div className="gameplay-music-panel__section gameplay-music-panel__section--sfx">
+              <div className="gameplay-music-panel__label">{tx('SFX')}</div>
+              <div className="gameplay-music-panel__row">
+                <input
+                  className="gameplay-music-panel__slider"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={sfxVolume}
+                  onChange={onSfxVolumeChange}
+                  aria-label={tx('Sound effects volume')}
+                />
+                <div className="gameplay-music-panel__inlineValue" aria-live="polite">{sfxVolume}%</div>
+              </div>
+            </div>
           </div>
         ) : null}
       </div>

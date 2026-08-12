@@ -22,7 +22,7 @@
 }
 
 .fei-animation-overlay.is-active .fei-animation-overlay__stage {
-  animation: feiStageShake 1480ms cubic-bezier(.2,.72,.15,1) both;
+  animation: feiStageShake 1500ms cubic-bezier(.2,.72,.15,1) both;
 }
 
 .fei-animation-overlay__stage::before {
@@ -36,7 +36,7 @@
 }
 
 .fei-animation-overlay.is-active .fei-animation-overlay__stage::before {
-  animation: feiBackdrop 1480ms ease-out both;
+  animation: feiBackdrop 1500ms ease-out both;
 }
 
 .fei-layer {
@@ -143,18 +143,18 @@
   transform-origin: center;
 }
 
-.fei-animation-overlay.is-active .fei-layer--speed-lines { animation: feiSpeedLines 1480ms ease-out both; }
-.fei-animation-overlay.is-active .fei-layer--impact-glow { animation: feiImpactGlow 1480ms ease-out both; }
-.fei-animation-overlay.is-active .fei-layer--platform { animation: feiPlatform 1480ms cubic-bezier(.2,.8,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--debris { animation: feiDebris 1480ms cubic-bezier(.18,.8,.24,1) both; }
-.fei-animation-overlay.is-active .fei-layer--cup { animation: feiCupFlip 1480ms cubic-bezier(.22,.72,.18,1) both; }
-.fei-animation-overlay.is-active .fei-layer--die-1 { animation: feiDie1 1480ms cubic-bezier(.18,.78,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--die-2 { animation: feiDie2 1480ms cubic-bezier(.18,.78,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--die-3 { animation: feiDie3 1480ms cubic-bezier(.18,.78,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--die-4 { animation: feiDie4 1480ms cubic-bezier(.18,.78,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--z-text { animation: feiZPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--joker-on { animation: feiJokerPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
-.fei-animation-overlay.is-active .fei-layer--fei-text { animation: feiTextPop 1480ms cubic-bezier(.2,.84,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--speed-lines { animation: feiSpeedLines 1500ms ease-out both; }
+.fei-animation-overlay.is-active .fei-layer--impact-glow { animation: feiImpactGlow 1500ms ease-out both; }
+.fei-animation-overlay.is-active .fei-layer--platform { animation: feiPlatform 1500ms cubic-bezier(.2,.8,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--debris { animation: feiDebris 1500ms cubic-bezier(.18,.8,.24,1) both; }
+.fei-animation-overlay.is-active .fei-layer--cup { animation: feiCupFlip 1500ms cubic-bezier(.22,.72,.18,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-1 { animation: feiDie1 1500ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-2 { animation: feiDie2 1500ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-3 { animation: feiDie3 1500ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--die-4 { animation: feiDie4 1500ms cubic-bezier(.18,.78,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--z-text { animation: feiZPop 1500ms cubic-bezier(.2,.84,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--joker-on { animation: feiJokerPop 1500ms cubic-bezier(.2,.84,.2,1) both; }
+.fei-animation-overlay.is-active .fei-layer--fei-text { animation: feiTextPop 1500ms cubic-bezier(.2,.84,.2,1) both; }
 
 @keyframes feiBackdrop {
   0%, 10% { opacity: 0; }
