@@ -13,6 +13,7 @@ import FeiAnimationOverlay, { FEI_ACTION_SUBMIT_MS, FEI_ANIMATION_DURATION_MS } 
 import {
   OFFICIAL_FEI_QUANTITY_STEP,
   getOfficialDefaultBid,
+  getOfficialOpeningZaiBid,
   getOfficialSpecialActionMode,
   officialBidFaceRank,
   validateOfficialFeiSelection,
@@ -1270,16 +1271,34 @@ function isValidBid(currentBid, quantity, face, options = {}) {
   return normalizedQuantity > currentQuantity || (normalizedQuantity === currentQuantity && officialBidFaceRank(normalizedFace) > officialBidFaceRank(currentFace));
 }
 
-function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace }) {
+function getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace, playerCount = 2, totalDice = 1 }) {
   const currentMode = getMatchJokerDisplay(match, currentBid)?.mode;
+  const specialMode = getOfficialSpecialActionMode({ currentBid, currentMode });
+
+  // At the start of a round the ordinary selector intentionally defaults to
+  // Face 1. Explicit ZAI may never use Face 1, so normalize only the dedicated
+  // ZAI action to the nearest legal opening claim instead of disabling it.
+  if (!currentBid && specialMode === 'zai') {
+    const controls = getBidControls(match);
+    const serverOpening = controls?.zaiOpeningBid || controls?.zaiBid || {};
+    const requestedFace = toNumber(selectedFace, 1);
+    const fallbackFace = Math.max(2, Math.min(6, toNumber(serverOpening.face, 2)));
+    const legalFace = requestedFace >= 2 && requestedFace <= 6 ? requestedFace : fallbackFace;
+    const openingMinimum = getOpeningMinimumQuantity(match, playerCount, legalFace);
+
+    return getOfficialOpeningZaiBid({
+      selectedQuantity,
+      selectedFace: legalFace,
+      openingMinimum,
+      totalDice,
+      fallbackFace,
+    });
+  }
+
   return {
-    // Never rewrite the player's visible selection. Validation decides whether
-    // the exact value can be submitted as ZAI or FEI.
     quantity: toNumber(selectedQuantity, toNumber(currentBid?.quantity, 1)),
     face: Math.max(1, Math.min(6, toNumber(selectedFace, toNumber(currentBid?.face, 1)))),
-    source: getOfficialSpecialActionMode({ currentBid, currentMode }) === 'fei'
-      ? 'selected_fei'
-      : 'selected_zai',
+    source: specialMode === 'fei' ? 'selected_fei' : 'selected_zai',
   };
 }
 
@@ -1423,6 +1442,8 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const [feiAnimationRun, setFeiAnimationRun] = useState(0);
   const feiTimersRef = useRef([]);
   const feiActionSentRef = useRef(false);
+  const specialActionAnimation = data?.specialActionAnimation || null;
+  const lastSpecialActionAnimationRef = useRef('');
   const turnIntroKey = isOpeningCoinFlipActive ? '' : getTurnIntroKey(match, activePlayer);
   const turnIntroResetKey = getTurnIntroResetKey(match);
   const isTurnIntroPlaying = TURN_INTRO_ACTIVE_PHASES.has(turnIntroPhase);
@@ -1471,7 +1492,19 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const [roundResultVisible, setRoundResultVisible] = useState(false);
   const showRoundResult = Boolean(match && roundResult && roundResultVisible && !isFinished);
   const [clockTick, setClockTick] = useState(() => Date.now());
-  const liveTurnSeconds = isOpeningCoinFlipActive ? 0 : getLiveTurnSeconds(match, clockTick);
+  const roundIntermission = match?.roundIntermission || null;
+  const roundIntermissionActive = Boolean(match?.roundIntermissionActive || (match?.roundPhase === 'round_intermission' && roundIntermission));
+  const roundRevealEndsAtMs = roundIntermission?.revealEndsAt ? new Date(roundIntermission.revealEndsAt).getTime() : Number.NaN;
+  const nextRoundStartsAtMs = roundIntermission?.nextRoundStartsAt ? new Date(roundIntermission.nextRoundStartsAt).getTime() : Number.NaN;
+  const roundRevealBufferRemainingMs = roundIntermissionActive && Number.isFinite(roundRevealEndsAtMs)
+    ? Math.max(0, roundRevealEndsAtMs - clockTick)
+    : 0;
+  const nextRoundRemainingMs = roundIntermissionActive && Number.isFinite(nextRoundStartsAtMs)
+    ? Math.max(0, nextRoundStartsAtMs - clockTick)
+    : 0;
+  const showNewRoundCountdown = roundIntermissionActive && roundRevealBufferRemainingMs <= 0 && nextRoundRemainingMs > 0;
+  const newRoundCountdownSeconds = showNewRoundCountdown ? Math.max(1, Math.min(5, Math.ceil(nextRoundRemainingMs / 1000))) : 0;
+  const liveTurnSeconds = isOpeningCoinFlipActive || roundIntermissionActive ? 0 : getLiveTurnSeconds(match, clockTick);
   const chatMessages = Array.isArray(data?.chatMessages) ? data.chatMessages : [];
   const chatStatus = data?.chatStatus || {};
   const [chatOpen, setChatOpen] = useState(false);
@@ -1776,10 +1809,14 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const submitZaiBid = () => {
     if (isTurnIntroPlaying) return;
 
-    const specialBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
+    const specialBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace, playerCount: tablePlayerCount, totalDice });
 
     if (specialActionMode === 'zai') {
       if (!canSubmitZai || !zaiSelectionValidation.valid) return;
+      if (!currentBid && (specialBid.quantity !== selectedQuantity || specialBid.face !== selectedFace)) {
+        setSelectedQuantity(specialBid.quantity);
+        setSelectedFace(specialBid.face);
+      }
       const actionPayload = {
         matchId: currentMatchId,
         type: 'zai',
@@ -1791,12 +1828,16 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
           betAmount: selectedCoinBet,
           zai: true,
           isZai: true,
+          zaiDeclared: true,
+          explicitZaiAction: true,
           jokerMode: 'zai',
         },
         quantity: specialBid.quantity,
         face: specialBid.face,
         zai: true,
         isZai: true,
+        zaiDeclared: true,
+        explicitZaiAction: true,
         jokerMode: 'zai',
         coinBet: selectedCoinBet,
         betAmount: selectedCoinBet,
@@ -1882,6 +1923,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     callLiarActionSentRef.current = false;
     zaiActionSentRef.current = false;
     feiActionSentRef.current = false;
+    lastSpecialActionAnimationRef.current = '';
     // Reset an in-flight cinematic if the match itself changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMatchId]);
@@ -1980,6 +2022,85 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
     slamTimersRef.current = [actionTimer, finishTimer];
   };
 
+  useEffect(() => {
+    const event = specialActionAnimation;
+    if (!event || typeof window === 'undefined') return;
+
+    const eventMatchId = event.matchId || null;
+    if (eventMatchId && currentMatchId && String(eventMatchId) !== String(currentMatchId)) return;
+
+    const eventId = String(
+      event.eventId
+      || [eventMatchId || currentMatchId || 'match', event.type || event.actionType || 'action', event.createdAt || ''].join(':'),
+    );
+    if (!eventId || lastSpecialActionAnimationRef.current === eventId) return;
+    lastSpecialActionAnimationRef.current = eventId;
+
+    const animationType = String(event.type || event.actionType || '').trim().toLowerCase();
+
+    // Remote cinematic playback never submits a game action. The originating
+    // client already owns its local animation/action timing; this path exists
+    // only for the other players (and for every human when a bot acts).
+    clearSlamTimers();
+    clearCallLiarTimers();
+    clearZaiTimers();
+    clearFeiTimers();
+    setSlamAnimating(false);
+    setCallLiarAnimating(false);
+    setZaiAnimating(false);
+    setFeiAnimating(false);
+
+    if (animationType === 'zai') {
+      setZaiAnimationRun((run) => run + 1);
+      setZaiAnimating(true);
+      playGameSfx('zai');
+      const finishTimer = window.setTimeout(() => {
+        setZaiAnimating(false);
+        zaiTimersRef.current = [];
+      }, ZAI_ANIMATION_DURATION_MS);
+      zaiTimersRef.current = [finishTimer];
+      return;
+    }
+
+    if (animationType === 'fei') {
+      setFeiAnimationRun((run) => run + 1);
+      setFeiAnimating(true);
+      playGameSfx('fei');
+      const finishTimer = window.setTimeout(() => {
+        setFeiAnimating(false);
+        feiTimersRef.current = [];
+      }, FEI_ANIMATION_DURATION_MS);
+      feiTimersRef.current = [finishTimer];
+      return;
+    }
+
+    if (animationType === 'call_liar') {
+      setCallLiarAnimationRun((run) => run + 1);
+      setCallLiarAnimating(true);
+      playGameSfx('callLiar');
+      const finishTimer = window.setTimeout(() => {
+        setCallLiarAnimating(false);
+        callLiarTimersRef.current = [];
+      }, CALL_LIAR_ANIMATION_DURATION_MS);
+      callLiarTimersRef.current = [finishTimer];
+      return;
+    }
+
+    if (animationType === 'slam') {
+      setSlamAnimationRun((run) => run + 1);
+      setSlamAnimating(true);
+      playGameSfx('slam');
+      const finishTimer = window.setTimeout(() => {
+        setSlamAnimating(false);
+        slamTimersRef.current = [];
+      }, SLAM_ANIMATION_DURATION_MS);
+      slamTimersRef.current = [finishTimer];
+    }
+    // The event id is the sole trigger. Timer helpers are intentionally owned
+    // by this component instance and remain stable for the lifetime of it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [specialActionAnimation?.eventId, currentMatchId]);
+
   const submitReroll = () => {
     if (!canReroll || isTurnIntroPlaying) return;
     playGameSfx('roll');
@@ -2056,7 +2177,7 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
   const coinBetIsValid = selectedCoinBet >= minRequiredCoinBet && selectedCoinBet <= maxAllowedCoinBet;
   const quantityMin = currentBid ? 1 : getOpeningMinimumQuantity(match, tablePlayerCount, selectedFace);
   const quantityMax = quantityValues[quantityValues.length - 1] || Math.max(1, toNumber(totalDice, 1));
-  const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace });
+  const directZaiBid = getDirectZaiBid({ match, currentBid, selectedQuantity, selectedFace, playerCount: tablePlayerCount, totalDice });
   const specialActionMode = getOfficialSpecialActionMode({ currentBid, currentMode: currentBidJokerMode });
   const isFeiActionMode = specialActionMode === 'fei';
   const feiSelectionValidation = validateOfficialFeiSelection({
@@ -2302,9 +2423,15 @@ export default function Gameplay({ navigation, data, backendActions, backendStat
             type="button"
             className="gameplay-round-result__ok"
             onClick={() => setRoundResultVisible(false)}
+            disabled={roundIntermissionActive && roundRevealBufferRemainingMs > 0}
           >
             {tx('OK')}
           </button>
+          {showNewRoundCountdown ? (
+            <span className="gameplay-round-result__nextRoundCountdown" role="status" aria-live="polite">
+              {tx('ROUND')} {newRoundCountdownSeconds}s
+            </span>
+          ) : null}
         </div>
       ) : null}
 

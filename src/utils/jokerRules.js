@@ -190,6 +190,31 @@ export function getOfficialSpecialActionMode({ currentBid = null, currentMode = 
     : 'zai';
 }
 
+export function getOfficialOpeningZaiBid({
+  selectedQuantity = 1,
+  selectedFace = 1,
+  openingMinimum = 1,
+  totalDice = 1,
+  fallbackFace = 2,
+} = {}) {
+  const safeTotalDice = Math.max(1, Math.trunc(asNumber(totalDice, 1)));
+  const requestedFace = Math.trunc(asNumber(selectedFace, fallbackFace));
+  const face = requestedFace >= 2 && requestedFace <= 6
+    ? requestedFace
+    : Math.min(6, Math.max(2, Math.trunc(asNumber(fallbackFace, 2))));
+  const minimumQuantity = Math.max(1, Math.trunc(asNumber(openingMinimum, 1)));
+  const requestedQuantity = Math.max(1, Math.trunc(asNumber(selectedQuantity, minimumQuantity)));
+  const quantity = Math.min(safeTotalDice, Math.max(minimumQuantity, requestedQuantity));
+
+  return {
+    quantity,
+    face,
+    minimumQuantity,
+    adjusted: quantity !== requestedQuantity || face !== requestedFace,
+    source: 'opening_zai',
+  };
+}
+
 export function getOfficialDefaultBid({ currentBid = null, totalDice = 1, currentMode = 'normal' } = {}) {
   const safeTotalDice = Math.max(1, Math.trunc(asNumber(totalDice, 1)));
   if (!currentBid) return { quantity: 1, face: 1, source: 'opening_default' };
